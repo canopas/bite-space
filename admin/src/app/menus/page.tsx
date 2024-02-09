@@ -5,23 +5,37 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu } from "@/types/menu";
+import Pagination from "@/components/pagination/pagination";
 
 const MenusPage = () => {
   const [menusData, setMenusData] = useState([] as Menu[]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3;
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from("menus").select("id, name");
-
       if (error) {
         throw error;
       }
-
       setMenusData(data);
     };
 
     fetchCategories();
   }, []);
+
+  const deleteRecord = async (id: number) => {
+    try {
+      await supabase.from("menus").delete().eq("id", id).throwOnError();
+      setMenusData(menusData.filter((x) => x.id != id));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <DefaultLayout>
@@ -63,24 +77,31 @@ const MenusPage = () => {
                 <Link href={`menus/edit/${menu.id}`} className="text-green-600">
                   <svg
                     className="fill-current"
-                    height="18"
-                    width="18"
+                    height="17"
+                    width="17"
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
                   >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                     <g
                       id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     ></g>
                     <g id="SVGRepo_iconCarrier">
                       <path d="m455.1,137.9l-32.4,32.4-81-81.1 32.4-32.4c6.6-6.6 18.1-6.6 24.7,0l56.3,56.4c6.8,6.8 6.8,17.9 0,24.7zm-270.7,271l-81-81.1 209.4-209.7 81,81.1-209.4,209.7zm-99.7-42l60.6,60.7-84.4,23.8 23.8-84.5zm399.3-282.6l-56.3-56.4c-11-11-50.7-31.8-82.4,0l-285.3,285.5c-2.5,2.5-4.3,5.5-5.2,8.9l-43,153.1c-2,7.1 0.1,14.7 5.2,20 5.2,5.3 15.6,6.2 20,5.2l153-43.1c3.4-0.9 6.4-2.7 8.9-5.2l285.1-285.5c22.7-22.7 22.7-59.7 0-82.5z"></path>{" "}
                     </g>
                   </svg>
                 </Link>
-                <button className="text-red">
+                <button
+                  className="text-red"
+                  onClick={() =>
+                    confirm("Are you sure you want to delete this dish?")
+                      ? deleteRecord(menu.id)
+                      : ""
+                  }
+                >
                   <svg
                     className="fill-current"
                     width="18"
@@ -112,6 +133,12 @@ const MenusPage = () => {
           ))}
         </tbody>
       </table>
+      <Pagination
+        items={menusData.length}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+      />
     </DefaultLayout>
   );
 };

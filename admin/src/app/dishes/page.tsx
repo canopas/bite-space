@@ -7,38 +7,42 @@ import Link from "next/link";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
 
-const productData: Product[] = [
+const productData: any[] = [
   {
-    image: "/images/product/product-01.png",
-    name: "Apple Watch Series 7",
-    category: "Electronics",
-    price: 296,
-    sold: 22,
-    profit: 45,
+    id: 1,
+    menu: "Dessert",
+    category: "Cake",
+    image:
+      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/red-velvet-cake-3.webp",
+    name: "Red Velvet Cake",
+    price: 120,
   },
   {
-    image: "/images/product/product-02.png",
-    name: "Macbook Pro M1",
-    category: "Electronics",
-    price: 546,
-    sold: 12,
-    profit: 125,
+    id: 2,
+    menu: "Beverage",
+    category: "Macchiato",
+    image:
+      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/caramel-macchiato-4.jpg",
+    name: "Iced Caramel Macchiato",
+    price: 90,
   },
   {
-    image: "/images/product/product-03.png",
-    name: "Dell Inspiron 15",
-    category: "Electronics",
-    price: 443,
-    sold: 64,
-    profit: 247,
+    id: 3,
+    menu: "Brunch",
+    category: "-",
+    image:
+      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/fruit-tart-3.jpg",
+    name: "Fruit Tart",
+    price: 110,
   },
   {
-    image: "/images/product/product-04.png",
-    name: "HP Probook 450",
-    category: "Electronics",
-    price: 499,
-    sold: 72,
-    profit: 103,
+    id: 4,
+    menu: "Dinner",
+    category: "Dhosa",
+    image:
+      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/dhosa-1.jpg",
+    name: "Masala Dhosa",
+    price: 350,
   },
 ];
 
@@ -50,11 +54,9 @@ const DishesPage = () => {
       // const { data, error } = await supabase
       //   .from("dishes")
       //   .select("id, menu_id, name");
-
       // if (error) {
       //   throw error;
       // }
-
       // console.log(data);
       // setDishesData(data);
     };
@@ -82,10 +84,10 @@ const DishesPage = () => {
       <table className="w-full table-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <thead className="w-full">
           <tr className="flex py-5">
-            <th className="w-full">Product Name</th>
+            <th className="w-full">Menu</th>
             <th className="w-full">Category</th>
+            <th className="w-full">Name</th>
             <th className="w-full">Price</th>
-            <th className="w-full">Sold</th>
             <th className="w-full">Actions</th>
           </tr>
         </thead>
@@ -96,14 +98,25 @@ const DishesPage = () => {
               className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
               key={key}
             >
+              <td className="flex w-full items-center justify-center">
+                <p className="text-sm text-black dark:text-white">
+                  {product.menu}
+                </p>
+              </td>
+              <td className="flex w-full items-center justify-center">
+                <p className="text-sm text-black dark:text-white">
+                  {product.category}
+                </p>
+              </td>
               <td className="flex w-full items-center">
                 <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
-                  <div className="h-12.5 w-15 rounded-md">
+                  <div className="h-25 w-17 rounded-md">
                     <Image
                       src={product.image}
-                      width={60}
-                      height={50}
+                      width={100}
+                      height={100}
                       alt="Product"
+                      className="h-full w-full object-cover"
                     />
                   </div>
                   <p className="text-sm text-black dark:text-white">
@@ -113,25 +126,18 @@ const DishesPage = () => {
               </td>
               <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {product.category}
-                </p>
-              </td>
-              <td className="flex w-full items-center justify-center">
-                <p className="text-sm text-black dark:text-white">
-                  ${product.price}
-                </p>
-              </td>
-              <td className="flex w-full items-center justify-center">
-                <p className="text-sm text-black dark:text-white">
-                  {product.sold}
+                  ₹{product.price}
                 </p>
               </td>
               <td className="flex w-full items-center justify-center gap-5">
-                <Link href="#" className="text-green-600">
+                <Link
+                  href={`dishes/edit/${product.id}`}
+                  className="text-green-600"
+                >
                   <svg
                     className="fill-current"
-                    height="18"
-                    width="18"
+                    height="17"
+                    width="17"
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
