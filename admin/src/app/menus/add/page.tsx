@@ -2,13 +2,12 @@
 
 import supabase from "@/utils/supabase";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
-import { Menu } from "@/types/menu";
+import { useState } from "react";
 import { z } from "zod";
-import { navigate } from "@/utils/actions";
+import { useRouter } from "next/navigation";
 
 const AddMenuPage = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
 
@@ -27,7 +26,7 @@ const AddMenuPage = () => {
 
       if (error) throw error;
 
-      navigate("/menus");
+      router.push("/menus");
     } catch (error) {
       console.error(error);
     } finally {
@@ -48,11 +47,7 @@ const AddMenuPage = () => {
             Menu Details
           </h3>
         </div>
-        <form
-          className="flex flex-col gap-5.5 p-6.5"
-          onSubmit={onSubmit}
-          method="post"
-        >
+        <form className="flex flex-col gap-5.5 p-6.5" method="post">
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -68,7 +63,8 @@ const AddMenuPage = () => {
           </div>
           <div className="text-end">
             <button
-              type="submit"
+              type="button"
+              onClick={onSubmit}
               className="h-10 w-30 rounded-md bg-blue-600 font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
               disabled={isLoading || !name}
             >

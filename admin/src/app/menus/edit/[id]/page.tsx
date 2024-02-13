@@ -2,13 +2,13 @@
 
 import supabase from "@/utils/supabase";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu } from "@/types/menu";
 import { z } from "zod";
-import { navigate } from "@/utils/actions";
+import { useRouter } from "next/navigation";
 
 const EditMenuPage = ({ params }: { params: { id: number } }) => {
+  const [error, setErrorMessage] = useState({});
+  const router = useRouter();
   const [menusData, setMenusData] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
@@ -35,19 +35,23 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     setIsLoading(true);
 
     try {
-      // const mySchema = z.string().min(3);
-      // mySchema.parse(name);
+      const mySchema = z.object({
+        name: z.string().min(3),
+      });
 
-      // let { error } = await supabase.from("menus").upsert({
-      //   id: params.id,
-      //   name: name,
-      // });
+      mySchema.parse({ name: name });
 
-      // if (error) throw error;
+      let { error } = await supabase.from("menus").upsert({
+        id: params.id,
+        name: name,
+      });
 
-      navigate("/menus");
+      if (error) throw error;
+
+      router.push("/menus");
     } catch (error) {
-      console.error(error);
+      setErrorMessage(error as {});
+      console.error("error from catch", error);
     } finally {
       setIsLoading(false);
     }
@@ -66,11 +70,8 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Menu Details
           </h3>
         </div>
-        <form
-          className="flex flex-col gap-5.5 p-6.5"
-          onSubmit={onSubmit}
-          method="post"
-        >
+        <div>{error.message}</div>
+        <form className="flex flex-col gap-5.5 p-6.5" method="post">
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -87,7 +88,8 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
           </div>
           <div className="text-end">
             <button
-              type="submit"
+              type="button"
+              onClick={onSubmit}
               className="h-10 w-30 rounded-md bg-blue-600  font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
               disabled={isLoading || !name}
             >

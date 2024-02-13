@@ -1,71 +1,87 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Product } from "@/types/product";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
-
-const productData: any[] = [
-  {
-    id: 1,
-    menu: "Dessert",
-    category: "Cake",
-    image:
-      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/red-velvet-cake-3.webp",
-    name: "Red Velvet Cake",
-    price: 120,
-  },
-  {
-    id: 2,
-    menu: "Beverage",
-    category: "Macchiato",
-    image:
-      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/caramel-macchiato-4.jpg",
-    name: "Iced Caramel Macchiato",
-    price: 90,
-  },
-  {
-    id: 3,
-    menu: "Brunch",
-    category: "-",
-    image:
-      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/fruit-tart-3.jpg",
-    name: "Fruit Tart",
-    price: 110,
-  },
-  {
-    id: 4,
-    menu: "Dinner",
-    category: "Dhosa",
-    image:
-      "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/menu/dhosa-1.jpg",
-    name: "Masala Dhosa",
-    price: 350,
-  },
-];
+import PaginationPage from "@/components/pagination/PaginatedPage";
 
 const DishesPage = () => {
   const [dishesData, setDishesData] = useState([]);
+  const [dishesCount, setDishesCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3;
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchDishes(page);
+  };
+
+  const fetchDishes = async (page: number) => {
+    const { data: dishData, error } = await supabase
+      .from("dishes")
+      .select("id, menu_id, category_id, name, price, images, video")
+      .range((page - 1) * pageSize, pageSize * page - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    const restaurant = await Promise.all(
+      dishData.map(async (dish) => {
+        const { data: menuData, error: menuError } = await supabase
+          .from("menus")
+          .select("name")
+          .eq("id", dish.menu_id)
+          .single();
+
+        if (menuError) {
+          throw menuError;
+        }
+
+        const { data: categoryData, error: categoryError } = await supabase
+          .from("categories")
+          .select("name")
+          .eq("id", dish.category_id)
+          .single();
+
+        if (categoryError) {
+          throw categoryError;
+        }
+
+        return {
+          ...dish,
+          image: dish.images[0],
+          menu: menuData,
+          category: categoryData,
+        };
+      }),
+    );
+
+    setDishesData(restaurant);
+  };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      // const { data, error } = await supabase
-      //   .from("dishes")
-      //   .select("id, menu_id, name");
-      // if (error) {
-      //   throw error;
-      // }
-      // console.log(data);
-      // setDishesData(data);
+    const fetchCountDishes = async () => {
+      const { data, error } = await supabase.from("dishes").select();
+      if (error) {
+        throw error;
+      }
+      setDishesCount(data.length);
     };
 
-    fetchCategories();
+    fetchCountDishes();
+    fetchDishes(currentPage);
   }, []);
 
-  const deleteRecord = (id: number) => {
-    console.log(id, " ** -- id");
+  const deleteRecord = async (id: number) => {
+    try {
+      await supabase.from("dishes").delete().eq("id", id).throwOnError();
+      setDishesData(dishesData.filter((x) => x.id != id));
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
@@ -84,6 +100,7 @@ const DishesPage = () => {
       <table className="w-full table-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <thead className="w-full">
           <tr className="flex py-5">
+            <th className="w-full">Id</th>
             <th className="w-full">Menu</th>
             <th className="w-full">Category</th>
             <th className="w-full">Name</th>
@@ -93,31 +110,47 @@ const DishesPage = () => {
         </thead>
 
         <tbody>
-          {productData.map((product, key) => (
+          {dishesData.map((product, key) => (
             <tr
               className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
               key={key}
             >
               <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {product.menu}
+                  {product.id}
                 </p>
               </td>
               <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {product.category}
+                  {product.menu.name}
+                </p>
+              </td>
+              <td className="flex w-full items-center justify-center">
+                <p className="text-sm text-black dark:text-white">
+                  {product.category.name}
                 </p>
               </td>
               <td className="flex w-full items-center">
                 <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
                   <div className="h-25 w-17 rounded-md">
-                    <Image
-                      src={product.image}
-                      width={100}
-                      height={100}
-                      alt="Product"
-                      className="h-full w-full object-cover"
-                    />
+                    {product.video ? (
+                      <video
+                        loop
+                        autoPlay
+                        muted
+                        className={` h-full w-full object-cover`}
+                      >
+                        <source src={product.video} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <Image
+                        src={product.images[0]}
+                        width={200}
+                        height={100}
+                        alt="Product"
+                        className="h-full w-full object-cover"
+                      />
+                    )}
                   </div>
                   <p className="text-sm text-black dark:text-white">
                     {product.name}
@@ -192,6 +225,12 @@ const DishesPage = () => {
           ))}
         </tbody>
       </table>
+      <PaginationPage
+        currentPage={currentPage}
+        totalProducts={dishesCount}
+        perPage={pageSize}
+        onPageChange={onPageChange}
+      />
     </DefaultLayout>
   );
 };

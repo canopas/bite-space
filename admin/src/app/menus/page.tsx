@@ -5,27 +5,41 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu } from "@/types/menu";
-import Pagination from "@/components/pagination/pagination";
+import PaginationPage from "@/components/pagination/PaginatedPage";
 
 const MenusPage = () => {
   const [menusData, setMenusData] = useState([] as Menu[]);
+  const [menusCount, setMenusCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
+  const fetchMenus = async (page: number) => {
+    const { data, error } = await supabase
+      .from("menus")
+      .select("id, name")
+      .range((page - 1) * pageSize, pageSize * page - 1);
+    if (error) {
+      throw error;
+    }
+    setMenusData(data);
+  };
+
   const onPageChange = (page: number) => {
     setCurrentPage(page);
+    fetchMenus(page);
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const { data, error } = await supabase.from("menus").select("id, name");
+    const fetchCountMenus = async () => {
+      const { data, error } = await supabase.from("menus").select();
       if (error) {
         throw error;
       }
-      setMenusData(data);
+      setMenusCount(data.length);
     };
 
-    fetchCategories();
+    fetchCountMenus();
+    fetchMenus(currentPage);
   }, []);
 
   const deleteRecord = async (id: number) => {
@@ -133,10 +147,10 @@ const MenusPage = () => {
           ))}
         </tbody>
       </table>
-      <Pagination
-        items={menusData.length}
+      <PaginationPage
         currentPage={currentPage}
-        pageSize={pageSize}
+        totalProducts={menusCount}
+        perPage={pageSize}
         onPageChange={onPageChange}
       />
     </DefaultLayout>
