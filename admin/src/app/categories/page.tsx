@@ -8,106 +8,53 @@ import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 
-const DishesPage = () => {
-  const [dishesData, setDishesData] = useState([]);
-  const [dishesCount, setDishesCount] = useState(0);
+const CategoriesPage = () => {
+  const [categoriesData, setCategoriesData] = useState([]);
+  const [categoriesCount, setCategoriesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
-    fetchDishes(page);
+    fetchCategories(page);
   };
 
-  const fetchDishes = async (page: number) => {
-    const { data: dishData, error } = await supabase
-      .from("dishes")
-      .select("id, menu_id, category_id, name, price, images, video")
+  const fetchCategories = async (page: number) => {
+    const { data: categoryData, error } = await supabase
+      .from("categories")
+      .select("id, name, image")
       .range((page - 1) * pageSize, pageSize * page - 1);
 
     if (error) {
       throw error;
     }
 
-    const restaurant = await Promise.all(
-      dishData.map(async (dish) => {
-        const { data: menuData, error: menuError } = await supabase
-          .from("menus")
-          .select("name")
-          .eq("id", dish.menu_id)
-          .single();
-
-        if (menuError) {
-          throw menuError;
-        }
-
-        const { data: categoryData, error: categoryError } = await supabase
-          .from("categories")
-          .select("name")
-          .eq("id", dish.category_id)
-          .single();
-
-        if (categoryError) {
-          throw categoryError;
-        }
-
-        return {
-          ...dish,
-          image: dish.images[0],
-          menu: menuData,
-          category: categoryData,
-        };
-      }),
-    );
-
-    setDishesData(restaurant);
+    setCategoriesData(categoryData);
   };
 
   useEffect(() => {
-    const fetchCountDishes = async () => {
-      const { data, error } = await supabase.from("dishes").select();
+    const fetchCountCategories = async () => {
+      const { data, error } = await supabase.from("categories").select();
       if (error) {
         throw error;
       }
-      setDishesCount(data.length);
+      setCategoriesCount(data.length);
     };
 
-    fetchCountDishes();
-    fetchDishes(currentPage);
+    fetchCountCategories();
+    fetchCategories(currentPage);
   }, []);
 
-  const deleteRecord = async (id: number) => {
+  const deleteRecord = async (id: number, key: number) => {
     try {
-      const { data: dish, error } = await supabase
-        .from("dishes")
-        .select("images, video")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.storage
+        .from("test")
+        .remove([getFilenameFromURL(categoriesData[key].image)]);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      if (dish.images) {
-        for (var i = 0; i < dish.images.length; i++) {
-          const { error } = await supabase.storage
-            .from("test")
-            .remove([getFilenameFromURL(dish.images[i])]);
-
-          if (error) throw error;
-        }
-      }
-
-      if (dish.video) {
-        const { error } = await supabase.storage
-          .from("test")
-          .remove([getFilenameFromURL(dish.video)]);
-
-        if (error) throw error;
-      }
-
-      await supabase.from("dishes").delete().eq("id", id).throwOnError();
-      setDishesData(dishesData.filter((x) => x.id != id));
+      await supabase.from("categories").delete().eq("id", id).throwOnError();
+      setCategoriesData(categoriesData.filter((x) => x.id != id));
     } catch (error) {
       console.log("error", error);
     }
@@ -117,10 +64,10 @@ const DishesPage = () => {
     <DefaultLayout>
       <div className="mb-6 flex gap-3">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Dishes
+          Categories
         </h2>
         <Link
-          href="dishes/add"
+          href="categories/add"
           className="h-8 w-8 rounded-md bg-blue-600 text-center text-2xl font-medium text-white shadow-default hover:bg-blue-700"
         >
           +
@@ -130,68 +77,41 @@ const DishesPage = () => {
         <thead className="w-full">
           <tr className="flex py-5">
             <th className="w-full">Id</th>
-            <th className="w-full">Menu</th>
-            <th className="w-full">Category</th>
             <th className="w-full">Name</th>
-            <th className="w-full">Price</th>
             <th className="w-full">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {dishesData.map((dish, key) => (
+          {categoriesData.map((category, key) => (
             <tr
               className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
               key={key}
             >
               <td className="flex w-full items-center justify-center">
-                <p className="text-sm text-black dark:text-white">{dish.id}</p>
-              </td>
-              <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {dish.menu.name}
-                </p>
-              </td>
-              <td className="flex w-full items-center justify-center">
-                <p className="text-sm text-black dark:text-white">
-                  {dish.category.name}
+                  {category.id}
                 </p>
               </td>
               <td className="flex w-full items-center">
                 <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
-                  <div className="h-25 w-17 rounded-md">
-                    {dish.video ? (
-                      <video
-                        loop
-                        autoPlay
-                        muted
-                        className={` h-full w-full object-cover`}
-                      >
-                        <source src={dish.video} type="video/mp4" />
-                      </video>
-                    ) : (
-                      <Image
-                        src={dish.images[0]}
-                        width={200}
-                        height={100}
-                        alt="Dish"
-                        className="h-full w-full object-cover"
-                      />
-                    )}
+                  <div className="h-25 w-25 rounded-md">
+                    <Image
+                      src={category.image}
+                      width={200}
+                      height={200}
+                      alt="Category"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <p className="text-sm text-black dark:text-white">
-                    {dish.name}
+                    {category.name}
                   </p>
                 </div>
               </td>
-              <td className="flex w-full items-center justify-center">
-                <p className="text-sm text-black dark:text-white">
-                  ₹{dish.price}
-                </p>
-              </td>
               <td className="flex w-full items-center justify-center gap-5">
                 <Link
-                  href={`dishes/edit/${dish.id}`}
+                  href={`categories/edit/${category.id}`}
                   className="text-green-600"
                 >
                   <svg
@@ -216,8 +136,8 @@ const DishesPage = () => {
                 <button
                   className="text-red"
                   onClick={() =>
-                    confirm("Are you sure you want to delete this dish?")
-                      ? deleteRecord(dish.id)
+                    confirm("Are you sure you want to delete this category?")
+                      ? deleteRecord(category.id, key)
                       : ""
                   }
                 >
@@ -254,7 +174,7 @@ const DishesPage = () => {
       </table>
       <PaginationPage
         currentPage={currentPage}
-        totalProducts={dishesCount}
+        totalProducts={categoriesCount}
         perPage={pageSize}
         onPageChange={onPageChange}
       />
@@ -262,4 +182,4 @@ const DishesPage = () => {
   );
 };
 
-export default DishesPage;
+export default CategoriesPage;

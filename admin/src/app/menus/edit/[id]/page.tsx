@@ -14,7 +14,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   const [name, setName] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchMenus = async () => {
       const { data, error } = await supabase
         .from("menus")
         .select("id, name")
@@ -28,7 +28,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
       setMenusData(data);
     };
 
-    fetchCategories();
+    fetchMenus();
   }, []);
 
   async function onSubmit() {
