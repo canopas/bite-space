@@ -4,27 +4,37 @@ import React, { useState, useRef, RefObject, useEffect } from "react";
 import { StaticImageData } from "next/image";
 type InputElementType = HTMLInputElement;
 
+interface FilePreview {
+  previewType: string;
+  previewUrl: string;
+  previewName: string;
+}
+
 interface Props {
-  uploadedFiles?: {
-    previewType: string;
-    previewUrl: string;
-    previewName: string;
-  }[];
+  uploadedFiles?: FilePreview[];
   callback: Function;
   children: (file: {}) => React.ReactNode;
 }
 
 export default function MultipleFileUpload({
-  uploadedFiles = [] as Array<{
-    previewType: string;
-    previewUrl: string;
-    previewName: string;
-  }>,
+  uploadedFiles = [] as Array<FilePreview>,
   callback,
   children,
 }: Props) {
-  const [filesPreview, setFilesPreview] = useState(uploadedFiles);
+  const [filesPreview, setFilesPreview] =
+    useState<FilePreview[]>(uploadedFiles);
   const [files, setFiles] = useState(uploadedFiles);
+
+  const areArraysEqual = (arr1: any[], arr2: any[]) => {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
+  };
+
+  useEffect(() => {
+    if (uploadedFiles.length > 0) {
+      setFilesPreview(uploadedFiles);
+      setFiles(uploadedFiles);
+    }
+  }, [uploadedFiles]);
 
   const inputRefs = useRef<Array<RefObject<InputElementType> | null>>(
     new Array().fill(null),

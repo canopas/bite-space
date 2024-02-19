@@ -11,12 +11,13 @@ import { getFilenameFromURL } from "@/utils/image";
 
 const EditCategoryPage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  const [imageData, setImageData] = useState({} as any);
+  const [imageData, setImageData] = useState(null);
   const [image, setImage] = useState("");
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
@@ -61,7 +62,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
       const mySchema = z.object({
         name: z.string().min(3),
         description: z.string().min(3),
-        image: z.string().min(10),
+        image: z.string().min(10, { message: "Image is required" }),
       });
 
       let image_url = image;
@@ -91,13 +92,21 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
         );
       }
 
-      mySchema.parse({
+      const response = mySchema.safeParse({
         name: name,
         description: description,
         image: image_url,
       });
 
-      console.log(image);
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
+      }
 
       const { error } = await supabase.from("categories").upsert({
         id: params.id,
@@ -146,6 +155,9 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
               autoComplete="off"
               value={name}
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div className="mb-5.5">
             <label
@@ -162,6 +174,9 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
                 onChange={(e) => setDescription(e.target.value)}
                 defaultValue={description}
               ></textarea>
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "description")?.message}
             </div>
           </div>
           <div>
@@ -223,6 +238,9 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
                 </div>
               )}
             </SingleImgPreview>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "image")?.message}
+            </div>
           </div>
           <div className="text-end">
             <button

@@ -12,7 +12,7 @@ const CategoriesPage = () => {
   const [categoriesData, setCategoriesData] = useState([]);
   const [categoriesCount, setCategoriesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
@@ -20,6 +20,7 @@ const CategoriesPage = () => {
   };
 
   const fetchCategories = async (page: number) => {
+    console.log((page - 1) * pageSize, pageSize * page - 1);
     const { data: categoryData, error } = await supabase
       .from("categories")
       .select("id, name, image")

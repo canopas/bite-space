@@ -12,7 +12,7 @@ const DishesPage = () => {
   const [dishesData, setDishesData] = useState([]);
   const [dishesCount, setDishesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
@@ -20,6 +20,7 @@ const DishesPage = () => {
   };
 
   const fetchDishes = async (page: number) => {
+    console.log((page - 1) * pageSize, pageSize * page - 1);
     const { data: dishData, error } = await supabase
       .from("dishes")
       .select("id, menu_id, category_id, name, price, images, video")

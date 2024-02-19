@@ -14,6 +14,7 @@ import { getFilenameFromURL } from "@/utils/image";
 
 const EditMenuPage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [menus, setMenusData] = useState([]);
@@ -23,10 +24,10 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [menuId, setMenuOption] = useState<number | null>(0);
-  const [categoryId, setCategoryOption] = useState<number | null>(0);
+  const [menuId, setMenuOption] = useState<number>(0);
+  const [categoryId, setCategoryOption] = useState<number>(0);
   const [tags, setTags] = useState([]);
-  const [price, setPrice] = useState<number | null>(null);
+  const [price, setPrice] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);
 
   const [imagesData, setImagesData] = useState<any[]>([]);
@@ -57,19 +58,20 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
       const mySchema = z.object({
         name: z.string().min(3),
         description: z.string().min(3),
-        menu_id: z.number().positive(),
-        category_id: z.number().positive(),
+        menu_id: z.number().positive({ message: "Select menu from list" }),
         tags: z.array(z.string().min(2)).min(1),
         price: z.number().positive(),
-      });
-
-      mySchema.parse({
-        name: name,
-        description: description,
-        menu_id: menuId,
-        category_id: categoryId,
-        tags: tags,
-        price: price,
+        images: isImagesChecked
+          ? z.array(z.string().min(10)).min(1, { message: "Image is required" })
+          : z.null(),
+        video: isVideoChecked
+          ? z
+              .string({
+                required_error: "Video is required",
+                invalid_type_error: "Video is required",
+              })
+              .min(10, { message: "Video is required" })
+          : z.null(),
       });
 
       if (isImagesChecked) {
@@ -149,17 +151,25 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
         }
       }
 
-      console.log({
-        id: params.id,
-        category_id: categoryId,
-        menu_id: menuId,
+      const response = mySchema.safeParse({
         name: name,
-        price: price,
         description: description,
+        menu_id: menuId,
+        tags: tags,
+        price: price,
         images: isVideoChecked ? null : new_images,
         video: isImagesChecked ? null : new_video,
-        tags: tags,
       });
+
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
+      }
 
       const { error } = await supabase.from("dishes").upsert({
         id: params.id,
@@ -175,7 +185,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
 
       if (error) throw error;
 
-      // router.push("/dishes");
+      router.push("/dishes");
     } catch (error) {
       console.error(error);
     } finally {
@@ -287,6 +297,9 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               onChange={(e) => setName(e.target.value)}
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div>
             <label
@@ -303,6 +316,9 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
                 onChange={(e) => setDescription(e.target.value)}
                 defaultValue={description}
               ></textarea>
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "description")?.message}
             </div>
           </div>
           <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
@@ -353,6 +369,9 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
                     </g>
                   </svg>
                 </span>
+              </div>
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "menu_id")?.message}
               </div>
             </div>
 
@@ -416,6 +435,9 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               name="tags"
               placeHolder="Write Your Tags Here"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "tags")?.message}
+            </div>
           </div>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -429,6 +451,9 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               onChange={(e) => setPrice(parseFloat(e.target.value))}
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "price")?.message}
+            </div>
           </div>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -614,6 +639,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
                       loop
                       muted
                       className="h-55 w-40 object-cover"
+                      key={previewVideoData.previewUrl}
                     >
                       <source
                         src={previewVideoData.previewUrl}
@@ -625,6 +651,10 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               </SingleImgPreview>
             </div>
           )}
+          <div className="mt-1 text-xs text-meta-1">
+            {errors.find((error) => error.for === "images")?.message ||
+              errors.find((error) => error.for === "video")?.message}
+          </div>
           <div className="text-end">
             <button
               onClick={onSubmit}

@@ -10,10 +10,12 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 
 const AddCategoryPage = () => {
   const router = useRouter();
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [name, setName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
-  const [image, setImage] = useState({} as any);
+  const [image, setImage] = useState(null);
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
       previewType: string;
@@ -27,19 +29,42 @@ const AddCategoryPage = () => {
     setIsLoading(true);
 
     try {
-      const mySchema = z.string().min(3);
-      mySchema.parse(name);
+      const mySchema = z.object({
+        name: z.string().min(3),
+        description: z.string().min(3),
+        image: z.string().min(10, { message: "Image is required" }),
+      });
 
-      const currentDate = new Date();
-      const { data: imgData, error: imgErr } = await supabase.storage
-        .from("test")
-        .upload(currentDate.getTime() + "-" + image.name, image);
+      let image_url: string = "";
 
-      if (imgErr) throw imgErr;
+      if (image) {
+        const currentDate = new Date();
+        const { data: imgData, error: imgErr } = await supabase.storage
+          .from("test")
+          .upload(currentDate.getTime() + "-" + image.name, image);
 
-      const image_url =
-        "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/test/" +
-        imgData.path;
+        if (imgErr) throw imgErr;
+
+        image_url =
+          "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/test/" +
+          imgData.path;
+      }
+
+      const response = mySchema.safeParse({
+        name: name,
+        description: description,
+        image: image_url,
+      });
+
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
+      }
 
       const { error } = await supabase.from("categories").insert({
         name: name,
@@ -86,6 +111,9 @@ const AddCategoryPage = () => {
               onChange={(e) => setName(e.target.value)}
               autoComplete="off"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div>
             <label
@@ -101,6 +129,9 @@ const AddCategoryPage = () => {
                 placeholder="Description"
                 onChange={(e) => setDescription(e.target.value)}
               ></textarea>
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "description")?.message}
             </div>
           </div>
           <div>
@@ -144,7 +175,7 @@ const AddCategoryPage = () => {
                       </svg>
                     </span>
                     <p>
-                      <span className="text-primary">Click to upload</span>
+                      <span className="text-primary">Click to upload</span>{" "}
                       image for category
                     </p>
                     <p className="mt-1.5">PNG, JPG, JPEG or GIF</p>
@@ -163,13 +194,16 @@ const AddCategoryPage = () => {
                 </div>
               )}
             </SingleImgPreview>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "image")?.message}
+            </div>
           </div>
           <div className="text-end">
             <button
               type="button"
               onClick={onSubmit}
               className="h-10 w-30 rounded-md bg-blue-600 font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
-              disabled={isLoading || !name}
+              disabled={isLoading}
             >
               {isLoading ? "Saving..." : "Save"}
             </button>

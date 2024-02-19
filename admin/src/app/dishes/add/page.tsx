@@ -13,6 +13,7 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 
 const AddMenuPage = () => {
   const router = useRouter();
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [menus, setMenusData] = useState([]);
@@ -20,24 +21,24 @@ const AddMenuPage = () => {
   const [isImagesChecked, setIsImagesChecked] = useState<boolean>(true);
   const [isVideoChecked, setIsVideoChecked] = useState<boolean>(false);
 
-  const [name, setName] = useState<string | null>(null);
-  const [description, setDescription] = useState<string | null>(null);
-  const [menuId, setMenuOption] = useState<number | null>(0);
-  const [categoryId, setCategoryOption] = useState<number | null>(0);
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [menuId, setMenuOption] = useState<number>(0);
+  const [categoryId, setCategoryOption] = useState<number>(0);
   const [tags, setTags] = useState([]);
-  const [price, setPrice] = useState<number | null>(null);
+  const [price, setPrice] = useState<number>(0);
 
   const [imagesData, setImagesData] = useState([]);
   const images: string[] = [];
   const uploadedFiles = [] as Array<{
-    fileType: string;
-    fileUrl: string;
-    fileName: string;
+    previewType: string;
+    previewUrl: string;
+    previewName: string;
   }>;
 
-  const [videoData, setVideo] = useState({} as any);
+  const [videoData, setVideo] = useState(null);
   let video: string | null = null;
-  const [previewFileData, setPreviewFileData] = useState(
+  const [previewVideoData, setPreviewVideoData] = useState(
     {} as {
       previewType: string;
       previewUrl: string;
@@ -52,22 +53,23 @@ const AddMenuPage = () => {
       const mySchema = z.object({
         name: z.string().min(3),
         description: z.string().min(3),
-        menu_id: z.number().positive(),
-        category_id: z.number().positive(),
+        menu_id: z.number().positive({ message: "Select menu from list" }),
         tags: z.array(z.string().min(2)).min(1),
         price: z.number().positive(),
+        images: isImagesChecked
+          ? z.array(z.string().min(10)).min(1, { message: "Image is required" })
+          : z.null(),
+        video: isVideoChecked
+          ? z
+              .string({
+                required_error: "Video is required",
+                invalid_type_error: "Video is required",
+              })
+              .min(10, { message: "Video is required" })
+          : z.null(),
       });
 
-      mySchema.parse({
-        name: name,
-        description: description,
-        menu_id: menuId,
-        category_id: categoryId,
-        tags: tags,
-        price: price,
-      });
-
-      if (isImagesChecked) {
+      if (isImagesChecked && imagesData) {
         for (var i = 0; i < imagesData.length; i++) {
           const currentDate = new Date();
           const { data: imgData, error: imgErr } = await supabase.storage
@@ -85,7 +87,7 @@ const AddMenuPage = () => {
 
           images.push(image_url);
         }
-      } else {
+      } else if (videoData) {
         const currentDate = new Date();
         const { data: videoStore, error: videoErr } = await supabase.storage
           .from("test")
@@ -96,6 +98,26 @@ const AddMenuPage = () => {
         video =
           "https://mbbmnygwewvjsxsjtzbo.supabase.co/storage/v1/object/public/test/" +
           videoStore.path;
+      }
+
+      const response = mySchema.safeParse({
+        name: name,
+        description: description,
+        menu_id: menuId,
+        tags: tags,
+        price: price,
+        images: isVideoChecked ? null : images,
+        video: video,
+      });
+
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
       }
 
       const { error } = await supabase.from("dishes").insert({
@@ -177,6 +199,9 @@ const AddMenuPage = () => {
               onChange={(e) => setName(e.target.value)}
               autoComplete="off"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div>
             <label
@@ -192,6 +217,9 @@ const AddMenuPage = () => {
                 placeholder="Description"
                 onChange={(e) => setDescription(e.target.value)}
               ></textarea>
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "description")?.message}
             </div>
           </div>
           <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
@@ -242,6 +270,9 @@ const AddMenuPage = () => {
                     </g>
                   </svg>
                 </span>
+              </div>
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "menu_id")?.message}
               </div>
             </div>
 
@@ -305,6 +336,9 @@ const AddMenuPage = () => {
               name="tags"
               placeHolder="Write Your Tags Here"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "tags")?.message}
+            </div>
           </div>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -317,6 +351,9 @@ const AddMenuPage = () => {
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               onChange={(e) => setPrice(parseFloat(e.target.value))}
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "price")?.message}
+            </div>
           </div>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -454,10 +491,10 @@ const AddMenuPage = () => {
             <div>
               <SingleImgPreview
                 accept="video/*"
-                uploadedFile={[previewFileData, setPreviewFileData]}
+                uploadedFile={[previewVideoData, setPreviewVideoData]}
                 callback={handleFileUploading}
               >
-                {!previewFileData || !previewFileData.previewUrl ? (
+                {!previewVideoData || !previewVideoData.previewUrl ? (
                   <div className="relative block h-55 w-full cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray p-5 dark:bg-meta-4 sm:py-7.5">
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
@@ -502,9 +539,10 @@ const AddMenuPage = () => {
                       loop
                       muted
                       className="h-55 w-40 object-cover"
+                      key={previewVideoData.previewUrl}
                     >
                       <source
-                        src={previewFileData.previewUrl}
+                        src={previewVideoData.previewUrl}
                         type="video/mp4"
                       />
                     </video>
@@ -513,6 +551,10 @@ const AddMenuPage = () => {
               </SingleImgPreview>
             </div>
           )}
+          <div className="mt-1 text-xs text-meta-1">
+            {errors.find((error) => error.for === "images")?.message ||
+              errors.find((error) => error.for === "video")?.message}
+          </div>
           <div className="text-end">
             <button
               onClick={onSubmit}

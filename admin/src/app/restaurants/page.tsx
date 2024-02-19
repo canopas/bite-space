@@ -1,51 +1,74 @@
 "use client";
 
-import supabase from "@/utils/supabase";
+import { useEffect, useState } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Menu } from "@/types/menu";
+import Image from "next/image";
+import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
+import { getFilenameFromURL } from "@/utils/image";
 
-const MenusPage = () => {
-  const [menusData, setMenusData] = useState([] as Menu[]);
-  const [menusCount, setMenusCount] = useState(0);
+const RestaurantsPage = () => {
+  const [restaurantsData, setRestaurantsData] = useState([]);
+  const [restaurantsCount, setRestaurantsCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
-  const fetchMenus = async (page: number) => {
-    const { data, error } = await supabase
-      .from("menus")
-      .select("id, name")
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchRestaurants(page);
+  };
+
+  const fetchRestaurants = async (page: number) => {
+    const { data: dishData, error } = await supabase
+      .from("restaurants")
+      .select("id, name, description, address, phone, images")
       .range((page - 1) * pageSize, pageSize * page - 1);
+
     if (error) {
       throw error;
     }
-    setMenusData(data);
-  };
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
-    fetchMenus(page);
+    setRestaurantsData(dishData);
   };
 
   useEffect(() => {
-    const fetchCountMenus = async () => {
-      const { data, error } = await supabase.from("menus").select();
+    const fetchCountRestaurants = async () => {
+      const { data, error } = await supabase.from("restaurants").select();
       if (error) {
         throw error;
       }
-      setMenusCount(data.length);
+      setRestaurantsCount(data.length);
     };
 
-    fetchCountMenus();
-    fetchMenus(currentPage);
+    fetchCountRestaurants();
+    fetchRestaurants(currentPage);
   }, []);
 
   const deleteRecord = async (id: number) => {
     try {
-      await supabase.from("menus").delete().eq("id", id).throwOnError();
-      setMenusData(menusData.filter((x) => x.id != id));
+      const { data: restaurant, error } = await supabase
+        .from("restaurants")
+        .select("images")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (restaurant.images) {
+        for (var i = 0; i < restaurant.images.length; i++) {
+          const { error } = await supabase.storage
+            .from("test")
+            .remove([getFilenameFromURL(restaurant.images[i])]);
+
+          if (error) throw error;
+        }
+      }
+
+      await supabase.from("restaurants").delete().eq("id", id).throwOnError();
+      setRestaurantsData(restaurantsData.filter((x) => x.id != id));
     } catch (error) {
       console.log("error", error);
     }
@@ -53,42 +76,70 @@ const MenusPage = () => {
 
   return (
     <DefaultLayout>
-      <div className="mb-6 flex gap-3 sm:items-center">
+      <div className="mb-6 flex gap-3">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Menus
+          Restaurants
         </h2>
         <Link
-          href="menus/add"
+          href="restaurants/add"
           className="h-8 w-8 rounded-md bg-blue-600 text-center text-2xl font-medium text-white shadow-default hover:bg-blue-700"
         >
           +
         </Link>
       </div>
-      <table className="w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <table className="w-full table-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <thead className="w-full">
           <tr className="flex py-5">
-            <th className="w-1/4">Id</th>
+            <th className="w-full">Id</th>
             <th className="w-full">Name</th>
+            <th className="w-full">Address</th>
+            <th className="w-full">Phone</th>
             <th className="w-full">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {menusData.map((menu, key) => (
+          {restaurantsData.map((restaurant, key) => (
             <tr
               className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
               key={key}
             >
-              <td className="flex w-1/4 items-center justify-center">
-                <p className="text-sm text-black dark:text-white">{menu.id}</p>
+              <td className="flex w-full items-center justify-center">
+                <p className="text-sm text-black dark:text-white">
+                  {restaurant.id}
+                </p>
+              </td>
+              <td className="flex w-full items-center">
+                <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
+                  <div className="h-20 w-30 rounded-md">
+                    <Image
+                      src={restaurant.images[0]}
+                      width={200}
+                      height={100}
+                      alt="restaurant"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <p className="text-sm text-black dark:text-white">
+                    {restaurant.name}
+                  </p>
+                </div>
               </td>
               <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {menu.name}
+                  {restaurant.address}
+                </p>
+              </td>
+              <td className="flex w-full items-center justify-center">
+                <p className="text-sm text-black dark:text-white">
+                  {restaurant.phone}
                 </p>
               </td>
               <td className="flex w-full items-center justify-center gap-5">
-                <Link href={`menus/edit/${menu.id}`} className="text-green-600">
+                <Link
+                  href={`restaurants/edit/${restaurant.id}`}
+                  className="text-green-600"
+                >
                   <svg
                     className="fill-current"
                     height="17"
@@ -111,8 +162,8 @@ const MenusPage = () => {
                 <button
                   className="text-red"
                   onClick={() =>
-                    confirm("Are you sure you want to delete this dish?")
-                      ? deleteRecord(menu.id)
+                    confirm("Are you sure you want to delete this restaurant?")
+                      ? deleteRecord(restaurant.id)
                       : ""
                   }
                 >
@@ -149,7 +200,7 @@ const MenusPage = () => {
       </table>
       <PaginationPage
         currentPage={currentPage}
-        totalProducts={menusCount}
+        totalProducts={restaurantsCount}
         perPage={pageSize}
         onPageChange={onPageChange}
       />
@@ -157,4 +208,4 @@ const MenusPage = () => {
   );
 };
 
-export default MenusPage;
+export default RestaurantsPage;

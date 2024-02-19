@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 const AddMenuPage = () => {
   const router = useRouter();
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
 
@@ -15,8 +16,21 @@ const AddMenuPage = () => {
     setIsLoading(true);
 
     try {
-      const mySchema = z.string().min(3);
-      mySchema.parse(name);
+      const mySchema = z.object({
+        name: z.string().min(3),
+      });
+
+      const response = mySchema.safeParse({ name: name });
+
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
+      }
 
       const { data: todo, error } = await supabase
         .from("menus")
@@ -60,13 +74,16 @@ const AddMenuPage = () => {
               onChange={(e) => setName(e.target.value)}
               autoComplete="off"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div className="text-end">
             <button
               type="button"
               onClick={onSubmit}
               className="h-10 w-30 rounded-md bg-blue-600 font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
-              disabled={isLoading || !name}
+              disabled={isLoading}
             >
               {isLoading ? "Saving..." : "Save"}
             </button>

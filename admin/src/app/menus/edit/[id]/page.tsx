@@ -7,11 +7,10 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 
 const EditMenuPage = ({ params }: { params: { id: number } }) => {
-  const [error, setErrorMessage] = useState({});
   const router = useRouter();
-  const [menusData, setMenusData] = useState({});
+  const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [name, setName] = useState<string | null>(null);
+  const [name, setName] = useState<string>("");
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -25,7 +24,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
         throw error;
       }
 
-      setMenusData(data);
+      setName(data.name);
     };
 
     fetchMenus();
@@ -39,7 +38,17 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
         name: z.string().min(3),
       });
 
-      mySchema.parse({ name: name });
+      const response = mySchema.safeParse({ name: name });
+
+      if (!response.success) {
+        let errArr: any[] = [];
+        const { errors: err } = response.error;
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
+        setErrors(errArr);
+        throw err;
+      }
 
       let { error } = await supabase.from("menus").upsert({
         id: params.id,
@@ -50,7 +59,6 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
 
       router.push("/menus");
     } catch (error) {
-      setErrorMessage(error as {});
       console.error("error from catch", error);
     } finally {
       setIsLoading(false);
@@ -70,14 +78,13 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Menu Details
           </h3>
         </div>
-        <div>{error.message}</div>
         <form className="flex flex-col gap-5.5 p-6.5" method="post">
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
             </label>
             <input
-              value={name ? name : menusData.name}
+              value={name}
               name="name"
               type="text"
               placeholder="Name"
@@ -85,13 +92,16 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               onChange={(e) => setName(e.target.value)}
               autoComplete="off"
             />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "name")?.message}
+            </div>
           </div>
           <div className="text-end">
             <button
               type="button"
               onClick={onSubmit}
               className="h-10 w-30 rounded-md bg-blue-600  font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
-              disabled={isLoading || !name}
+              disabled={isLoading}
             >
               {isLoading ? "Updating..." : "Update"}
             </button>
