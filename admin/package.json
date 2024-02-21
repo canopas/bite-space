@@ -12,8 +12,10 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "apexcharts": "^3.45.2",
+    "crypto-js": "^4.2.0",
     "flatpickr": "^4.6.13",
     "geist": "^1.2.1",
+    "jose": "^5.2.2",
     "jsvectormap": "^1.5.3",
     "next": "14.1.0",
     "react": "^18",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
