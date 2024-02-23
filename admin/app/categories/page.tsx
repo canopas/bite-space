@@ -68,7 +68,7 @@ const CategoriesPage = () => {
         </h2>
         <Link
           href="categories/add"
-          className="h-8 w-8 rounded-md bg-blue-600 text-center text-2xl font-medium text-white shadow-default hover:bg-blue-700"
+          className="h-8 w-8 rounded-md bg-primary text-center text-2xl font-medium text-white shadow-default hover:bg-opacity-90"
         >
           +
         </Link>

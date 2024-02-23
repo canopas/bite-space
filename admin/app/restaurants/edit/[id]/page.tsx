@@ -225,7 +225,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             </label>
             <div className="relative">
               <textarea
-                className="w-full rounded border border-stroke  px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                 rows={5}
                 placeholder="Address"
                 onChange={(e) => setAddress(e.target.value)}
@@ -277,7 +277,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
               {(file: any) => (
                 <div className="flex items-center justify-center">
                   {!file.previewUrl ? (
-                    <div className="relative block h-33 w-50 cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray p-5 dark:bg-meta-4 sm:py-7.5">
+                    <div className="relative block h-33 w-50 cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray p-6 dark:bg-meta-4">
                       <div className="flex flex-col items-center justify-center space-y-3">
                         <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                           <svg
@@ -334,7 +334,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             <button
               onClick={onSubmit}
               type="button"
-              className="h-10 w-30 rounded-md bg-blue-600 font-medium text-white disabled:cursor-wait disabled:opacity-30"
+              className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >
               {isLoading ? "Updating..." : "Update"}

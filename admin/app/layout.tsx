@@ -6,18 +6,29 @@ import "@/css/satoshi.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
+import { manageUserCookies } from "@/utils/jwt-auth";
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   // const pathname = usePathname();
 
+  const manageCookies = async () => {
+    const code = await manageUserCookies();
+    if (code == "LOGIN_NEEDED") {
+      router.push("/signin");
+    }
+  };
+
   useEffect(() => {
+    manageCookies();
     setTimeout(() => setLoading(false), 1000);
   }, []);
 

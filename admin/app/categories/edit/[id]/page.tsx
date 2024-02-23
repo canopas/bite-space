@@ -22,7 +22,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
       previewType: string;
-      previewUrl: string | ArrayBuffer | null;
+      previewUrl: string;
       previewName: string;
       isDragging: boolean;
     },
@@ -240,7 +240,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
             <button
               type="button"
               onClick={onSubmit}
-              className="h-10 w-30 rounded-md bg-blue-600 font-medium text-white disabled:cursor-wait disabled:opacity-30"
+              className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >
               {isLoading ? "Saving..." : "Save"}

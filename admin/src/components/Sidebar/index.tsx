@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { getUser } from "@/utils/jwt-auth";
+import { getCookiesValue } from "@/utils/jwt-auth";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -13,7 +13,7 @@ interface SidebarProps {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
 
-  const [role, setRole] = useState();
+  const [role, setAdminRole] = useState();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
@@ -26,10 +26,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   // close on click outside
   useEffect(() => {
-    const setrole = async () => {
-      setRole(await getUser("user-role"));
-      console.log(await getUser("user-role"));
+    const setUserCookies = async () => {
+      setAdminRole(await getCookiesValue("role"));
     };
+
     const clickHandler = ({ target }: MouseEvent) => {
       if (!sidebar.current || !trigger.current) return;
       if (
@@ -40,8 +40,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         return;
       setSidebarOpen(false);
     };
+
+    setUserCookies();
+
     document.addEventListener("click", clickHandler);
-    setrole();
     return () => document.removeEventListener("click", clickHandler);
   });
 
@@ -78,7 +80,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           className="text-4xl font-extrabold text-primary"
           ref={trigger}
         >
-          <span className="text-white">Just</span> Foodie {role == "admin"}
+          <span className="text-white">Just</span> Foodie
         </Link>
       </div>
       {/* <!-- SIDEBAR HEADER --> */}

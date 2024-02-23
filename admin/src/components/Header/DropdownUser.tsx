@@ -39,7 +39,7 @@ const DropdownUser = () => {
 
   const UserLogout = async () => {
     await logout("token");
-    await logout("user-role");
+    await logout("role");
     router.push("/signin");
   };
 
