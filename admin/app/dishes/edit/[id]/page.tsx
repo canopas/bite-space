@@ -25,7 +25,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [menuId, setMenuOption] = useState<number>(0);
-  const [categoryId, setCategoryOption] = useState<number>(0);
+  const [categoryId, setCategoryOption] = useState<number | null>(null);
   const [tags, setTags] = useState([]);
   const [price, setPrice] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);

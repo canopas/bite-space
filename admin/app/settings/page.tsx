@@ -12,7 +12,7 @@ import { TagsInput } from "react-tag-input-component";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const Settings = () => {
-  const [role, setRole] = useState();
+  const [selectedRestaurant, setSelectedRestaurant] = useState();
 
   const [errors, setErrors] = useState<any[]>([]);
   const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
@@ -38,20 +38,15 @@ const Settings = () => {
   >();
 
   useEffect(() => {
-    const setUserCookies = async () => {
-      setRole(await getCookiesValue("role"));
-    };
-
     const fetchRestaurantData = async () => {
+      const user = await getCookiesValue("login-info");
       const { data, error } = await supabase
         .from("restaurants")
         .select("id, name, description, address, phone, images, tags")
-        .eq("admin_id", 8)
+        .eq("id", user.split("-")[2])
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setId(data.id);
       setName(data.name);
@@ -74,7 +69,6 @@ const Settings = () => {
       }
     };
 
-    setUserCookies();
     fetchRestaurantData();
   }, []);
 
@@ -217,7 +211,7 @@ const Settings = () => {
       const { data: restaurant, error: restaurantErr } = await supabase
         .from("restaurants")
         .select("id, images")
-        .eq("admin_id", 8)
+        .eq("id", id)
         .single();
 
       if (restaurantErr) {
@@ -386,7 +380,7 @@ const Settings = () => {
                     {errors.find((error) => error.for === "images")?.message}
                   </div>
 
-                  <div className="flex justify-end gap-4.5">
+                  <div className="mt-10 flex justify-end gap-4.5">
                     <button
                       className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 disabled:cursor-wait disabled:opacity-30 dark:border-strokedark dark:text-white"
                       type="submit"

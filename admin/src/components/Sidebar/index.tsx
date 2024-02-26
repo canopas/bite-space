@@ -27,7 +27,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   // close on click outside
   useEffect(() => {
     const setUserCookies = async () => {
-      setAdminRole(await getCookiesValue("role"));
+      const user = await getCookiesValue("login-info");
+      user ? setAdminRole(user.split("-")[1]) : "";
     };
 
     const clickHandler = ({ target }: MouseEvent) => {

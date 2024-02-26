@@ -6,21 +6,28 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu } from "@/types/menu";
 import PaginationPage from "@/components/pagination/PaginatedPage";
+import { getCookiesValue } from "@/utils/jwt-auth";
 
 const MenusPage = () => {
+  const [id, setId] = useState();
   const [menusData, setMenusData] = useState([] as Menu[]);
   const [menusCount, setMenusCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
   const fetchMenus = async (page: number) => {
+    const user = await getCookiesValue("login-info");
+    console.log(user);
+    setId(user.split("-")[2]);
+
     const { data, error } = await supabase
       .from("menus")
-      .select("id, name")
+      .select("id, restaurant_id, name")
       .range((page - 1) * pageSize, pageSize * page - 1);
-    if (error) {
-      throw error;
-    }
+
+    console.log(id);
+    if (error) throw error;
+
     setMenusData(data);
   };
 
@@ -29,15 +36,22 @@ const MenusPage = () => {
     fetchMenus(page);
   };
 
+  const fetchCountMenus = async () => {
+    const { data, error } = await supabase.from("menus").select();
+
+    if (error) throw error;
+
+    setMenusCount(data.length);
+  };
+
   useEffect(() => {
-    const fetchCountMenus = async () => {
-      const { data, error } = await supabase.from("menus").select();
-      if (error) {
-        throw error;
-      }
-      setMenusCount(data.length);
+    const getCookies = async () => {
+      const user = await getCookiesValue("login-info");
+      console.log(user);
+      setId(user.split("-")[2]);
     };
 
+    getCookies();
     fetchCountMenus();
     fetchMenus(currentPage);
   }, []);
@@ -46,6 +60,7 @@ const MenusPage = () => {
     try {
       await supabase.from("menus").delete().eq("id", id).throwOnError();
       setMenusData(menusData.filter((x) => x.id != id));
+      fetchCountMenus();
     } catch (error) {
       console.error("error", error);
     }
@@ -147,6 +162,11 @@ const MenusPage = () => {
           ))}
         </tbody>
       </table>
+      {menusCount == 0 ? (
+        <div className="mt-5 text-center">No data found</div>
+      ) : (
+        ""
+      )}
       <PaginationPage
         currentPage={currentPage}
         totalProducts={menusCount}

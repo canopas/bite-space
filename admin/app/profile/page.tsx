@@ -38,14 +38,18 @@ const Profile = () => {
 
   useEffect(() => {
     const setUserCookies = async () => {
-      setRole(await getCookiesValue("role"));
+      const user = await getCookiesValue("login-info");
+      setRole(user.split("-")[1]);
     };
 
     const fetchAdminData = async () => {
+      const user = await getCookiesValue("login-info");
+      console.log(user);
+
       const { data, error } = await supabase
         .from("admins")
         .select("id, name, email, password, image")
-        .eq("id", 8)
+        .eq("id", user.split("-")[0])
         .single();
 
       if (error) {
@@ -181,28 +185,30 @@ const Profile = () => {
         throw errors;
       }
 
-      confirm("Are you sure you want to change password?");
+      if (confirm("Are you sure you want to change password?")) {
+        var encryptedPassword = CryptoJS.AES.encrypt(
+          newPassword,
+          process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+        ).toString();
 
-      var encryptedPassword = CryptoJS.AES.encrypt(
-        newPassword,
-        process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
-      ).toString();
+        const { error } = await supabase.from("admins").upsert({
+          id: 8,
+          name: name,
+          email: email,
+          password: encryptedPassword,
+        });
 
-      const { error } = await supabase.from("admins").upsert({
-        id: 8,
-        name: name,
-        email: email,
-        password: encryptedPassword,
-      });
+        if (error) throw error;
 
-      if (error) throw error;
+        setCurrentPassword("");
+        setNewPassword("");
+        setPassword(encryptedPassword);
+        setErrors([]);
 
-      setCurrentPassword("");
-      setNewPassword("");
-      setPassword(encryptedPassword);
-      setErrors([]);
+        showChangePwdPopup(true);
+      }
 
-      showChangePwdPopup(true);
+      return;
     } catch (error) {
       console.error(error);
     } finally {

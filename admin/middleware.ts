@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const loginPages = ["/signin", "/signup"];
+const loginPages = ["/signin", "/signup", "/forgot-password"];
 const adminPages = [
   "/categories",
   "/restaurants",
@@ -12,12 +12,19 @@ const adminPages = [
   "/profile",
   "/settings",
 ];
-const ownerPages = ["/menus", "/dishes", "/profile", "/settings"];
+const ownerPages = [
+  "/restaurants",
+  "/menus",
+  "/dishes",
+  "/profile",
+  "/settings",
+];
 
 const middleware = async (request: NextRequest) => {
-  const userRole = await getCookiesValue("role");
+  const user = await getCookiesValue("login-info");
+  console.log(user);
+  const userRole = user ? user.split("-")[1] : null;
 
-  console.log(userRole);
   if (loginPages.includes(request.nextUrl.pathname)) {
     if (userRole) {
       return NextResponse.redirect(new URL("/", request.url));

@@ -9,7 +9,7 @@ import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 
 const RestaurantsPage = () => {
-  const [restaurantsData, setRestaurantsData] = useState([]);
+  const [restaurantsData, setRestaurantsData] = useState<any[]>([]);
   const [restaurantsCount, setRestaurantsCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;

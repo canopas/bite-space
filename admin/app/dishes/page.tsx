@@ -7,11 +7,15 @@ import Image from "next/image";
 import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
+import { getCookiesValue } from "@/utils/jwt-auth";
 
 const DishesPage = () => {
+  const [id, setId] = useState();
+
   const [dishesData, setDishesData] = useState([]);
   const [dishesCount, setDishesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+
   const pageSize = 5;
 
   const onPageChange = (page: number) => {
@@ -48,7 +52,7 @@ const DishesPage = () => {
           .single();
 
         if (categoryError) {
-          throw categoryError;
+          console.log("Error while fetching category data: ", categoryError);
         }
 
         return {
@@ -72,6 +76,12 @@ const DishesPage = () => {
       setDishesCount(data.length);
     };
 
+    const getCookies = async () => {
+      const user = await getCookiesValue("login-info");
+      setId(user.split("-")[2]);
+    };
+
+    getCookies();
     fetchCountDishes();
     fetchDishes(currentPage);
   }, []);
@@ -154,7 +164,7 @@ const DishesPage = () => {
               </td>
               <td className="flex w-full items-center justify-center">
                 <p className="text-sm text-black dark:text-white">
-                  {dish.category.name}
+                  {dish.category ? dish.category.name : "-"}
                 </p>
               </td>
               <td className="flex w-full items-center">

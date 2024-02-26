@@ -22,17 +22,22 @@ export async function sign(payload: any) {
     path: "/",
   });
 
-  await setSessionForHour("role", payload.role);
-  await setSessionForHour("id", payload.id);
+  await setSessionForHour(
+    "login-info",
+    payload.id + "-" + payload.role + "-" + payload.restaurant,
+  );
 }
 
 export async function verify(token: string): Promise<any> {
   try {
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET!),
-    );
-    return payload;
+    if (token) {
+      const { payload } = await jwtVerify(
+        token,
+        new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET!),
+      );
+      return payload;
+    }
+    return;
   } catch (error) {
     console.error("JWT error: ", error);
     return error;
@@ -40,7 +45,11 @@ export async function verify(token: string): Promise<any> {
 }
 
 export async function logout(params: string) {
-  cookies().delete(params);
+  try {
+    cookies().delete(params);
+  } catch (error) {
+    console.error("Error in logout: ", error);
+  }
 }
 
 export async function getCookiesValue(params: string): Promise<any> {
@@ -54,22 +63,26 @@ export async function getCookiesValue(params: string): Promise<any> {
 }
 
 export async function setSessionForHour(name: string, value: string) {
-  value = CryptoJS.AES.encrypt(
-    value,
-    process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
-  ).toString();
+  try {
+    const encrypted = CryptoJS.AES.encrypt(
+      value,
+      process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+    ).toString();
 
-  cookies().set(name, value, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 60 * 60, // One hour
-    path: "/",
-  });
+    cookies().set(name, encrypted, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60, // One hour
+      path: "/",
+    });
+  } catch (error) {
+    console.error("Error while setting cookie : ", error);
+  }
 }
 
 export async function manageUserCookies(): Promise<any> {
-  const userRole = cookies().get("role")?.value;
-  if (userRole) return;
+  const userInfo = cookies().get("login-info")?.value;
+  if (userInfo) return;
 
   const token = cookies().get("token")?.value;
   const user = await verify(token!);
@@ -83,6 +96,9 @@ export async function manageUserCookies(): Promise<any> {
     return "LOGIN_NEEDED";
   }
 
-  await setSessionForHour("role", user.role);
+  await setSessionForHour(
+    "login-info",
+    user.id + "-" + user.role + "-" + user.restaurant,
+  );
   return;
 }

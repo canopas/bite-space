@@ -24,7 +24,7 @@ const AddMenuPage = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [menuId, setMenuOption] = useState<number>(0);
-  const [categoryId, setCategoryOption] = useState<number>(0);
+  const [categoryId, setCategoryOption] = useState<number | null>(null);
   const [tags, setTags] = useState([]);
   const [price, setPrice] = useState<number>(0);
 

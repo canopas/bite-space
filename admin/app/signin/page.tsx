@@ -46,13 +46,13 @@ const SignIn = () => {
 
       setErrors([]);
 
-      const { data: user, error } = await supabase
+      const { data: user, error: userError } = await supabase
         .from("admins")
-        .select("id, email, password, role")
+        .select("id, email, password")
         .eq("email", email)
         .single();
 
-      if (error) throw error;
+      if (userError) throw userError;
 
       var decrypted = CryptoJS.AES.decrypt(
         user.password,
@@ -64,13 +64,28 @@ const SignIn = () => {
         throw errors;
       }
 
+      const { data, error } = await supabase
+        .from("admins_roles_restaurants")
+        .select("id, admin_id, role_id, restaurant_id")
+        .eq("admin_id", user.id);
+
+      if (error) throw error;
+
+      const { data: role, error: roleError } = await supabase
+        .from("roles")
+        .select("id, name")
+        .eq("id", data[0].role_id)
+        .single();
+
+      if (roleError) throw roleError;
+
       await sign({
         id: user.id,
-        role: user.role,
+        role: role.name,
         email: email,
+        restaurant: data[0].restaurant_id,
       });
 
-      console.log("-----------------", path, "-----------------");
       if (path === "/signin") {
         router.push("/");
       } else {
@@ -332,7 +347,7 @@ const SignIn = () => {
                   </button>
                 </div>
 
-                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+                {/* <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
                   <span>
                     <svg
                       width="20"
@@ -367,7 +382,7 @@ const SignIn = () => {
                     </svg>
                   </span>
                   Sign in with Google
-                </button>
+                </button> */}
 
                 <div className="mt-6 text-center">
                   <p>
