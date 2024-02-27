@@ -20,29 +20,21 @@ const DropdownUser = () => {
       console.log(user);
       try {
         if (user) {
-          const { data, error } = await supabase
+          const { data, error: restaurantsError } = await supabase
             .from("admins_roles_restaurants")
-            .select("id, admin_id, role_id, restaurant_id")
+            .select(`*, restaurants(*)`)
             .eq("admin_id", user.split("-")[0]);
 
-          if (error) throw error;
+          if (restaurantsError) throw restaurantsError;
 
           var restaurants: any[] = [];
           for (var i = 0; i < data.length; i++) {
-            const { data: restaurant, error: restaurantsError } = await supabase
-              .from("restaurants")
-              .select("id, name, images")
-              .eq("id", data[i].restaurant_id)
-              .single();
-
-            if (restaurantsError) throw restaurantsError;
-
             console.log(user.split("-")[2]);
             if (data[i].restaurant_id == user.split("-")[2]) {
-              setSelectedRestaurant(restaurant);
+              setSelectedRestaurant(data[i].restaurants);
             }
 
-            restaurants.push(restaurant);
+            restaurants.push(data[i].restaurants);
           }
 
           setRestaurantsData(restaurants);

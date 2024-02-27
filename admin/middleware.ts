@@ -33,6 +33,10 @@ const middleware = async (request: NextRequest) => {
   }
 
   if (!request.nextUrl.pathname.startsWith("/_next")) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/signin", request.url));
+    }
+
     if (
       adminPages.some((path) => request.nextUrl.pathname.startsWith(path)) &&
       userRole == "admin"
@@ -47,14 +51,8 @@ const middleware = async (request: NextRequest) => {
       return;
     }
 
-    if (request.nextUrl.pathname == "/") {
-      return;
-    }
-
-    return NextResponse.redirect(new URL("/", request.url));
+    return;
   }
-
-  return;
 };
 
 export default middleware;

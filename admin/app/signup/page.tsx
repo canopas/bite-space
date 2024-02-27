@@ -110,7 +110,7 @@ const SignUp = () => {
                 className="mb-5.5 inline-block text-4xl font-extrabold text-primary"
                 href="/"
               >
-                <span className="text-black">Just</span> Foodie
+                <span className="text-black">Bite</span> Space
               </Link>
               <p className="2xl:px-20">
                 Elevate your dining experience with every bite. <br /> Where

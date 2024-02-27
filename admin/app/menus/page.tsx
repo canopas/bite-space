@@ -9,7 +9,7 @@ import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const MenusPage = () => {
-  const [id, setId] = useState();
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   const [menusData, setMenusData] = useState([] as Menu[]);
   const [menusCount, setMenusCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,18 +17,17 @@ const MenusPage = () => {
 
   const fetchMenus = async (page: number) => {
     const user = await getCookiesValue("login-info");
-    console.log(user);
-    setId(user.split("-")[2]);
 
     const { data, error } = await supabase
       .from("menus")
       .select("id, restaurant_id, name")
-      .range((page - 1) * pageSize, pageSize * page - 1);
+      .range((page - 1) * pageSize, pageSize * page - 1)
+      .eq("restaurant_id", user.split("-")[2]);
 
-    console.log(id);
     if (error) throw error;
 
     setMenusData(data);
+    setIsDataLoading(false);
   };
 
   const onPageChange = (page: number) => {
@@ -37,7 +36,11 @@ const MenusPage = () => {
   };
 
   const fetchCountMenus = async () => {
-    const { data, error } = await supabase.from("menus").select();
+    const user = await getCookiesValue("login-info");
+    const { data, error } = await supabase
+      .from("menus")
+      .select()
+      .eq("restaurant_id", user.split("-")[2]);
 
     if (error) throw error;
 
@@ -45,13 +48,6 @@ const MenusPage = () => {
   };
 
   useEffect(() => {
-    const getCookies = async () => {
-      const user = await getCookiesValue("login-info");
-      console.log(user);
-      setId(user.split("-")[2]);
-    };
-
-    getCookies();
     fetchCountMenus();
     fetchMenus(currentPage);
   }, []);
@@ -162,7 +158,11 @@ const MenusPage = () => {
           ))}
         </tbody>
       </table>
-      {menusCount == 0 ? (
+      {isDataLoading ? (
+        <div className="mt-8 flex items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+        </div>
+      ) : !isDataLoading && menusCount == 0 ? (
         <div className="mt-5 text-center">No data found</div>
       ) : (
         ""

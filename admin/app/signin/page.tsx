@@ -66,25 +66,34 @@ const SignIn = () => {
 
       const { data, error } = await supabase
         .from("admins_roles_restaurants")
-        .select("id, admin_id, role_id, restaurant_id")
+        .select("admin_id, role_id, restaurant_id")
         .eq("admin_id", user.id);
 
       if (error) throw error;
 
-      const { data: role, error: roleError } = await supabase
-        .from("roles")
-        .select("id, name")
-        .eq("id", data[0].role_id)
-        .single();
+      if (data.length > 0) {
+        const { data: role, error: roleError } = await supabase
+          .from("roles")
+          .select("id, name")
+          .eq("id", data[0].role_id)
+          .single();
 
-      if (roleError) throw roleError;
+        if (roleError) throw roleError;
 
-      await sign({
-        id: user.id,
-        role: role.name,
-        email: email,
-        restaurant: data[0].restaurant_id,
-      });
+        await sign({
+          id: user.id,
+          role: role.name,
+          email: email,
+          restaurant: data[0].restaurant_id,
+        });
+      } else {
+        await sign({
+          id: user.id,
+          role: "owner",
+          email: email,
+          restaurant: 0,
+        });
+      }
 
       if (path === "/signin") {
         router.push("/");
@@ -108,7 +117,7 @@ const SignIn = () => {
                 className="mb-5.5 inline-block text-4xl font-extrabold text-primary"
                 href="/"
               >
-                <span className="text-black">Just</span> Foodie
+                <span className="text-black">Bite</span> Space
               </Link>
 
               <p className="2xl:px-20">

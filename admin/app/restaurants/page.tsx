@@ -9,6 +9,7 @@ import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 
 const RestaurantsPage = () => {
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   const [restaurantsData, setRestaurantsData] = useState<any[]>([]);
   const [restaurantsCount, setRestaurantsCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,6 +31,7 @@ const RestaurantsPage = () => {
     }
 
     setRestaurantsData(dishData);
+    setIsDataLoading(false);
   };
 
   useEffect(() => {
@@ -198,6 +200,15 @@ const RestaurantsPage = () => {
           ))}
         </tbody>
       </table>
+      {isDataLoading ? (
+        <div className="mt-8 flex items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+        </div>
+      ) : !isDataLoading && restaurantsCount == 0 ? (
+        <div className="mt-5 text-center">No data found</div>
+      ) : (
+        ""
+      )}
       <PaginationPage
         currentPage={currentPage}
         totalProducts={restaurantsCount}

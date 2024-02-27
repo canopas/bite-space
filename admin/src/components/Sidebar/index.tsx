@@ -81,7 +81,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           className="text-4xl font-extrabold text-primary"
           ref={trigger}
         >
-          <span className="text-white">Just</span> Foodie
+          <span className="text-white">Bite</span> Space
         </Link>
       </div>
       {/* <!-- SIDEBAR HEADER --> */}

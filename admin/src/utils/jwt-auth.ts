@@ -72,7 +72,7 @@ export async function setSessionForHour(name: string, value: string) {
     cookies().set(name, encrypted, {
       httpOnly: true,
       secure: true,
-      maxAge: 60 * 60, // One hour
+      maxAge: 60 * 60 * 24, // One day
       path: "/",
     });
   } catch (error) {

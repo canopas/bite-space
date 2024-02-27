@@ -9,6 +9,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
+import { getCookiesValue, setSessionForHour } from "@/utils/jwt-auth";
 
 const AddMenuPage = () => {
   const router = useRouter();
@@ -31,6 +32,8 @@ const AddMenuPage = () => {
 
   async function onSubmit() {
     setIsLoading(true);
+    const user = await getCookiesValue("login-info");
+
     try {
       const mySchema = z.object({
         name: z.string().min(3),
@@ -84,18 +87,47 @@ const AddMenuPage = () => {
         throw err;
       }
 
-      const { error } = await supabase.from("restaurants").insert({
-        name: name,
-        description: description,
-        address: address,
-        images: images,
-        phone: parseInt(phone),
-        tags: tags,
+      const { data: restaurant, error: restaurantError } = await supabase
+        .from("restaurants")
+        .insert({
+          name: name,
+          description: description,
+          address: address,
+          images: images,
+          phone: parseInt(phone),
+          tags: tags,
+        })
+        .select()
+        .single();
+
+      if (restaurantError) throw restaurantError;
+
+      const { data: role, error: roleError } = await supabase
+        .from("roles")
+        .select("id")
+        .eq("name", "owner")
+        .single();
+
+      if (roleError) throw roleError;
+
+      const { error } = await supabase.from("admins_roles_restaurants").insert({
+        admin_id: user.split("-")[0],
+        role_id: role.id,
+        restaurant_id: restaurant.id,
       });
 
       if (error) throw error;
 
-      router.push("/restaurants");
+      await setSessionForHour(
+        "login-info",
+        user.split("-")[0] + "-" + user.split("-")[1] + "-" + restaurant.id,
+      );
+
+      if (user.split("-")[1] != "admin") {
+        router.push("/");
+      } else {
+        router.push("/restaurants");
+      }
     } catch (error) {
       console.error(error);
     } finally {

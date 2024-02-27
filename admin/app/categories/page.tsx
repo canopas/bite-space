@@ -9,6 +9,7 @@ import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 
 const CategoriesPage = () => {
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   const [categoriesData, setCategoriesData] = useState([]);
   const [categoriesCount, setCategoriesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,6 +31,7 @@ const CategoriesPage = () => {
     }
 
     setCategoriesData(categoryData);
+    setIsDataLoading(false);
   };
 
   useEffect(() => {
@@ -172,6 +174,15 @@ const CategoriesPage = () => {
           ))}
         </tbody>
       </table>
+      {isDataLoading ? (
+        <div className="mt-8 flex items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+        </div>
+      ) : !isDataLoading && categoriesCount == 0 ? (
+        <div className="mt-5 text-center">No data found</div>
+      ) : (
+        ""
+      )}
       <PaginationPage
         currentPage={currentPage}
         totalProducts={categoriesCount}
