@@ -24,7 +24,7 @@ export async function sign(payload: any) {
 
   await setSessionForHour(
     "login-info",
-    payload.id + "-" + payload.role + "-" + payload.restaurant,
+    payload.id + "/" + payload.role + "/" + payload.restaurant,
   );
 }
 
@@ -98,7 +98,7 @@ export async function manageUserCookies(): Promise<any> {
 
   await setSessionForHour(
     "login-info",
-    user.id + "-" + user.role + "-" + user.restaurant,
+    user.id + "/" + user.role + "/" + user.restaurant,
   );
   return;
 }

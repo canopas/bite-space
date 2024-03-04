@@ -1,5 +1,6 @@
 "use client";
 
+import "@/css/input-tags.css";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
@@ -8,6 +9,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getFilenameFromURL } from "@/utils/image";
+import { TagsInput } from "react-tag-input-component";
 
 const EditCategoryPage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
@@ -16,6 +18,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState([]);
 
   const [imageData, setImageData] = useState(null);
   const [image, setImage] = useState("");
@@ -32,7 +35,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
     const fetchCategory = async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, image, description")
+        .select("id, name, image, description, tags")
         .eq("id", params.id)
         .single();
 
@@ -50,12 +53,14 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
       setName(data.name);
       setDescription(data.description);
       setImage(data.image);
+      setTags(data.tags);
     };
 
     fetchCategory();
   }, []);
 
-  async function onSubmit() {
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
 
     try {
@@ -63,6 +68,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
         name: z.string().min(3),
         description: z.string().min(3),
         image: z.string().min(10, { message: "Image is required" }),
+        tags: z.array(z.string().min(2)).min(1),
       });
 
       let image_url = image;
@@ -90,6 +96,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
         name: name,
         description: description,
         image: image_url,
+        tags: tags,
       });
 
       if (!response.success) {
@@ -107,6 +114,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
         name: name,
         description: description,
         image: image_url,
+        tags: tags,
       });
 
       if (error) throw error;
@@ -117,7 +125,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleFileUploading = (file: any) => {
     setImageData(file);
@@ -136,7 +144,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
             Category Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" method="post">
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -171,6 +179,20 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
             </div>
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "description")?.message}
+            </div>
+          </div>
+          <div>
+            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              Tags <span className="text-meta-1">*</span>
+            </label>
+            <TagsInput
+              value={tags ?? [""]}
+              onChange={setTags}
+              name="tags"
+              placeHolder="Write Your Tags Here"
+            />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "tags")?.message}
             </div>
           </div>
           <div>
@@ -238,8 +260,7 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
           </div>
           <div className="text-end">
             <button
-              type="button"
-              onClick={onSubmit}
+              type="submit"
               className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >

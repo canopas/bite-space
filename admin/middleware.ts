@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const loginPages = ["/signin", "/signup", "/forgot-password"];
+const superAdminPages = ["/categories", "/profile"];
 const adminPages = [
   "/categories",
   "/restaurants",
@@ -12,18 +13,12 @@ const adminPages = [
   "/profile",
   "/settings",
 ];
-const ownerPages = [
-  "/restaurants",
-  "/menus",
-  "/dishes",
-  "/profile",
-  "/settings",
-];
+const generalPages = ["/menus", "/dishes", "/profile", "/settings"];
 
 const middleware = async (request: NextRequest) => {
   const user = await getCookiesValue("login-info");
   console.log(user);
-  const userRole = user ? user.split("-")[1] : null;
+  const userRole = user ? user.split("/")[1] : null;
 
   if (loginPages.includes(request.nextUrl.pathname)) {
     if (userRole) {
@@ -38,6 +33,15 @@ const middleware = async (request: NextRequest) => {
     }
 
     if (
+      superAdminPages.some((path) =>
+        request.nextUrl.pathname.startsWith(path),
+      ) &&
+      userRole == "super-admin"
+    ) {
+      return;
+    }
+
+    if (
       adminPages.some((path) => request.nextUrl.pathname.startsWith(path)) &&
       userRole == "admin"
     ) {
@@ -45,8 +49,8 @@ const middleware = async (request: NextRequest) => {
     }
 
     if (
-      ownerPages.some((path) => request.nextUrl.pathname.startsWith(path)) &&
-      userRole == "owner"
+      generalPages.some((path) => request.nextUrl.pathname.startsWith(path)) &&
+      userRole == "staff"
     ) {
       return;
     }

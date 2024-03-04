@@ -12,9 +12,9 @@ import { TagsInput } from "react-tag-input-component";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const Settings = () => {
-  const [selectedRestaurant, setSelectedRestaurant] = useState();
-
   const [errors, setErrors] = useState<any[]>([]);
+  const [role, setRole] = useState<string>("");
+
   const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false);
@@ -40,10 +40,12 @@ const Settings = () => {
   useEffect(() => {
     const fetchRestaurantData = async () => {
       const user = await getCookiesValue("login-info");
+      setRole(user.split("/")[1]);
+
       const { data, error } = await supabase
         .from("restaurants")
         .select("id, name, description, address, phone, images, tags")
-        .eq("id", user.split("-")[2])
+        .eq("id", user.split("/")[2])
         .single();
 
       if (error) throw error;
@@ -526,37 +528,40 @@ const Settings = () => {
               </div>
             </div>
           </div>
-          <div className="col-span-5 xl:col-span-2">
-            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
-                <h3 className="font-medium text-black dark:text-white">
-                  🔴 Delete Account
-                </h3>
-              </div>
-              <div className="p-7">
-                <div className="font-bold text-black">
-                  {" "}
-                  This action cannot be undone, and all your data will be lost.{" "}
-                  <span className="font-normal">
-                    Still want to delete your account?
-                  </span>
+          {role == "admin" ?? (
+            <div className="col-span-5 xl:col-span-2">
+              <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
+                  <h3 className="font-medium text-black dark:text-white">
+                    🔴 Delete Account
+                  </h3>
                 </div>
-                <div className="text-right">
-                  <button
-                    className="rounded bg-meta-1 px-6 py-2 font-medium text-gray hover:bg-opacity-90 disabled:cursor-wait disabled:opacity-30"
-                    onClick={() =>
-                      confirm("Are you sure you want to delete this account?")
-                        ? deleteAccount()
-                        : ""
-                    }
-                    disabled={isDeleteLoading}
-                  >
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </button>
+                <div className="p-7">
+                  <div className="font-bold text-black">
+                    {" "}
+                    This action cannot be undone, and all your data will be
+                    lost.{" "}
+                    <span className="font-normal">
+                      Still want to delete your account?
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <button
+                      className="rounded bg-meta-1 px-6 py-2 font-medium text-gray hover:bg-opacity-90 disabled:cursor-wait disabled:opacity-30"
+                      onClick={() =>
+                        confirm("Are you sure you want to delete this account?")
+                          ? deleteAccount()
+                          : ""
+                      }
+                      disabled={isDeleteLoading}
+                    >
+                      {isDeleteLoading ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </DefaultLayout>

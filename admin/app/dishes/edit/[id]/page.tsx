@@ -50,7 +50,8 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     },
   );
 
-  async function onSubmit() {
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
     try {
       let new_video = video;
@@ -191,7 +192,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchOptionsData = async () => {
@@ -285,7 +286,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Dish Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5">
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -332,7 +333,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
                   onChange={(e) => {
                     setMenuOption(parseInt(e.target.value));
                   }}
-                  className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  className={`relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
                     menuId ? "text-black dark:text-white" : ""
                   }`}
                 >
@@ -385,7 +386,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
                   onChange={(e) => {
                     setCategoryOption(parseInt(e.target.value));
                   }}
-                  className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  className={`relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
                     categoryId ? "text-black dark:text-white" : ""
                   }`}
                 >
@@ -657,8 +658,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
           </div>
           <div className="text-end">
             <button
-              onClick={onSubmit}
-              type="button"
+              type="submit"
               className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >

@@ -4,10 +4,15 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getCookiesValue, logout, setSessionForHour } from "@/utils/jwt-auth";
 import supabase from "@/utils/supabase";
+import React from "react";
 
-const DropdownUser = () => {
+const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
   const router = useRouter();
+
+  const [user, setUser] = useState<any>();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [role, setAdminRole] = useState();
+
   const [selectedRestaurant, setSelectedRestaurant] = useState<any>();
   const [restaurantsData, setRestaurantsData] = useState<any[]>([]);
 
@@ -16,21 +21,30 @@ const DropdownUser = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const user = await getCookiesValue("login-info");
-      console.log(user);
+      // const user = await getCookiesValue("login-info");
+      sessionUser ? setAdminRole(sessionUser.split("/")[1]) : "";
       try {
-        if (user) {
+        if (sessionUser) {
+          const { data: userData, error } = await supabase
+            .from("admins")
+            .select("id, name, email, password, image")
+            .eq("id", sessionUser.split("/")[0])
+            .single();
+
+          if (error) throw error;
+
+          setUser(userData);
+
           const { data, error: restaurantsError } = await supabase
             .from("admins_roles_restaurants")
             .select(`*, restaurants(*)`)
-            .eq("admin_id", user.split("-")[0]);
+            .eq("admin_id", sessionUser.split("/")[0]);
 
           if (restaurantsError) throw restaurantsError;
 
           var restaurants: any[] = [];
           for (var i = 0; i < data.length; i++) {
-            console.log(user.split("-")[2]);
-            if (data[i].restaurant_id == user.split("-")[2]) {
+            if (data[i].restaurant_id == sessionUser.split("/")[2]) {
               setSelectedRestaurant(data[i].restaurants);
             }
 
@@ -74,11 +88,11 @@ const DropdownUser = () => {
   });
 
   const changeSelectedRestaurant = async (id: number) => {
-    const user = await getCookiesValue("login-info");
-    if (user && user.split("-")[2] != id) {
+    // const user = await getCookiesValue("login-info");
+    if (sessionUser && sessionUser.split("/")[2] != id) {
       await setSessionForHour(
         "login-info",
-        user.split("-")[0] + "-" + user.split("-")[1] + "-" + id,
+        sessionUser.split("/")[0] + "/" + sessionUser.split("/")[1] + "/" + id,
       );
       window.location.reload();
     }
@@ -118,6 +132,25 @@ const DropdownUser = () => {
               />
             </span>
           </div>
+        ) : user ? (
+          <div className="flex items-center gap-4">
+            <span className="hidden text-right lg:block">
+              <span className="block text-base font-semibold text-black dark:text-white">
+                {user.name}
+              </span>
+              <span className="block text-xs">{user.email}</span>
+            </span>
+
+            <span className="h-12 w-12">
+              <Image
+                width={100}
+                height={100}
+                src={user.image ?? "/images/user/user-profile.png"}
+                alt="restaurant-profile"
+                className={`h-full w-full rounded-full object-cover ${user.image ?? "border border-black"}`}
+              />
+            </span>
+          </div>
         ) : (
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-3xl font-bold text-white">
             +
@@ -150,39 +183,47 @@ const DropdownUser = () => {
           dropdownOpen === true ? "block" : "hidden"
         }`}
       >
-        <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
-          {restaurantsData.map((restaurant, key) => (
-            <li key={key}>
-              <div
-                ref={trigger}
-                onClick={() => changeSelectedRestaurant(restaurant.id)}
-                className="flex cursor-pointer items-center gap-4"
-              >
-                <span className="h-12 w-12">
-                  <Image
-                    width={100}
-                    height={100}
-                    src={restaurant.images[0]}
-                    alt="User"
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                </span>
-                <span className="hidden lg:block">
-                  <span className="block text-base font-semibold text-black dark:text-white">
-                    {restaurant.name}
+        {restaurantsData.length > 0 || role == "admin" ? (
+          <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+            {restaurantsData.map((restaurant, key) => (
+              <li key={key}>
+                <div
+                  ref={trigger}
+                  onClick={() => changeSelectedRestaurant(restaurant.id)}
+                  className="flex cursor-pointer items-center gap-4"
+                >
+                  <span className="h-12 w-12">
+                    <Image
+                      width={100}
+                      height={100}
+                      src={restaurant.images[0]}
+                      alt="User"
+                      className="h-full w-full rounded-full object-cover"
+                    />
                   </span>
-                  <span className="block text-xs">Restaurant</span>
-                </span>
-              </div>
-            </li>
-          ))}
-          <Link
-            href="/restaurants/add"
-            className="rounded-lg border border-slate-200 py-1 text-center"
-          >
-            + create space
-          </Link>
-        </ul>
+                  <span className="hidden lg:block">
+                    <span className="block text-base font-semibold text-black dark:text-white">
+                      {restaurant.name}
+                    </span>
+                    <span className="block text-xs">Restaurant</span>
+                  </span>
+                </div>
+              </li>
+            ))}
+            {role == "admin" ? (
+              <Link
+                href="/restaurants/add"
+                className="rounded-lg border border-slate-200 py-1 text-center"
+              >
+                + create space
+              </Link>
+            ) : (
+              ""
+            )}
+          </ul>
+        ) : (
+          ""
+        )}
         <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>
             <Link
@@ -266,6 +307,10 @@ const DropdownUser = () => {
       {/* <!-- Dropdown End --> */}
     </div>
   );
-};
+});
+
+// const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
+//   return <>{sessionUser}</>;
+// });
 
 export default DropdownUser;

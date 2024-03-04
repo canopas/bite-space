@@ -6,16 +6,16 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 
-const EditMenuPage = ({ params }: { params: { id: number } }) => {
+const EditRolePage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
 
   useEffect(() => {
-    const fetchMenus = async () => {
+    const fetchRoles = async () => {
       const { data, error } = await supabase
-        .from("menus")
+        .from("roles")
         .select("id, name")
         .eq("id", params.id)
         .single();
@@ -27,7 +27,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
       setName(data.name);
     };
 
-    fetchMenus();
+    fetchRoles();
   }, []);
 
   const onSubmit = async (e: any) => {
@@ -51,16 +51,14 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
         throw err;
       }
 
-      setErrors([]);
-
-      let { error } = await supabase.from("menus").upsert({
+      let { error } = await supabase.from("roles").upsert({
         id: params.id,
         name: name,
       });
 
       if (error) throw error;
 
-      router.push("/menus");
+      router.push("/roles");
     } catch (error) {
       console.error("error from catch", error);
     } finally {
@@ -72,13 +70,13 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     <DefaultLayout>
       <div className="mb-6 flex gap-3 sm:items-center">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Edit Menu
+          Edit Role
         </h2>
       </div>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">
-            Menu Details
+            Role Details
           </h3>
         </div>
         <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
@@ -114,4 +112,4 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   );
 };
 
-export default EditMenuPage;
+export default EditRolePage;

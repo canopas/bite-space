@@ -39,7 +39,7 @@ const Profile = () => {
   useEffect(() => {
     const setUserCookies = async () => {
       const user = await getCookiesValue("login-info");
-      setRole(user.split("-")[1]);
+      setRole(user.split("/")[1]);
     };
 
     const fetchAdminData = async () => {
@@ -49,12 +49,10 @@ const Profile = () => {
       const { data, error } = await supabase
         .from("admins")
         .select("id, name, email, password, image")
-        .eq("id", user.split("-")[0])
+        .eq("id", user.split("/")[0])
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setPreviewFileData({
         previewType: "image",

@@ -30,7 +30,8 @@ const AddMenuPage = () => {
     previewName: string;
   }>;
 
-  async function onSubmit() {
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
     const user = await getCookiesValue("login-info");
 
@@ -105,13 +106,13 @@ const AddMenuPage = () => {
       const { data: role, error: roleError } = await supabase
         .from("roles")
         .select("id")
-        .eq("name", "owner")
+        .eq("name", "admin")
         .single();
 
       if (roleError) throw roleError;
 
       const { error } = await supabase.from("admins_roles_restaurants").insert({
-        admin_id: user.split("-")[0],
+        admin_id: user.split("/")[0],
         role_id: role.id,
         restaurant_id: restaurant.id,
       });
@@ -120,10 +121,10 @@ const AddMenuPage = () => {
 
       await setSessionForHour(
         "login-info",
-        user.split("-")[0] + "-" + user.split("-")[1] + "-" + restaurant.id,
+        user.split("/")[0] + "/" + user.split("/")[1] + "/" + restaurant.id,
       );
 
-      if (user.split("-")[1] != "admin") {
+      if (user.split("/")[1] != "admin") {
         router.push("/");
       } else {
         router.push("/restaurants");
@@ -133,7 +134,7 @@ const AddMenuPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleFilesUploading = async (files: any) => {
     setImagesData(files);
@@ -152,7 +153,7 @@ const AddMenuPage = () => {
             Restaurant Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5">
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -302,8 +303,7 @@ const AddMenuPage = () => {
 
           <div className="text-end">
             <button
-              onClick={onSubmit}
-              type="button"
+              type="submit"
               className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >

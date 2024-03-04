@@ -4,51 +4,49 @@ import supabase from "@/utils/supabase";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu } from "@/types/menu";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const MenusPage = () => {
+const AdminsPage = () => {
   const [restaurantId, setRestaurantId] = useState<number>(0);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
 
-  const [menusData, setMenusData] = useState([] as Menu[]);
-  const [menusCount, setMenusCount] = useState(0);
+  const [adminsData, setAdminsData] = useState<any[]>([]);
+  const [adminsCount, setAdminsCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
-  const fetchMenus = async (page: number) => {
+  const fetchAdmins = async (page: number) => {
     const user = await getCookiesValue("login-info");
+
     const { data, error } = await supabase
-      .from("menus")
-      .select("id, restaurant_id, name")
+      .from("pending_invitations")
+      .select("*, admins(name, email), roles(name)")
       .range((page - 1) * pageSize, pageSize * page - 1)
-      .eq("restaurant_id", user.split("/")[2])
-      .neq("restaurant_id", 0);
+      .eq("invited_for", user.split("/")[2]);
 
     if (error) throw error;
 
-    setMenusData(data);
+    setAdminsData(data);
     setIsDataLoading(false);
   };
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
-    fetchMenus(page);
+    fetchAdmins(page);
   };
 
-  const fetchCountMenus = async () => {
+  const fetchCountAdmins = async () => {
     const user = await getCookiesValue("login-info");
     const { data, error } = await supabase
-      .from("menus")
+      .from("pending_invitations")
       .select()
-      .eq("restaurant_id", user.split("/")[2])
-      .neq("restaurant_id", 0);
+      .eq("invited_for", user.split("/")[2]);
 
     if (error) throw error;
 
-    setMenusCount(data.length);
+    setAdminsCount(data.length);
   };
 
   useEffect(() => {
@@ -59,15 +57,19 @@ const MenusPage = () => {
     };
 
     setCookiesInfo();
-    fetchCountMenus();
-    fetchMenus(currentPage);
+    fetchCountAdmins();
+    fetchAdmins(currentPage);
   }, []);
 
   const deleteRecord = async (id: number) => {
     try {
-      await supabase.from("menus").delete().eq("id", id).throwOnError();
-      setMenusData(menusData.filter((x) => x.id != id));
-      fetchCountMenus();
+      await supabase
+        .from("pending_invitations")
+        .delete()
+        .eq("id", id)
+        .throwOnError();
+      setAdminsData(adminsData.filter((x) => x.id != id));
+      fetchCountAdmins();
     } catch (error) {
       console.error("error", error);
     }
@@ -77,11 +79,11 @@ const MenusPage = () => {
     <DefaultLayout>
       <div className="mb-6 flex gap-3 sm:items-center">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Menus
+          Invited Members
         </h2>
         {restaurantId > 0 ? (
           <Link
-            href="menus/add"
+            href="invited-members/add"
             className="h-8 w-8 rounded-md bg-primary text-center text-2xl font-medium text-white shadow-default hover:bg-opacity-90"
           >
             +
@@ -109,7 +111,7 @@ const MenusPage = () => {
           </div>
           <div className="w-full">
             <h5 className="mb-3 font-semibold text-[#B45454]">
-              You can not add menus.
+              You can not invite members.
             </h5>
             <ul>
               <li className="leading-relaxed text-[#CD5D5D]">
@@ -123,30 +125,42 @@ const MenusPage = () => {
           <thead className="w-full">
             <tr className="flex py-5">
               <th className="w-1/4">Id</th>
-              <th className="w-full">Name</th>
+              <th className="w-full">Invited By</th>
+              <th className="w-full">Email</th>
+              <th className="w-full">Role</th>
               <th className="w-full">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {menusData.map((menu, key) => (
+            {adminsData.map((admin, key) => (
               <tr
                 className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
                 key={key}
               >
                 <td className="flex w-1/4 items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {menu.id}
+                    {admin.id}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {menu.name}
+                    {admin.admins.name}
+                  </p>
+                </td>
+                <td className="flex w-full items-center justify-center">
+                  <p className="text-sm text-black dark:text-white">
+                    {admin.email}
+                  </p>
+                </td>
+                <td className="flex w-full items-center justify-center">
+                  <p className="text-sm text-black dark:text-white">
+                    {admin.roles.name}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center gap-5">
                   <Link
-                    href={`menus/edit/${menu.id}`}
+                    href={`invited-members/edit/${admin.id}`}
                     className="text-green-600"
                   >
                     <svg
@@ -171,8 +185,8 @@ const MenusPage = () => {
                   <button
                     className="text-red"
                     onClick={() =>
-                      confirm("Are you sure you want to delete this dish?")
-                        ? deleteRecord(menu.id)
+                      confirm("Are you sure you want to delete this admin?")
+                        ? deleteRecord(admin.id)
                         : ""
                     }
                   >
@@ -212,14 +226,14 @@ const MenusPage = () => {
         <div className="mt-8 flex items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
         </div>
-      ) : !isDataLoading && menusCount == 0 && restaurantId > 0 ? (
+      ) : !isDataLoading && adminsCount == 0 && restaurantId > 0 ? (
         <div className="mt-5 text-center">No data found</div>
       ) : (
         ""
       )}
       <PaginationPage
         currentPage={currentPage}
-        totalProducts={menusCount}
+        totalProducts={adminsCount}
         perPage={pageSize}
         onPageChange={onPageChange}
       />
@@ -227,4 +241,4 @@ const MenusPage = () => {
   );
 };
 
-export default MenusPage;
+export default AdminsPage;

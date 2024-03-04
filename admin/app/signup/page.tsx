@@ -79,6 +79,7 @@ const SignUp = () => {
           name: name,
           email: email,
           password: encryptedPassword,
+          role: "admin",
         })
         .select()
         .single();
@@ -87,7 +88,7 @@ const SignUp = () => {
 
       await sign({
         id: user.id,
-        role: "owner",
+        role: "admin",
         email: email,
         restaurant: 0,
       });

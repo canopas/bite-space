@@ -50,7 +50,8 @@ const AddMenuPage = () => {
     },
   );
 
-  async function onSubmit() {
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
     if (!restaurantId) return;
 
@@ -144,12 +145,12 @@ const AddMenuPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const setCookiesInfo = async () => {
       const user = await getCookiesValue("login-info");
-      if (user.split("-")[2] != 0) setRestaurantId(user.split("-")[2]);
+      if (user.split("/")[2] != 0) setRestaurantId(user.split("/")[2]);
       setIsDataLoading(false);
     };
 
@@ -157,18 +158,16 @@ const AddMenuPage = () => {
       const { data: menus, error: menuError } = await supabase
         .from("menus")
         .select("id, name");
-      if (menuError) {
-        throw menuError;
-      }
+
+      if (menuError) throw menuError;
 
       setMenusData(menus);
 
       const { data: categories, error: categoryError } = await supabase
         .from("categories")
         .select();
-      if (categoryError) {
-        throw categoryError;
-      }
+
+      if (categoryError) throw categoryError;
 
       setCategories(categories);
     };
@@ -229,7 +228,7 @@ const AddMenuPage = () => {
             Dish Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5">
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -276,7 +275,7 @@ const AddMenuPage = () => {
                   onChange={(e) => {
                     setMenuOption(parseInt(e.target.value));
                   }}
-                  className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  className={`relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
                     menuId ? "text-black dark:text-white" : ""
                   }`}
                 >
@@ -329,7 +328,7 @@ const AddMenuPage = () => {
                   onChange={(e) => {
                     setCategoryOption(parseInt(e.target.value));
                   }}
-                  className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  className={`relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
                     categoryId ? "text-black dark:text-white" : ""
                   }`}
                 >
@@ -600,8 +599,7 @@ const AddMenuPage = () => {
           </div>
           <div className="text-end">
             <button
-              onClick={onSubmit}
-              type="button"
+              type="submit"
               className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-not-allowed disabled:opacity-30"
               disabled={isLoading || !restaurantId}
             >

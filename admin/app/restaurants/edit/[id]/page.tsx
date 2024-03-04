@@ -33,7 +33,8 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     }>
   >();
 
-  async function onSubmit() {
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
     try {
       const mySchema = z.object({
@@ -126,7 +127,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchRestaurantData = async () => {
@@ -180,7 +181,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Restaurant Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5">
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -332,8 +333,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
           </div>
           <div className="text-end">
             <button
-              onClick={onSubmit}
-              type="button"
+              type="submit"
               className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >
