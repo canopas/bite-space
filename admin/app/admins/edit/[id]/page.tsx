@@ -24,7 +24,7 @@ const EditAdminPage = ({ params }: { params: { id: number } }) => {
   const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
-    const fetchAdmin = async () => {
+    const fetchAdmins = async () => {
       try {
         const user = await getCookiesValue("login-info");
         const { data, error } = await supabase
@@ -61,7 +61,7 @@ const EditAdminPage = ({ params }: { params: { id: number } }) => {
     };
 
     fetchOptionsData();
-    fetchAdmin();
+    fetchAdmins();
   }, []);
 
   const onSubmit = async (e: any) => {

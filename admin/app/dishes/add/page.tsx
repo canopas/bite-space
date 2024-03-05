@@ -12,15 +12,15 @@ import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const AddMenuPage = () => {
+const AddDishPage = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
 
-  const [menus, setMenusData] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [menus, setMenusData] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [isImagesChecked, setIsImagesChecked] = useState<boolean>(true);
   const [isVideoChecked, setIsVideoChecked] = useState<boolean>(false);
 
@@ -28,10 +28,10 @@ const AddMenuPage = () => {
   const [description, setDescription] = useState<string>("");
   const [menuId, setMenuOption] = useState<number>(0);
   const [categoryId, setCategoryOption] = useState<number | null>(null);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<any[]>([]);
   const [price, setPrice] = useState<number>(0);
 
-  const [imagesData, setImagesData] = useState([]);
+  const [imagesData, setImagesData] = useState<any[]>([]);
   const images: string[] = [];
   const uploadedFiles = [] as Array<{
     previewType: string;
@@ -52,8 +52,8 @@ const AddMenuPage = () => {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    setIsLoading(true);
     if (!restaurantId) return;
+    setIsLoading(true);
 
     try {
       const mySchema = z.object({
@@ -123,8 +123,10 @@ const AddMenuPage = () => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase.from("dishes").insert({
         category_id: categoryId,
@@ -612,4 +614,4 @@ const AddMenuPage = () => {
   );
 };
 
-export default AddMenuPage;
+export default AddDishPage;

@@ -11,7 +11,7 @@ import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { getFilenameFromURL } from "@/utils/image";
 
-const EditMenuPage = ({ params }: { params: { id: number } }) => {
+const EditRestaurantPage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +33,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     }>
   >();
 
-  const onSubmit = async (e: any) => {
+  const handleEditRestaurant = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
     try {
@@ -106,8 +106,10 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase.from("restaurants").upsert({
         id: params.id,
@@ -181,7 +183,10 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Restaurant Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form
+          className="flex flex-col gap-5.5 p-6.5"
+          onSubmit={handleEditRestaurant}
+        >
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -346,4 +351,4 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   );
 };
 
-export default EditMenuPage;
+export default EditRestaurantPage;

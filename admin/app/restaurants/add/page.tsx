@@ -11,7 +11,7 @@ import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { getCookiesValue, setSessionForHour } from "@/utils/jwt-auth";
 
-const AddMenuPage = () => {
+const AddRestaurantPage = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,7 +30,7 @@ const AddMenuPage = () => {
     previewName: string;
   }>;
 
-  const onSubmit = async (e: any) => {
+  const handleAddRestaurant = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
     const user = await getCookiesValue("login-info");
@@ -85,8 +85,10 @@ const AddMenuPage = () => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { data: restaurant, error: restaurantError } = await supabase
         .from("restaurants")
@@ -153,7 +155,10 @@ const AddMenuPage = () => {
             Restaurant Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form
+          className="flex flex-col gap-5.5 p-6.5"
+          onSubmit={handleAddRestaurant}
+        >
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -316,4 +321,4 @@ const AddMenuPage = () => {
   );
 };
 
-export default AddMenuPage;
+export default AddRestaurantPage;

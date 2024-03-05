@@ -30,7 +30,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     fetchMenus();
   }, []);
 
-  const onSubmit = async (e: any) => {
+  const handleEditMenu = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -81,7 +81,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
             Menu Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={handleEditMenu}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>

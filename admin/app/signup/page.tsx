@@ -465,7 +465,7 @@ const SignUp = () => {
                 <div className="mt-6 text-center">
                   <p>
                     Already have an account?{" "}
-                    <Link href="/signin" className="text-primary">
+                    <Link href="/signin" className="text-primary underline">
                       Sign in
                     </Link>
                   </p>

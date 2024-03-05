@@ -99,6 +99,15 @@ const SignIn = () => {
         });
       }
 
+      const { error: updateError } = await supabase.from("admins").upsert({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        reset_password: null,
+      });
+
+      if (updateError) throw updateError;
+
       if (path === "/signin") {
         router.push("/");
       } else {
@@ -435,7 +444,7 @@ const SignIn = () => {
                 <div className="mt-6 text-center">
                   <p>
                     Don’t have any account?{" "}
-                    <Link href="/signup" className="text-primary">
+                    <Link href="/signup" className="text-primary underline">
                       Sign Up
                     </Link>
                   </p>

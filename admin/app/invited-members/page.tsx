@@ -7,17 +7,17 @@ import { useEffect, useState } from "react";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const AdminsPage = () => {
+const InvitedMembersPage = () => {
   const [restaurantId, setRestaurantId] = useState<number>(0);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
 
-  const [adminsData, setAdminsData] = useState<any[]>([]);
-  const [adminsCount, setAdminsCount] = useState(0);
+  const [invitedMembersData, setInvitedMembersData] = useState<any[]>([]);
+  const [invitedMembersCount, setInvitedMembersCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
-  const fetchAdmins = async (page: number) => {
+  const fetchInvitedMembersData = async (page: number) => {
     const user = await getCookiesValue("login-info");
 
     const { data, error } = await supabase
@@ -28,13 +28,13 @@ const AdminsPage = () => {
 
     if (error) throw error;
 
-    setAdminsData(data);
+    setInvitedMembersData(data);
     setIsDataLoading(false);
   };
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
-    fetchAdmins(page);
+    fetchInvitedMembersData(page);
   };
 
   const fetchCountAdmins = async () => {
@@ -46,7 +46,7 @@ const AdminsPage = () => {
 
     if (error) throw error;
 
-    setAdminsCount(data.length);
+    setInvitedMembersCount(data.length);
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const AdminsPage = () => {
 
     setCookiesInfo();
     fetchCountAdmins();
-    fetchAdmins(currentPage);
+    fetchInvitedMembersData(currentPage);
   }, []);
 
   const deleteRecord = async (id: number) => {
@@ -68,7 +68,7 @@ const AdminsPage = () => {
         .delete()
         .eq("id", id)
         .throwOnError();
-      setAdminsData(adminsData.filter((x) => x.id != id));
+      setInvitedMembersData(invitedMembersData.filter((x) => x.id != id));
       fetchCountAdmins();
     } catch (error) {
       console.error("error", error);
@@ -133,34 +133,34 @@ const AdminsPage = () => {
           </thead>
 
           <tbody>
-            {adminsData.map((admin, key) => (
+            {invitedMembersData.map((invited, key) => (
               <tr
                 className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
                 key={key}
               >
                 <td className="flex w-1/4 items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {admin.id}
+                    {invited.id}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {admin.admins.name}
+                    {invited.admins.name}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {admin.email}
+                    {invited.email}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center">
                   <p className="text-sm text-black dark:text-white">
-                    {admin.roles.name}
+                    {invited.roles.name}
                   </p>
                 </td>
                 <td className="flex w-full items-center justify-center gap-5">
                   <Link
-                    href={`invited-members/edit/${admin.id}`}
+                    href={`invited-members/edit/${invited.id}`}
                     className="text-green-600"
                   >
                     <svg
@@ -185,8 +185,10 @@ const AdminsPage = () => {
                   <button
                     className="text-red"
                     onClick={() =>
-                      confirm("Are you sure you want to delete this admin?")
-                        ? deleteRecord(admin.id)
+                      confirm(
+                        "Are you sure you want to delete this invited member?",
+                      )
+                        ? deleteRecord(invited.id)
                         : ""
                     }
                   >
@@ -226,14 +228,14 @@ const AdminsPage = () => {
         <div className="mt-8 flex items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
         </div>
-      ) : !isDataLoading && adminsCount == 0 && restaurantId > 0 ? (
+      ) : !isDataLoading && invitedMembersCount == 0 && restaurantId > 0 ? (
         <div className="mt-5 text-center">No data found</div>
       ) : (
         ""
       )}
       <PaginationPage
         currentPage={currentPage}
-        totalProducts={adminsCount}
+        totalProducts={invitedMembersCount}
         perPage={pageSize}
         onPageChange={onPageChange}
       />
@@ -241,4 +243,4 @@ const AdminsPage = () => {
   );
 };
 
-export default AdminsPage;
+export default InvitedMembersPage;

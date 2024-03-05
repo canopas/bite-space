@@ -127,28 +127,33 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </Link>
               </div>
 
+              {role != "super-admin" ? (
+                <div>
+                  <Link
+                    href="/pending-invitations"
+                    className={`group relative flex items-center gap-5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      pathname.includes("pending-invitations") &&
+                      "bg-graydark dark:bg-meta-4"
+                    }`}
+                  >
+                    <svg
+                      className="fill-white"
+                      width="22"
+                      height="25"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 32 32"
+                    >
+                      <path d="M29 4H3a3 3 0 0 0-3 3v18a3 3 0 0 0 3 3h26a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-.72 2L16 14.77 3.72 6zM30 25a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.23l13.42 9.58a1 1 0 0 0 1.16 0L30 7.23z" />
+                    </svg>
+                    Your Invitations
+                  </Link>
+                </div>
+              ) : (
+                ""
+              )}
+
               {role === "admin" ? (
                 <div className="flex flex-col gap-1.5">
-                  <div>
-                    <Link
-                      href="/pending-invitations"
-                      className={`group relative flex items-center gap-5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                        pathname.includes("pending-invitations") &&
-                        "bg-graydark dark:bg-meta-4"
-                      }`}
-                    >
-                      <svg
-                        className="fill-white"
-                        width="22"
-                        height="25"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 32 32"
-                      >
-                        <path d="M29 4H3a3 3 0 0 0-3 3v18a3 3 0 0 0 3 3h26a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-.72 2L16 14.77 3.72 6zM30 25a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.23l13.42 9.58a1 1 0 0 0 1.16 0L30 7.23z" />
-                      </svg>
-                      Invitations
-                    </Link>
-                  </div>
                   <div>
                     <Link
                       href="/invited-members"

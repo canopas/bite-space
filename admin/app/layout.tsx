@@ -7,7 +7,14 @@ import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import { manageUserCookies } from "@/utils/jwt-auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+const loginPages = [
+  "/signin",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export default function RootLayout({
   children,
@@ -18,11 +25,14 @@ export default function RootLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // const pathname = usePathname();
+  const pathname = usePathname();
 
   const manageCookies = async () => {
     const code = await manageUserCookies();
-    if (code == "LOGIN_NEEDED") {
+    if (
+      code == "LOGIN_NEEDED" &&
+      !loginPages.some((path) => pathname.startsWith(path))
+    ) {
       router.push("/signin");
     }
   };

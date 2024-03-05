@@ -106,8 +106,10 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase.from("categories").upsert({
         id: params.id,

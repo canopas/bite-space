@@ -3,8 +3,15 @@ import type { NextRequest } from "next/server";
 
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const loginPages = ["/signin", "/signup", "/forgot-password"];
+const loginPages = [
+  "/signin",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+];
+
 const superAdminPages = ["/categories", "/profile"];
+
 const adminPages = [
   "/categories",
   "/restaurants",
@@ -13,6 +20,7 @@ const adminPages = [
   "/profile",
   "/settings",
 ];
+
 const generalPages = ["/menus", "/dishes", "/profile", "/settings"];
 
 const middleware = async (request: NextRequest) => {
@@ -20,7 +28,7 @@ const middleware = async (request: NextRequest) => {
   console.log(user);
   const userRole = user ? user.split("/")[1] : null;
 
-  if (loginPages.includes(request.nextUrl.pathname)) {
+  if (loginPages.some((path) => request.nextUrl.pathname.startsWith(path))) {
     if (userRole) {
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -57,6 +65,8 @@ const middleware = async (request: NextRequest) => {
 
     return;
   }
+
+  return;
 };
 
 export default middleware;

@@ -88,12 +88,21 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
   });
 
   const changeSelectedRestaurant = async (id: number) => {
-    // const user = await getCookiesValue("login-info");
     if (sessionUser && sessionUser.split("/")[2] != id) {
+      const { data, error } = await supabase
+        .from("admins_roles_restaurants")
+        .select("*, restaurants(id, name), roles(id, name)")
+        .eq("admin_id", sessionUser.split("/")[0])
+        .eq("restaurant_id", id)
+        .single();
+
+      if (error) throw error;
+
       await setSessionForHour(
         "login-info",
-        sessionUser.split("/")[0] + "/" + sessionUser.split("/")[1] + "/" + id,
+        sessionUser.split("/")[0] + "/" + data.roles.name + "/" + id,
       );
+
       window.location.reload();
     }
     setDropdownOpen(!dropdownOpen);
@@ -174,7 +183,6 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
         </svg>
       </Link>
 
-      {/* <!-- Dropdown Start --> */}
       <div
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
@@ -202,8 +210,8 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
                     />
                   </span>
                   <span className="hidden lg:block">
-                    <span className="block text-base font-semibold text-black dark:text-white">
-                      {restaurant.name}
+                    <span className="block text-sm font-semibold text-black dark:text-white">
+                      {restaurant.name.substring(0, 17) + ".."}
                     </span>
                     <span className="block text-xs">Restaurant</span>
                   </span>
@@ -304,13 +312,8 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
           Log Out
         </button>
       </div>
-      {/* <!-- Dropdown End --> */}
     </div>
   );
 });
-
-// const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
-//   return <>{sessionUser}</>;
-// });
 
 export default DropdownUser;

@@ -102,3 +102,12 @@ export async function manageUserCookies(): Promise<any> {
   );
   return;
 }
+
+export async function fetchEmailFromToken(token: string): Promise<string> {
+  const user = await verify(token);
+
+  if (user.code == "ERR_JWT_EXPIRED" || user.code == "ERR_JWS_INVALID")
+    return user.code;
+
+  return user.email;
+}

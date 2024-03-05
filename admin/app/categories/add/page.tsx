@@ -82,8 +82,10 @@ const AddCategoryPage = () => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase.from("categories").insert({
         restaurant_id: restaurantId,

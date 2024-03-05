@@ -10,7 +10,7 @@ import { sendMail } from "@/../service/mailService";
 import { render } from "@react-email/render";
 import InviteMemberEmail from "../../../emails/invitationMail";
 
-const AddAdminPage = () => {
+const InvitedMemberPage = () => {
   const router = useRouter();
 
   const [error, setError] = useState<any>();
@@ -49,7 +49,7 @@ const AddAdminPage = () => {
     fetchOptionsData();
   }, []);
 
-  const onSubmit = async (e: any) => {
+  const handleInviteMember = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
     if (!restaurantId) return;
@@ -159,7 +159,7 @@ const AddAdminPage = () => {
             Member Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={handleInviteMember}>
           <div className="flex gap-5">
             <div className="w-full xl:w-1/2">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -244,4 +244,4 @@ const AddAdminPage = () => {
   );
 };
 
-export default AddAdminPage;
+export default InvitedMemberPage;

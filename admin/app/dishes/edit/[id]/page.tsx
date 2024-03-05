@@ -12,7 +12,7 @@ import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getFilenameFromURL } from "@/utils/image";
 
-const EditMenuPage = ({ params }: { params: { id: number } }) => {
+const EditDishPage = ({ params }: { params: { id: number } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,6 +53,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
       let new_video = video;
 
@@ -169,8 +170,10 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase.from("dishes").upsert({
         id: params.id,
@@ -671,4 +674,4 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
   );
 };
 
-export default EditMenuPage;
+export default EditDishPage;
