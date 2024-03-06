@@ -45,7 +45,7 @@ const AddRestaurantPage = () => {
           .min(1, { message: "Images is required" }),
         phone: z.number().positive().min(10),
         tags: z
-          .array(z.string().min(2))
+          .array(z.string().min(3))
           .min(1, { message: "Tags is required" }),
       });
 

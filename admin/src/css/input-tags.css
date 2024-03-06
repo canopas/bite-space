@@ -3,12 +3,16 @@
   --rti-main: #ff6347 !important;
   min-height: 50px;
   height: fit-content;
-  padding-left: 20px !important;
+  padding: 15px 20px !important;
   border: 1px solid rgb(226 232 240) !important;
 }
 
 .rti--container:focus {
   border: 1px solid #ff6347 !important;
+}
+
+.rti--input {
+  width: 100% !important;
 }
 
 .rti--tag {

@@ -1,6 +1,7 @@
 "use client";
 
 import "@/css/input-tags.css";
+import "@/css/input-time.css";
 import Image from "next/image";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import supabase from "@/utils/supabase";
@@ -10,6 +11,37 @@ import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { z } from "zod";
 import { TagsInput } from "react-tag-input-component";
 import { getCookiesValue } from "@/utils/jwt-auth";
+
+const week_days_list = [
+  {
+    day: "Sun",
+    value: 1,
+  },
+  {
+    day: "Mon",
+    value: 2,
+  },
+  {
+    day: "Tue",
+    value: 3,
+  },
+  {
+    day: "Wed",
+    value: 4,
+  },
+  {
+    day: "Thu",
+    value: 5,
+  },
+  {
+    day: "Fri",
+    value: 6,
+  },
+  {
+    day: "Sat",
+    value: 7,
+  },
+];
 
 const Settings = () => {
   const [errors, setErrors] = useState<any[]>([]);
@@ -26,6 +58,9 @@ const Settings = () => {
   const [phone, setPhone] = useState<string>("");
   const [tags, setTags] = useState([]);
   const [images, setImages] = useState<string[]>([]);
+  const [weekDays, setWeekDays] = useState<number[]>([]);
+  const [startTime, setStartTime] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
 
   const [imagesData, setImagesData] = useState<any[]>([]);
   const new_images: string[] = [];
@@ -44,7 +79,9 @@ const Settings = () => {
 
       const { data, error } = await supabase
         .from("restaurants")
-        .select("id, name, description, address, phone, images, tags")
+        .select(
+          "id, name, description, address, phone, images, tags, week_days, start_time, end_time",
+        )
         .eq("id", user.split("/")[2])
         .single();
 
@@ -56,6 +93,9 @@ const Settings = () => {
       setAddress(data.address);
       setPhone(data.phone);
       setTags(data.tags);
+      setWeekDays(data.week_days);
+      setStartTime(data.start_time);
+      setEndTime(data.end_time);
 
       setImages(data.images);
       if (data.images) {
@@ -160,15 +200,22 @@ const Settings = () => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     setIsFormLoading(true);
+    console.log(startTime, endTime);
+
     try {
       const mySchema = z.object({
         name: z.string().min(3),
         phone: z.number().positive().min(10),
         address: z.string().min(10),
         tags: z
-          .array(z.string().min(2))
+          .array(z.string().min(3))
           .min(1, { message: "Tags is required" }),
         description: z.string().min(5),
+        week_days: z
+          .array(z.number().gt(0))
+          .min(1, { message: "Week days is required" }),
+        start_time: z.string().min(5),
+        end_time: z.string().min(5),
       });
 
       const response = mySchema.safeParse({
@@ -177,6 +224,9 @@ const Settings = () => {
         address: address,
         tags: tags,
         description: description,
+        week_days: weekDays,
+        start_time: startTime,
+        end_time: endTime,
       });
 
       if (!response.success) {
@@ -196,6 +246,9 @@ const Settings = () => {
         address: address,
         tags: tags,
         phone: parseInt(phone),
+        week_days: weekDays,
+        start_time: startTime,
+        end_time: endTime,
       });
 
       if (error) throw error;
@@ -204,6 +257,10 @@ const Settings = () => {
     } finally {
       setIsFormLoading(false);
     }
+  };
+
+  const setIsWeekDayChecked = async (day: number) => {
+    setWeekDays([...weekDays, day]);
   };
 
   const deleteAccount = async () => {
@@ -410,8 +467,11 @@ const Settings = () => {
                 </h3>
               </div>
               <div className="p-7">
-                <form onSubmit={handleFormSubmit}>
-                  <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                <form
+                  onSubmit={handleFormSubmit}
+                  className="flex flex-col gap-5.5"
+                >
+                  <div className="flex flex-col gap-5.5 sm:flex-row">
                     <div className="w-full sm:w-1/2">
                       <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                         Name <span className="text-meta-1">*</span>
@@ -452,7 +512,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  <div className="mb-5.5">
+                  <div>
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                       Address <span className="text-meta-1">*</span>
                     </label>
@@ -471,7 +531,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  <div className="mb-5.5">
+                  <div>
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                       Tags <span className="text-meta-1">*</span>
                     </label>
@@ -486,7 +546,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  <div className="mb-5.5">
+                  <div>
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                       Description <span className="text-meta-1">*</span>
                     </label>
@@ -505,6 +565,84 @@ const Settings = () => {
                         errors.find((error) => error.for === "description")
                           ?.message
                       }
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                      Opening Week Days <span className="text-meta-1">*</span>
+                    </label>
+                    <div className="flex flex-wrap gap-5">
+                      {week_days_list.map((week, key) => (
+                        <label
+                          htmlFor={"week-" + week.value}
+                          className="flex cursor-pointer select-none items-center"
+                          key={key}
+                        >
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              id={"week-" + week.value}
+                              className="sr-only"
+                              onChange={() => {
+                                setIsWeekDayChecked(week.value);
+                              }}
+                            />
+                            <div
+                              className={`flex h-10 w-20 items-center justify-center rounded-full border transition duration-500 ${
+                                weekDays?.find((day) => day == week.value)
+                                  ? "border-2 border-green-600 font-bold text-green-600"
+                                  : "border-slate-400 text-slate-500"
+                              }`}
+                            >
+                              {week.day}
+                            </div>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="mt-1 text-xs text-meta-1">
+                      {
+                        errors.find((error) => error.for === "week_days")
+                          ?.message
+                      }
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-5.5">
+                    <div>
+                      <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                        Start Time <span className="text-meta-1">*</span>
+                      </label>
+                      <input
+                        type="time"
+                        className="w-50 rounded border border-stroke"
+                        onChange={(e) => setStartTime(e.target.value)}
+                        value={startTime}
+                      />
+                      <div className="mt-1 text-xs text-meta-1">
+                        {
+                          errors.find((error) => error.for === "start_time")
+                            ?.message
+                        }
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                        End Time <span className="text-meta-1">*</span>
+                      </label>
+                      <input
+                        type="time"
+                        className="w-50 rounded border border-stroke"
+                        onChange={(e) => setEndTime(e.target.value)}
+                        value={endTime}
+                      />
+                      <div className="mt-1 text-xs text-meta-1">
+                        {
+                          errors.find((error) => error.for === "end_time")
+                            ?.message
+                        }
+                      </div>
                     </div>
                   </div>
 
