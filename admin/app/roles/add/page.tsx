@@ -28,10 +28,10 @@ const AddRolePage = () => {
     setCookiesInfo();
   }, []);
 
-  const onSubmit = async (e: any) => {
+  const handleAddRoles = async (e: any) => {
     e.preventDefault();
-    setIsLoading(true);
     if (restaurantId == 0) return;
+    setIsLoading(true);
 
     try {
       const mySchema = z.object({
@@ -47,8 +47,10 @@ const AddRolePage = () => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw err;
+        return;
       }
+
+      setErrors([]);
 
       const { error } = await supabase
         .from("roles")
@@ -77,7 +79,7 @@ const AddRolePage = () => {
             Role Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={handleAddRoles}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>

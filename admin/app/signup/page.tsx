@@ -20,7 +20,7 @@ const SignUp = () => {
   const [password, setPassword] = useState<string>("");
   const [repeatPwd, setRepeatPassword] = useState<string>("");
 
-  const handleLogin = async (e: any) => {
+  const handleSignUp = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -53,7 +53,7 @@ const SignUp = () => {
             message: "Password not matched",
           });
         setErrors(errArr);
-        throw errors;
+        return;
       }
 
       if (password !== repeatPwd) {
@@ -63,7 +63,7 @@ const SignUp = () => {
             message: "Password not matched",
           },
         ]);
-        throw errors;
+        return;
       }
 
       setErrors([]);
@@ -251,7 +251,7 @@ const SignUp = () => {
                 Sign Up
               </h2>
 
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSignUp}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name <span className="text-meta-1">*</span>

@@ -23,7 +23,7 @@ const SignIn = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleLogin = async (e: any) => {
+  const handleSignIn = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -45,7 +45,7 @@ const SignIn = () => {
           errArr.push({ for: err[i].path[0], message: err[i].message });
         }
         setErrors(errArr);
-        throw errors;
+        return;
       }
 
       setErrors([]);
@@ -65,7 +65,7 @@ const SignIn = () => {
 
       if (decrypted !== password) {
         setErrors([{ for: "password", message: "Admin Not Found" }]);
-        throw errors;
+        return;
       }
 
       const { data, error } = await supabase
@@ -306,7 +306,7 @@ const SignIn = () => {
                 Sign In
               </h2>
 
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSignIn}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email
