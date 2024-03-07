@@ -1,9 +1,10 @@
 {
-  "name": "just-foodie-admin",
+  "name": "bite-space-admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "vite-build": "vite build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -26,6 +27,7 @@
     "react-email": "2.1.0",
     "react-hook-form": "^7.50.1",
     "react-tag-input-component": "^2.0.2",
+    "vite": "^5.1.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {

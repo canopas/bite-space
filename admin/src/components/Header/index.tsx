@@ -1,6 +1,6 @@
 import DropdownUser from "./DropdownUser";
 import { useEffect, useState } from "react";
-import { getCookiesValue } from "@/utils/jwt-auth";
+import { getCookiesValue } from "../../utils/jwt-auth";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;

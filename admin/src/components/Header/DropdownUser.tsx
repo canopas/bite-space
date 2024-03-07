@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getCookiesValue, logout, setSessionForHour } from "@/utils/jwt-auth";
-import supabase from "@/utils/supabase";
+import { logout, setSessionForHour } from "../../utils/jwt-auth";
+import supabase from "../../utils/supabase";
 import React from "react";
 
 const DropdownUser = React.memo(function Hello({ sessionUser }: any) {

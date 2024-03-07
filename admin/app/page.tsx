@@ -1,5 +1,5 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import ECommerce from "../src/components/Dashboard/E-commerce";
+import DefaultLayout from "../src/components/Layouts/DefaultLaout";
 
 export default function Home() {
   return (
