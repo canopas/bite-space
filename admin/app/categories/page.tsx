@@ -92,7 +92,7 @@ const CategoriesPage = () => {
 
     fetchCountCategories();
     fetchCategories(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number, key: number) => {
     try {

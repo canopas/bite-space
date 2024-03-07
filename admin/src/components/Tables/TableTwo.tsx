@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { Product } from "@/types/product";
 
-const productData: Product[] = [
+const productData: any[] = [
   {
     image: "/images/product/product-01.png",
     name: "Apple Watch Series 7",

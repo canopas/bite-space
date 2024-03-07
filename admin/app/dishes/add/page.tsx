@@ -39,7 +39,7 @@ const AddDishPage = () => {
     previewName: string;
   }>;
 
-  const [videoData, setVideo] = useState(null);
+  const [videoData, setVideo] = useState<any | null>(null);
   let video: string | null = null;
   const [previewVideoData, setPreviewVideoData] = useState(
     {} as {
@@ -50,7 +50,7 @@ const AddDishPage = () => {
     },
   );
 
-  const onSubmit = async (e: any) => {
+  const handleAddDish = async (e: any) => {
     e.preventDefault();
     if (!restaurantId) return;
     setIsLoading(true);
@@ -129,7 +129,7 @@ const AddDishPage = () => {
       setErrors([]);
 
       const { error } = await supabase.from("dishes").insert({
-        category_id: categoryId,
+        category_id: categoryId == 0 ? null : categoryId,
         menu_id: menuId,
         name: name,
         price: price,
@@ -230,7 +230,7 @@ const AddDishPage = () => {
             Dish Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={handleAddDish}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -326,7 +326,7 @@ const AddDishPage = () => {
               </label>
               <div className="relative z-20 bg-white dark:bg-form-input">
                 <select
-                  value={categoryId}
+                  value={categoryId ?? 0}
                   onChange={(e) => {
                     setCategoryOption(parseInt(e.target.value));
                   }}

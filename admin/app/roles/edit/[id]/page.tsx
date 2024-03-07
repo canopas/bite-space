@@ -28,7 +28,7 @@ const EditRolePage = ({ params }: { params: { id: number } }) => {
     };
 
     fetchRoles();
-  }, []);
+  }, [params.id]);
 
   const handleEditRole = async (e: any) => {
     e.preventDefault();

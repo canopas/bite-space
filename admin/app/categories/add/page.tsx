@@ -20,8 +20,8 @@ const AddCategoryPage = () => {
 
   const [name, setName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
-  const [tags, setTags] = useState([]);
-  const [image, setImage] = useState(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [image, setImage] = useState<any | null>(null);
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
       previewType: string;
@@ -40,7 +40,7 @@ const AddCategoryPage = () => {
     setCookiesInfo();
   }, []);
 
-  const onSubmit = async (e: any) => {
+  const handleAddCategory = async (e: any) => {
     e.preventDefault();
     const user = await getCookiesValue("login-info");
     setIsLoading(true);
@@ -122,7 +122,10 @@ const AddCategoryPage = () => {
             Category Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form
+          className="flex flex-col gap-5.5 p-6.5"
+          onSubmit={handleAddCategory}
+        >
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>

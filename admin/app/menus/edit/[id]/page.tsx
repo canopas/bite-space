@@ -28,7 +28,7 @@ const EditMenuPage = ({ params }: { params: { id: number } }) => {
     };
 
     fetchMenus();
-  }, []);
+  }, [params.id]);
 
   const handleEditMenu = async (e: any) => {
     e.preventDefault();

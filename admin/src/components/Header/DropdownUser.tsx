@@ -59,7 +59,7 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
     };
 
     getData();
-  }, []);
+  }, [sessionUser]);
 
   // close on click outside
   useEffect(() => {

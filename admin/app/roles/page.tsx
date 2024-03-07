@@ -60,7 +60,7 @@ const RolesPage = () => {
     setCookiesInfo();
     fetchCountRoles();
     fetchRoles(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number) => {
     try {

@@ -17,8 +17,8 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [menus, setMenusData] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [menus, setMenusData] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [isImagesChecked, setIsImagesChecked] = useState<boolean>(true);
   const [isVideoChecked, setIsVideoChecked] = useState<boolean>(false);
 
@@ -26,7 +26,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
   const [description, setDescription] = useState("");
   const [menuId, setMenuOption] = useState<number>(0);
   const [categoryId, setCategoryOption] = useState<number | null>(null);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [price, setPrice] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);
 
@@ -50,7 +50,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
     },
   );
 
-  const onSubmit = async (e: any) => {
+  const handleEditDish = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -177,7 +177,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
 
       const { error } = await supabase.from("dishes").upsert({
         id: params.id,
-        category_id: categoryId,
+        category_id: categoryId == 0 ? null : categoryId,
         menu_id: menuId,
         name: name,
         price: price,
@@ -266,7 +266,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
 
     fetchOptionsData();
     fetchDishData();
-  }, []);
+  }, [params.id]);
 
   const handleFilesUploading = async (files: any) => {
     setImagesData(files);
@@ -289,7 +289,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
             Dish Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={handleEditDish}>
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>
@@ -385,7 +385,7 @@ const EditDishPage = ({ params }: { params: { id: number } }) => {
               </label>
               <div className="relative z-20 bg-white dark:bg-form-input">
                 <select
-                  value={categoryId}
+                  value={categoryId ?? 0}
                   onChange={(e) => {
                     setCategoryOption(parseInt(e.target.value));
                   }}

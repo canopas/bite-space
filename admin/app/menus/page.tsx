@@ -61,7 +61,7 @@ const MenusPage = () => {
     setCookiesInfo();
     fetchCountMenus();
     fetchMenus(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number) => {
     try {

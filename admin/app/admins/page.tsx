@@ -60,7 +60,7 @@ const AdminsPage = () => {
     setCookiesInfo();
     fetchCountAdmins();
     fetchAdmins(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number, relativeId: number) => {
     try {

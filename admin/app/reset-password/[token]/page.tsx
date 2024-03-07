@@ -55,8 +55,39 @@ const ResetPasswordPage = ({ params }: { params: { token: string } }) => {
   };
 
   useEffect(() => {
+    const verifyGivenToken = async () => {
+      try {
+        const email = await fetchEmailFromToken(params.token);
+
+        if (email == "ERR_JWT_EXPIRED" || email == "ERR_JWS_INVALID") {
+          setIsShowError(true);
+          setError("This link is expired now, you can try by using new link.");
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("admins")
+          .select("*")
+          .eq("email", email)
+          .eq("reset_password", params.token)
+          .single();
+
+        if (error) {
+          setIsShowError(true);
+          setError(
+            "This link is expired or you haven't applied for reset password.",
+          );
+          return;
+        }
+
+        setUser(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     verifyGivenToken();
-  }, []);
+  }, [params.token]);
 
   const handleResetPassword = async (e: any) => {
     e.preventDefault();

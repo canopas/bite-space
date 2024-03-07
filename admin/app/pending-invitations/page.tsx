@@ -65,7 +65,7 @@ const PendingInvitationsPage = () => {
   useEffect(() => {
     fetchCountPendingInvitations();
     fetchPendingInvitations(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const acceptInvitation = async (
     id: number,

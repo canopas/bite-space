@@ -45,7 +45,7 @@ const RestaurantsPage = () => {
 
     fetchCountRestaurants();
     fetchRestaurants(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number) => {
     try {

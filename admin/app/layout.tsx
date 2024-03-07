@@ -27,20 +27,20 @@ export default function RootLayout({
 
   const pathname = usePathname();
 
-  const manageCookies = async () => {
-    const code = await manageUserCookies();
-    if (
-      code == "LOGIN_NEEDED" &&
-      !loginPages.some((path) => pathname.startsWith(path))
-    ) {
-      router.push("/signin");
-    }
-  };
-
   useEffect(() => {
+    const manageCookies = async () => {
+      const code = await manageUserCookies();
+      if (
+        code == "LOGIN_NEEDED" &&
+        !loginPages.some((path) => pathname.startsWith(path))
+      ) {
+        router.push("/signin");
+      }
+    };
+
     manageCookies();
     setTimeout(() => setLoading(false), 500);
-  }, []);
+  }, [pathname, router]);
 
   return (
     <html lang="en">

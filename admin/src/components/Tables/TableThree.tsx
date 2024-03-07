@@ -1,6 +1,4 @@
-import { Package } from "@/types/package";
-
-const packageData: Package[] = [
+const packageData: any[] = [
   {
     name: "Free package",
     price: 0.0,

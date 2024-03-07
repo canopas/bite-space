@@ -74,7 +74,7 @@ const DishesPage = () => {
     setCookiesInfo();
     fetchCountDishes();
     fetchDishes(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number) => {
     try {

@@ -20,9 +20,9 @@ const AddRestaurantPage = () => {
   const [description, setDescription] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [phone, setPhone] = useState<string>("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<string[]>([]);
 
-  const [imagesData, setImagesData] = useState([]);
+  const [imagesData, setImagesData] = useState<any[]>([]);
   const images: string[] = [];
   const uploadedFiles = [] as Array<{
     previewType: string;

@@ -18,9 +18,9 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<string[]>([]);
 
-  const [imageData, setImageData] = useState(null);
+  const [imageData, setImageData] = useState<any | null>(null);
   const [image, setImage] = useState("");
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
@@ -57,9 +57,9 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
     };
 
     fetchCategory();
-  }, []);
+  }, [params.id]);
 
-  const onSubmit = async (e: any) => {
+  const handleEditCategory = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -146,7 +146,10 @@ const EditCategoryPage = ({ params }: { params: { id: number } }) => {
             Category Details
           </h3>
         </div>
-        <form className="flex flex-col gap-5.5 p-6.5" onSubmit={onSubmit}>
+        <form
+          className="flex flex-col gap-5.5 p-6.5"
+          onSubmit={handleEditCategory}
+        >
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Name <span className="text-meta-1">*</span>

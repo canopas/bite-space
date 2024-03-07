@@ -61,7 +61,7 @@ const EditInvitedMemberPage = ({ params }: { params: { id: number } }) => {
 
     fetchOptionsData();
     fetchAdmin();
-  }, []);
+  }, [params.id]);
 
   const handleInvitedMember = async (e: any) => {
     e.preventDefault();

@@ -43,7 +43,7 @@ const main = {
 
 const container = {
   margin: "0 auto",
-  textAlign: "center",
+  "text-align": "center",
   maxWidth: "50rem",
 };
 

@@ -20,7 +20,7 @@ const EditRestaurantPage = ({ params }: { params: { id: number } }) => {
   const [description, setDescription] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
 
   const [imagesData, setImagesData] = useState<any[]>([]);
@@ -164,7 +164,7 @@ const EditRestaurantPage = ({ params }: { params: { id: number } }) => {
     };
 
     fetchRestaurantData();
-  }, []);
+  }, [params.id]);
 
   const handleFilesUploading = async (files: any) => {
     setImagesData(files);

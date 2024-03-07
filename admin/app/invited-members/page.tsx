@@ -59,7 +59,7 @@ const InvitedMembersPage = () => {
     setCookiesInfo();
     fetchCountAdmins();
     fetchInvitedMembersData(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const deleteRecord = async (id: number) => {
     try {

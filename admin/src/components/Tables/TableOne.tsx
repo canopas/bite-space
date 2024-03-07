@@ -1,7 +1,6 @@
-import { BRAND } from "@/types/brand";
 import Image from "next/image";
 
-const brandData: BRAND[] = [
+const brandData: any[] = [
   {
     logo: "/images/brand/brand-01.svg",
     name: "Google",

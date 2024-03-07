@@ -1,8 +1,7 @@
-import { BRAND } from "@/types/brand";
 import Image from "next/image";
 import DropdownDefault from "../Dropdowns/DropdownDefault";
 
-const brandData: BRAND[] = [
+const brandData: any[] = [
   {
     logo: "/images/brand/brand-01.svg",
     name: "Google",

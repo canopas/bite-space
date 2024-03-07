@@ -6,7 +6,7 @@ type InputElementType = HTMLInputElement;
 
 interface FilePreview {
   previewType: string;
-  previewUrl: string;
+  previewUrl: string| ArrayBuffer | null;
   previewName: string;
 }
 
@@ -41,7 +41,7 @@ export default function MultipleFileUpload({
   );
   const selectFile = (index: number) => {
     if (inputRefs.current[index] && inputRefs.current[index]?.current) {
-      inputRefs.current[index]?.current.click();
+      inputRefs.current[index]?.current?.click();
     }
   };
 
@@ -54,7 +54,7 @@ export default function MultipleFileUpload({
 
   const add = (
     previewType: any,
-    previewUrl: string | StaticImageData | ArrayBuffer | null,
+    previewUrl: string | ArrayBuffer | null,
     previewName: string,
     file: any,
   ) => {
@@ -78,7 +78,7 @@ export default function MultipleFileUpload({
 
   const update = (
     previewType: any,
-    previewUrl: string | StaticImageData | ArrayBuffer | null,
+    previewUrl: string | ArrayBuffer | null,
     previewName: string,
     file: any,
     index: number,
@@ -117,7 +117,7 @@ export default function MultipleFileUpload({
   const previewFile = async (file: any, index: number, action: string) => {
     var obj = {
       previewType: "image",
-      previewUrl: "" as string | StaticImageData | ArrayBuffer | null,
+      previewUrl: "" as string | ArrayBuffer | null,
       previewName: file.name,
     };
 

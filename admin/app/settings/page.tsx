@@ -56,7 +56,7 @@ const Settings = () => {
   const [description, setDescription] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [weekDays, setWeekDays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState<string>("");

@@ -25,7 +25,7 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [imageData, setImageData] = useState(null);
+  const [imageData, setImageData] = useState<any | null>(null);
   const [image, setImage] = useState("");
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
