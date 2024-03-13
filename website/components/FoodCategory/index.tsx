@@ -84,16 +84,14 @@ const FoodCategory = () => {
               <div key={"food-category-" + item.id}>
                 <SwiperSlide>
                   <Link
-                    href={`/category/${item.name
-                      .toLocaleLowerCase()
-                      .replace(/ /g, "-")}`}
+                    href={`/category/${item.id}`}
                     className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
                   >
                     <Image
                       src={item.image}
                       height={100}
                       width={100}
-                      className="h-[16rem] rounded-2xl object-cover"
+                      className="h-[16rem] w-full rounded-2xl object-cover"
                       alt="item-image"
                     />
                     <p className="text-center text-lg font-black">
@@ -117,16 +115,14 @@ const FoodCategory = () => {
               <div key={"food-category-" + item.id}>
                 <SwiperSlide>
                   <Link
-                    href={`/category/${item.name
-                      .toLocaleLowerCase()
-                      .replace(/ /g, "-")}`}
-                    className="flex h-80 cursor-pointer flex-col gap-2"
+                    href={`/category/${item.id}`}
+                    className="flex h-72 w-64 cursor-pointer flex-col"
                   >
                     <Image
                       src={item.image}
                       height={100}
                       width={100}
-                      className="h-[16rem] rounded-2xl object-cover"
+                      className="h-[16rem] w-full rounded-2xl object-cover"
                       alt="item-image"
                     />
                     <p className="text-center text-lg font-black">
@@ -150,9 +146,7 @@ const FoodCategory = () => {
               <div key={"food-category-" + item.id}>
                 <SwiperSlide>
                   <Link
-                    href={`/category/${item.name
-                      .toLocaleLowerCase()
-                      .replace(/ /g, "-")}`}
+                    href={`/category/${item.id}`}
                     className="flex h-80 w-full cursor-pointer flex-col gap-2"
                   >
                     <Image

@@ -15,6 +15,8 @@ const SingleItem = ({ item }: { item: any }) => {
               loop
               autoPlay
               muted
+              playsInline
+              webkit-playsinline
               className={` w-full object-cover ${
                 video ? "h-[35rem]" : "h-full"
               }`}

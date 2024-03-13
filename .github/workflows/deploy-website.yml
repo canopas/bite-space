@@ -3,7 +3,7 @@ name: Build and Deploy NextJS App to S3
 on:
   push:
     branches:
-      - main
+      - design-website
 
 permissions:
   id-token: write

@@ -200,6 +200,8 @@ const Menu = ({ paramsData }: { paramsData: { restaurant: string } }) => {
                                 loop
                                 autoPlay
                                 muted
+                                playsInline
+                                webkit-playsinline
                                 className="h-[30rem] w-full rounded-xl object-cover"
                               >
                                 <source src={data.video} type="video/mp4" />
@@ -351,6 +353,8 @@ const Menu = ({ paramsData }: { paramsData: { restaurant: string } }) => {
                               loop
                               autoPlay
                               muted
+                              playsInline
+                              webkit-playsinline
                               className="h-full w-full rounded-xl object-cover"
                             >
                               <source src={data.video} type="video/mp4" />

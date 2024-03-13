@@ -36,6 +36,8 @@ const RestaurantsPage = ({
                         autoPlay
                         loop
                         muted
+                        playsInline
+                        webkit-playsinline
                       >
                         <source src={item.video} type="video/mp4" />
                       </video>
