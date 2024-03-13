@@ -1,0 +1,56 @@
+name: Build and Deploy NextJS App to S3
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy-website:
+    name: Build and Deploy Website
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: |
+          cd website
+          npm install
+
+      - name: Build
+        run: |
+          cd website
+          sed -i "s|SUPABASE_URL_VALUE|${{ secrets.SUPABASE_URL }}|g" config.js
+          sed -i "s|SUPABASE_ANON_KEY_VALUE|${{ secrets.SUPABASE_ANON_KEY }}|g" config.js
+          npm run build
+
+      - name: Debug - List files in out directory
+        run: |
+          cd website
+          ls -R ./out
+
+      - name: Debug - Display AWS CLI version
+        run: aws --version
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          cd website
+          aws s3 sync ./out s3://${{ secrets.WEBSITE_BUCKET_NAME }}

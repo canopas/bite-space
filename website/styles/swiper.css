@@ -1,0 +1,48 @@
+.swiper-gallery .swiper-slide {
+  opacity: 0.4;
+}
+
+.swiper-gallery .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.food-category-swiper .swiper-button-prev {
+  right: 8rem;
+  left: auto;
+  top: 25rem;
+  background: black;
+  color: white;
+  padding: 22px;
+  border-radius: 50%;
+  font-weight: 900;
+  opacity: 0.5;
+}
+
+.dark .food-category-swiper .swiper-button-prev {
+  background: white;
+  color: black;
+}
+
+.food-category-swiper .swiper-button-prev:after {
+  font-size: 20px;
+}
+
+.food-category-swiper .swiper-button-next {
+  right: 4rem;
+  top: 25rem;
+  background: black;
+  color: white;
+  padding: 22px;
+  border-radius: 50%;
+  font-weight: 900;
+  opacity: 0.5;
+}
+
+.dark .food-category-swiper .swiper-button-next {
+  background: white;
+  color: black;
+}
+
+.food-category-swiper .swiper-button-next:after {
+  font-size: 20px;
+}
