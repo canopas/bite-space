@@ -17,7 +17,10 @@ export async function generateStaticParams() {
     .select("id")
     .eq("restaurant_id", 0);
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error fetching category IDs:", error);
+    return [];
+  }
 
   const pagesParams: any[] = [];
   for (var i = 0; i < data.length; i++) {

@@ -19,7 +19,9 @@ const Cuisines = () => {
               <Link
                 href={
                   "/restaurants/" +
-                  item.name.replace(/\s+/g, "-").toLocaleLowerCase()
+                  encodeURIComponent(
+                    item.name.toLowerCase().replace(/\s+/g, "-")
+                  )
                 }
                 key={"cuisine-" + item.id}
                 className="cursor-pointer rounded-xl border p-5 text-center hover:border-primary/10 hover:bg-primary hover:bg-opacity-10"

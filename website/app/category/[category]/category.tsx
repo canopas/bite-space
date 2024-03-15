@@ -5,11 +5,12 @@ import supabase from "@/utils/supabase";
 import SectionTitle from "@/components/Common/SectionTitle";
 import Restaurants from "./restaurant";
 import { useEffect, useState } from "react";
+import { CategoryData, RestaurantData } from "@/types/category-by-id";
 
 const Category = ({ paramsData }: { paramsData: { category: string } }) => {
-  const [categoryData, setCategoryData] = useState<any>({});
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
-  const [restaurantsData, setRestaurantsData] = useState<any[]>([]);
+  const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
+  const [restaurantsData, setRestaurantsData] = useState<RestaurantData[]>([]);
 
   useEffect(() => {
     const fetchCategoryData = async () => {

@@ -1,5 +1,6 @@
 "use client";
 
+import { RestaurantData } from "@/types/category-restaurant";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,7 +9,7 @@ const RestaurantsPage = ({
   restaurantsData,
 }: {
   isLoading: boolean;
-  restaurantsData: any[];
+  restaurantsData: RestaurantData[];
 }) => {
   return (
     <>

@@ -1,19 +1,13 @@
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 
-const ThemeToggler = ({ sticky }) => {
+const ThemeToggler = ({ sticky }: any) => {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className={`bg-gray-2 dark:bg-dark-bg flex h-9 w-9 cursor-pointer items-center justify-center rounded-full md:h-14 md:w-14 ${
-        sticky || pathname != "/" ? "text-black dark:text-white" : "text-white"
-      } ${
-        pathname.includes("/menu")
-          ? "text-white sm:text-black sm:dark:text-white"
-          : ""
-      }`}
+      className="bg-gray-2 dark:bg-dark-bg flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-black dark:text-white md:h-14 md:w-14"
     >
       <svg
         viewBox="0 0 23 23"

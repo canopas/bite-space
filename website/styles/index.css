@@ -69,7 +69,7 @@ input#checkboxLabel:checked ~ .box span {
 }
 
 .animated-fade-y {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.9s ease-out;
 }
 
 .animated-fade-y-on-scroll {

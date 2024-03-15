@@ -1,6 +1,7 @@
+import { ItemProps } from "@/types/card-item";
 import Image from "next/image";
 
-const SingleItem = ({ item }: { item: any }) => {
+const SingleItem = ({ item }: { item: ItemProps }) => {
   const { id, name, tags, image, video, price, rating, restaurants } = item;
   return (
     <>

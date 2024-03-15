@@ -26,11 +26,13 @@ const Header = () => {
     handleSystemThemeChange(prefersDarkMode);
 
     // Listen for changes in the system color scheme
-    prefersDarkMode.addListener(handleSystemThemeChange);
+    // prefersDarkMode.addListener(handleSystemThemeChange);
+    prefersDarkMode.addEventListener("change", handleSystemThemeChange);
 
     // Clean up the event listener on component unmount
     return () => {
-      prefersDarkMode.removeListener(handleSystemThemeChange);
+      // prefersDarkMode.removeListener(handleSystemThemeChange);
+      prefersDarkMode.removeEventListener("change", handleSystemThemeChange);
     };
   }, [setTheme]);
 
@@ -185,21 +187,6 @@ const Header = () => {
                                 </svg>
                               </span>
                             </a>
-                            <div
-                              className={`submenu relative left-0 top-full rounded-md bg-white transition-[top] duration-300 group-hover:opacity-100 dark:bg-dark lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
-                                openIndex === index ? "block" : "hidden"
-                              }`}
-                            >
-                              {/* {menuItem.submenu.map((submenuItem) => (
-                                <Link
-                                  href={submenuItem.path}
-                                  key={"submenu-" + submenuItem.id}
-                                  className="block rounded py-2.5 text-sm text-black hover:opacity-70 dark:text-white lg:px-3"
-                                >
-                                  {submenuItem.title}
-                                </Link>
-                              ))} */}
-                            </div>
                           </>
                         )}
                       </li>
@@ -214,12 +201,6 @@ const Header = () => {
                 >
                   Sign In
                 </Link>
-                {/* <Link
-                  href="/signup"
-                  className="ease-in-up hidden rounded-md bg-primary py-3 px-8 text-base font-bold text-white transition duration-300 hover:bg-opacity-90 hover:shadow-signUp md:block md:px-9 lg:px-6 xl:px-9"
-                >
-                  Sign Up
-                </Link> */}
                 {/* <div>
                   <ThemeToggler sticky={sticky} />
                 </div> */}

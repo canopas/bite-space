@@ -12,7 +12,7 @@ const PopularFood = () => {
     <>
       <div className="container flex flex-col gap-5">
         <p className="text-3xl font-extrabold">Popular Food</p>
-        <Swiper
+        {/* <Swiper
           modules={[Autoplay]}
           slidesPerView={6}
           loop={true}
@@ -135,7 +135,7 @@ const PopularFood = () => {
               </SwiperSlide>
             </div>
           ))}
-        </Swiper>
+        </Swiper> */}
       </div>
     </>
   );

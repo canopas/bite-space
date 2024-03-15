@@ -2,7 +2,7 @@
 
 ## Welcome to the Bite Space Web App – Your Ultimate Culinary Companion!
 
-A food web app for food lovers which is built in nextjs to discover popular foods and restaurants/cafes near you or where you want.
+A food web app for food lovers which is built in Next.js to discover popular foods and restaurants/cafés near you or where you want.
 
 🍔 Explore Culinary Delights: Dive into a world of flavors with our curated collection of dishes. Discover local favorites, international delights, and recipes that cater to every palate.
 
@@ -10,7 +10,7 @@ A food web app for food lovers which is built in nextjs to discover popular food
 
 🌐 Personalized Recommendations: Tailored to your taste! Receive personalized food recommendations based on your preferences, previous selections, and trending dishes in your area.
 
-🍳 Recipe Hub: From kitchen novices to seasoned chefs, our Recipe Hub offers a variety of easy-to-follow recipes. Experiment with diverse cuisines and elevate your cooking skills.
+🍳 Recipe Hub: From kitchen novices to seasoned chefs, our Recipe Hub offers easy-to-follow recipes. Experiment with diverse cuisines and elevate your cooking skills.
 
 🏆 Community & Reviews: Join a vibrant community of food enthusiasts. Share your culinary experiences, leave reviews, and connect with like-minded individuals who share your passion for food.
 

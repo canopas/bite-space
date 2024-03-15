@@ -9,16 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/font": "13.1.6",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
-    "geist": "^1.2.1",
-    "@next/font": "13.1.6",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "geist": "^1.2.1",
     "next": "^14.1.0",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.8.1",
     "react-modal-video": "^2.0.0",
     "swiper": "^11.0.5"
   },

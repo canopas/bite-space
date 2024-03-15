@@ -1,22 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import SectionTitle from "../Common/SectionTitle";
 import SingleItem from "./SingleItem";
 import supabase from "@/utils/supabase";
+import { InView } from "react-intersection-observer";
 
 const ItemCard = () => {
+  const [error, setError] = useState(null);
   const [itemData, setMostBrowsedItemData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: dishesData } = await supabase
+        const { data: dishesData, error } = await supabase
           .from("dishes")
           .select("menu_id, name, price, images, video, tags")
           .range(0, 8);
+
+        if (error) throw error;
 
         const restaurant = await Promise.all(
           dishesData.map(async (dish) => {
@@ -39,40 +43,19 @@ const ItemCard = () => {
 
         setMostBrowsedItemData(restaurant);
       } catch (error) {
+        setError(error);
         console.error("Error fetching data:", error);
+      } finally {
+        setError(null);
       }
     };
 
     fetchData();
   }, []);
 
-  const [isVisible, setIsVisible] = useState(false);
-  const animateFoodItemsRef = useRef(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const element = animateFoodItemsRef.current;
-
-      if (element) {
-        const elementTop = element.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-
-        if (elementTop < windowHeight * 0.75) {
-          setIsVisible(true);
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <section className="bg-primary/10 py-16 md:py-20 lg:py-28">
-      <div className="container" ref={animateFoodItemsRef}>
+      <div className="container">
         <SectionTitle
           title="Most browsed items from the location"
           paragraph="Connect Locally: Must-Visit Places in Your Neighborhood. In our vibrant community, explore top-rated local experiences."
@@ -81,15 +64,21 @@ const ItemCard = () => {
         {itemData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
             {itemData.map((item) => (
-              <Link
-                href={`/restaurants/${item.restaurant_id}/menu`}
-                key={"item-card-" + item.id}
-                className={`animated-fade-y-on-scroll h-full w-full ${
-                  isVisible ? "animate" : ""
-                }`}
-              >
-                <SingleItem item={item} />
-              </Link>
+              <div key={"item-card-" + item.id}>
+                <InView triggerOnce>
+                  {({ inView, ref, entry }) => (
+                    <Link
+                      ref={ref}
+                      href={`/restaurants/${item.restaurant_id}/menu`}
+                      className={`h-full w-full ${
+                        inView ? "animated-fade-y" : ""
+                      }`}
+                    >
+                      <SingleItem item={item} />
+                    </Link>
+                  )}
+                </InView>
+              </div>
             ))}
           </div>
         ) : (

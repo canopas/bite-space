@@ -15,6 +15,7 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
           // The `set` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
           // user sessions.
+          console.error("Error setting cookie:", error);
         }
       },
       remove(name: string, options: CookieOptions) {
@@ -24,6 +25,7 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
           // The `delete` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
           // user sessions.
+          console.error("Error setting cookie:", error);
         }
       },
     },

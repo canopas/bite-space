@@ -13,7 +13,10 @@ export default RestaurantMenuDetails;
 
 export async function generateStaticParams() {
   const { data, error } = await supabase.from("restaurants").select("id");
-  if (error) throw error;
+  if (error) {
+    console.error("Error fetching restaurant IDs:", error);
+    return [];
+  }
 
   const pagesParams: any[] = [];
   for (var i = 0; i < data.length; i++) {

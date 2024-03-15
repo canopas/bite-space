@@ -16,16 +16,24 @@ import "swiper/css/navigation";
 import "styles/swiper.css";
 
 const FoodCategory = () => {
+  const [error, setError] = useState(null);
   const [foodData, setFoodData] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await supabase
-        .from("categories")
-        .select()
-        .eq("restaurant_id", 0);
+      try {
+        const { data, error } = await supabase
+          .from("categories")
+          .select()
+          .eq("restaurant_id", 0);
 
-      setFoodData(data);
+        if (error) throw error;
+
+        setFoodData(data);
+      } catch (error) {
+        setError(error);
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchCategories();
