@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 
-const Menu = ({ paramsData }: { paramsData: { id: number } }) => {
+const Menu = ({ paramsData }: { paramsData: { id: string } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -92,7 +92,7 @@ const AddCategoryPage = () => {
         name: name,
         description: description,
         image: image_url,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;

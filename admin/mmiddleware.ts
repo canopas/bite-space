@@ -24,6 +24,7 @@ const adminPages = [
 const generalPages = ["/menus", "/dishes", "/profile", "/settings"];
 
 const middleware = async (request: NextRequest) => {
+  
   const user = await getCookiesValue("login-info");
   console.log(user);
   const userRole = user ? user.split("/")[1] : null;

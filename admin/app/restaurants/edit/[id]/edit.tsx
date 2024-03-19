@@ -11,7 +11,7 @@ import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { getFilenameFromURL } from "@/utils/image";
 
-const Restaurant = ({ paramsData }: { paramsData: { id: number } }) => {
+const Restaurant = ({ paramsData }: { paramsData: { id: string } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -117,7 +117,7 @@ const Restaurant = ({ paramsData }: { paramsData: { id: number } }) => {
         description: description,
         address: address,
         images: new_images,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
         phone: parseInt(phone),
       });
 

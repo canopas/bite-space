@@ -4,10 +4,10 @@ import { useState } from "react";
 import React from "react";
 import Link from "next/link";
 
+import config from "../../config";
 import supabase from "@/utils/supabase";
 import { z } from "zod";
 import { SignJWT } from "jose";
-import { sendMail } from "../../service/mailService";
 import { render } from "@react-email/render";
 import ForgotPasswordEmail from "../../emails/forgotPassword";
 
@@ -62,7 +62,7 @@ const ForgotPasswordPage = () => {
         .setExpirationTime(exp)
         .setIssuedAt(iat)
         .setNotBefore(iat)
-        .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET!));
+        .sign(new TextEncoder().encode(config.JWT_SECRET));
 
       const { error } = await supabase.from("admins").upsert({
         id: user.id,
@@ -73,13 +73,13 @@ const ForgotPasswordPage = () => {
 
       if (error) throw error;
 
-      await sendMail(
-        "Bite Space - Reset Password Link",
-        email,
-        render(
-          ForgotPasswordEmail("http://localhost:3000/reset-password/" + token),
-        ),
-      );
+      // await sendMail(
+      //   "Bite Space - Reset Password Link",
+      //   email,
+      //   render(
+      //     ForgotPasswordEmail("http://localhost:3000/reset-password/" + token),
+      //   ),
+      // );
 
       setIsShowSuccess(true);
       await new Promise((resolve) => setTimeout(resolve, 5000));

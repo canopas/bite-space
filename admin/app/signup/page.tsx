@@ -9,6 +9,7 @@ import supabase from "@/utils/supabase";
 import { sign } from "@/utils/jwt-auth";
 import { z } from "zod";
 import CryptoJS from "crypto-js";
+import config from "../../config";
 
 const SignUp = () => {
   const router = useRouter();
@@ -70,7 +71,7 @@ const SignUp = () => {
 
       var encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+        config.CRYPTO_SECRET,
       ).toString();
 
       const { data: user, error } = await supabase

@@ -136,7 +136,7 @@ const AddDishPage = () => {
         description: description,
         images: isVideoChecked ? null : images,
         video: video,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;

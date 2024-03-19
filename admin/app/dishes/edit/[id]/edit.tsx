@@ -12,7 +12,7 @@ import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getFilenameFromURL } from "@/utils/image";
 
-const Dish = ({ paramsData }: { paramsData: { id: number } }) => {
+const Dish = ({ paramsData }: { paramsData: { id: string } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -184,7 +184,7 @@ const Dish = ({ paramsData }: { paramsData: { id: number } }) => {
         description: description,
         images: isVideoChecked ? null : new_images,
         video: isImagesChecked ? null : new_video,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;

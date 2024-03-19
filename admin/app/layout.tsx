@@ -36,6 +36,13 @@ export default function RootLayout({
       ) {
         router.push("/signin");
       }
+      if (
+        loginPages.some((path) => pathname.startsWith(path)) &&
+        code != "" &&
+        code != "LOGIN_NEEDED"
+      ) {
+        router.push("/");
+      }
     };
 
     manageCookies();

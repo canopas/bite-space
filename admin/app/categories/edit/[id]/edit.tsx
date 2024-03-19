@@ -11,7 +11,7 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getFilenameFromURL } from "@/utils/image";
 import { TagsInput } from "react-tag-input-component";
 
-const Category = ({ paramsData }: { paramsData: { id: number } }) => {
+const Category = ({ paramsData }: { paramsData: { id: string } }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -116,7 +116,7 @@ const Category = ({ paramsData }: { paramsData: { id: number } }) => {
         name: name,
         description: description,
         image: image_url,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;

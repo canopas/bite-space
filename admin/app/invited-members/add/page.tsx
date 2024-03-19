@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { getCookiesValue } from "@/utils/jwt-auth";
-import { sendMail } from "@/../service/mailService";
 import { render } from "@react-email/render";
 import InviteMemberEmail from "../../../emails/invitationMail";
 

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const Admin = ({ paramsData }: { paramsData: { id: number } }) => {
+const Admin = ({ paramsData }: { paramsData: { id: string } }) => {
   const router = useRouter();
 
   const [error, setError] = useState<any>();

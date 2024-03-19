@@ -244,7 +244,7 @@ const Settings = () => {
         name: name,
         description: description,
         address: address,
-        tags: tags,
+        tags: tags.map((tag) => tag.toLowerCase()),
         phone: parseInt(phone),
         week_days: weekDays,
         start_time: startTime,

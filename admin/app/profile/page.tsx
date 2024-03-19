@@ -9,6 +9,7 @@ import { getFilenameFromURL } from "@/utils/image";
 import { z } from "zod";
 import CryptoJS from "crypto-js";
 import { getCookiesValue } from "@/utils/jwt-auth";
+import config from "../../config";
 
 const Profile = () => {
   const [role, setRole] = useState();
@@ -170,7 +171,7 @@ const Profile = () => {
 
       var decrypted = CryptoJS.AES.decrypt(
         password,
-        process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+        config.CRYPTO_SECRET,
       ).toString(CryptoJS.enc.Utf8);
 
       if (decrypted !== currentPassword) {
@@ -186,7 +187,7 @@ const Profile = () => {
       if (confirm("Are you sure you want to change password?")) {
         var encryptedPassword = CryptoJS.AES.encrypt(
           newPassword,
-          process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+          config.CRYPTO_SECRET,
         ).toString();
 
         const { error } = await supabase.from("admins").upsert({

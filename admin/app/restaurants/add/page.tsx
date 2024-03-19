@@ -98,7 +98,7 @@ const AddRestaurantPage = () => {
           address: address,
           images: images,
           phone: parseInt(phone),
-          tags: tags,
+          tags: tags.map((tag) => tag.toLowerCase()),
         })
         .select()
         .single();

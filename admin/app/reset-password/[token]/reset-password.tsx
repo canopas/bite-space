@@ -9,6 +9,7 @@ import supabase from "@/utils/supabase";
 import { z } from "zod";
 import { fetchEmailFromToken } from "@/utils/jwt-auth";
 import CryptoJS from "crypto-js";
+import config from "../../../config";
 
 const ResetPassword = ({ paramsData }: { paramsData: { token: string } }) => {
   const router = useRouter();
@@ -132,7 +133,7 @@ const ResetPassword = ({ paramsData }: { paramsData: { token: string } }) => {
 
       var encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+        config.CRYPTO_SECRET,
       ).toString();
 
       const { error } = await supabase.from("admins").upsert({

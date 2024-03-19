@@ -20,7 +20,7 @@ function useLocalStorage<T>(
       }
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
+      console.log("Error in local storage : ",error);
       return initialValue;
     }
   });

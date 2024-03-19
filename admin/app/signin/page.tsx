@@ -9,6 +9,7 @@ import supabase from "@/utils/supabase";
 import { sign } from "@/utils/jwt-auth";
 import { z } from "zod";
 import CryptoJS from "crypto-js";
+import config from "../../config";
 
 const SignIn = () => {
   const path = usePathname();
@@ -60,7 +61,7 @@ const SignIn = () => {
 
       var decrypted = CryptoJS.AES.decrypt(
         user.password,
-        process.env.NEXT_PUBLIC_CRYPTO_SECRET!,
+        config.CRYPTO_SECRET,
       ).toString(CryptoJS.enc.Utf8);
 
       if (decrypted !== password) {
