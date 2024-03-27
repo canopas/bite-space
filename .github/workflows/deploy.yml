@@ -1,0 +1,60 @@
+name: Deploy website and admin panel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Fetch and reset main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
+      - name: Merge website branch to website-main
+        run: |
+          git fetch origin
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          if [ "$(git diff origin/main:website origin/website-main | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes in the website folder after build. Pushing changes to website-main branch."
+            git checkout website-main
+            git rm -r *
+            git checkout main -- website
+            git mv website/* .
+            ls
+            rm -r website
+            git add .
+            git commit -m "Deploy website"
+            git push origin website-main
+          else
+            echo "No changes detected in the website folder after build. Exiting."
+          fi
+
+      - name: Merge admin branch to admin-main
+        run: |
+          git fetch origin
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          if [ "$(git diff origin/main:admin origin/admin-main | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes in the admin folder after build. Pushing changes to admin-main branch."
+            git checkout admin-main
+            git rm -r *
+            git checkout main -- admin
+            git mv admin/* .
+            ls
+            rm -r admin
+            git add .
+            git commit -m "Deploy admin panel"
+            git push origin admin-main
+          else
+            echo "No changes detected in the admin folder after build. Exiting."
+          fi

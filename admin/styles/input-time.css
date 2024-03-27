@@ -1,0 +1,11 @@
+input[type="time"] {
+  padding: 10px;
+}
+
+input[type="time"]:focus-visible {
+  outline: none;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(40%);
+}
