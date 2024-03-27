@@ -1,6 +1,6 @@
-# Just Foodie
+# Bite Space
 
-## Welcome to the Just Foodie Web App – Your Ultimate Culinary Companion!
+## Welcome to the Bite Space Web App – Your Ultimate Culinary Companion!
 
 A food web app for food lovers which is built in nextjs to discover popular foods and restaurants/cafes near you or where you want.
 
