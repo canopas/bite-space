@@ -51,7 +51,7 @@ const About = () => {
                 <br className="hidden sm:block" /> our mission is simple
               </p>
             </div>
-            <p className="sm:w-1/2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl sm:pl-10 lg:pl-20">
+            <p className="sm:w-1/2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl sm:pl-10 lg:pl-20 text-gray-600 dark:text-gray-400">
               to empower and inspire individuals to lead healthier, happier
               lives through better food choices. We believe that everyone
               deserves access to nutritious and delicious meals, and we are
@@ -65,7 +65,7 @@ const About = () => {
               </p>
               <p className="bg-primary w-1/2 h-1 md:h-2"></p>
             </div>
-            <p className="mt-8 md:mt-0 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+            <p className="mt-8 md:mt-0 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-400">
               It all started with a simple desire – the craving to explore menus
               and dishes from all the restaurants, yet facing the frustration of
               limited options and scattered information. <br /> <br />
@@ -75,7 +75,7 @@ const About = () => {
               convenience evolved into a visionary project aimed at
               revolutionizing the way we approach food. From that moment of
               inspiration,{" "}
-              <span className="font-bold">
+              <span className="font-bold text-white">
                 Bite <span className="text-primary">Space</span>
               </span>{" "}
               was born. <br /> <br /> Today, our small idea has blossomed into a
@@ -107,7 +107,7 @@ const About = () => {
                 <p className="bg-primary w-1/2 h-1 md:h-2"></p>
               </div>
             </div>
-            <p className="w-full text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+            <p className="w-full text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-400">
               At{" "}
               <span className="text-black dark:text-white font-bold">Bite</span>{" "}
               <span className="text-primary font-bold">Space</span>, we are
@@ -124,11 +124,11 @@ const About = () => {
               </p>
               <p className="bg-primary w-1/4 h-1 md:h-2"></p>
             </div>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl">
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-400">
               We&apos;d love to hear from you! Drop us a line at{" "}
               <Link
                 href="mailto:contact@bitespace.in"
-                className="opacity-60 underline font-semibold"
+                className="opacity-80 dark:opacity-100 underline font-semibold"
               >
                 contact@bitespace.in
               </Link>
