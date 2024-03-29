@@ -3,6 +3,8 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ScrollToTop from "@/components/ScrollToTop";
+import Providers from "./providers";
+import Head from "next/head";
 
 export default function RootLayout({
   children,
@@ -10,24 +12,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.js. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <Head />
-
-      <body className="dark:bg-black">
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <ScrollToTop />
-        </Providers>
-      </body>
-    </html>
+    <div className="dark:bg-black">
+      <Head>
+        <title>Bite Space</title>
+      </Head>
+      <Providers>
+        <Header />
+        {children}
+        <Footer />
+        <ScrollToTop />
+      </Providers>
+    </div>
   );
 }
-
-import Providers from "./providers";
-import Head from "./head";

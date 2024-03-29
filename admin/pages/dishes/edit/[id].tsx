@@ -87,7 +87,7 @@ const EditDishPage = () => {
           } else {
             const currentDate = new Date();
             const { data: imgData, error: imgErr } = await supabase.storage
-              .from("test")
+              .from("dishes")
               .upload(
                 currentDate.getTime() + "-" + imagesData[i].name,
                 imagesData[i]
@@ -97,7 +97,7 @@ const EditDishPage = () => {
 
             const image_url =
               process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/test/" +
+              "/dishes/" +
               imgData.path;
 
             new_images.push(image_url);
@@ -111,7 +111,7 @@ const EditDishPage = () => {
 
           for (var i = 0; i < removeImages.length; i++) {
             const { error } = await supabase.storage
-              .from("test")
+              .from("dishes")
               .remove([getFilenameFromURL(removeImages[i])]);
 
             if (error) throw error;
@@ -120,7 +120,7 @@ const EditDishPage = () => {
 
         if (video) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("dishes")
             .remove([getFilenameFromURL(video)]);
 
           if (error) throw error;
@@ -128,7 +128,7 @@ const EditDishPage = () => {
       } else if (videoData) {
         if (video) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("dishes")
             .remove([getFilenameFromURL(video)]);
 
           if (error) throw error;
@@ -136,20 +136,20 @@ const EditDishPage = () => {
 
         const currentDate = new Date();
         const { data: videoStore, error: videoErr } = await supabase.storage
-          .from("test")
+          .from("dishes")
           .upload(currentDate.getTime() + "-" + videoData.name, videoData);
 
         if (videoErr) throw videoErr;
 
         new_video =
           process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/test/" +
+          "/dishes/" +
           videoStore.path;
 
         if (images) {
           for (var i = 0; i < images.length; i++) {
             const { error } = await supabase.storage
-              .from("test")
+              .from("dishes")
               .remove([getFilenameFromURL(images[i])]);
 
             if (error) throw error;

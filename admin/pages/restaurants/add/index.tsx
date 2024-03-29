@@ -51,7 +51,7 @@ const AddRestaurantPage = () => {
         for (var i = 0; i < imagesData.length; i++) {
           const currentDate = new Date();
           const { data: imgData, error: imgErr } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .upload(
               currentDate.getTime() + "-" + imagesData[i].name,
               imagesData[i]
@@ -61,7 +61,7 @@ const AddRestaurantPage = () => {
 
           const image_url =
             process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/test/" +
+            "/restaurants/" +
             imgData.path;
 
           images.push(image_url);

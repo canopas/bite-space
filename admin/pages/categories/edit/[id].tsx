@@ -74,20 +74,20 @@ const EditCategoryPage = () => {
       if (imageData) {
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
-          .from("test")
+          .from("categories")
           .upload(currentDate.getTime() + "-" + imageData.name, imageData);
 
         if (imgErr) throw imgErr;
 
         const { error } = await supabase.storage
-          .from("test")
+          .from("categories")
           .remove([getFilenameFromURL(image)]);
 
         if (error) throw error;
 
         image_url =
           process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/test/" +
+          "/categories/" +
           imgData.path;
       }
 

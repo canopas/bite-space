@@ -83,7 +83,7 @@ const Header = () => {
                 <Link href="/" className="text-3xl font-extrabold text-primary">
                   <span
                     className={`${
-                      sticky || pathname != "/"
+                      sticky || (pathname !== "/" && pathname !== "/about")
                         ? "text-black dark:text-white"
                         : "text-white"
                     } ${
@@ -104,37 +104,46 @@ const Header = () => {
                   onClick={navbarToggleHandler}
                   id="navbarToggler"
                   aria-label="Mobile Menu"
-                  className="absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden"
+                  className="absolute right-4 top-1/2 block translate-y-[-50%] px-2 py-[6px] ring-primary lg:hidden"
                 >
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px]  transition-all duration-300 ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
                       sticky || pathname != "/"
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     } ${navbarOpen ? " top-[7px] rotate-45" : ""} ${
-                      sticky || !pathname?.includes("/menu")
+                      sticky ||
+                      (pathname !== "/" &&
+                        pathname !== "/about" &&
+                        !pathname?.includes("/menu"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px]  transition-all duration-300 ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
                       sticky || pathname != "/"
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     } ${navbarOpen ? "opacity-0 " : ""} ${
-                      sticky || !pathname?.includes("/menu")
+                      sticky ||
+                      (pathname !== "/" &&
+                        pathname !== "/about" &&
+                        !pathname?.includes("/menu"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px]  transition-all duration-300 ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
                       sticky || pathname != "/"
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     } ${navbarOpen ? " top-[-8px] -rotate-45" : ""} ${
-                      sticky || !pathname?.includes("/menu")
+                      sticky ||
+                      (pathname !== "/" &&
+                        pathname !== "/about" &&
+                        !pathname?.includes("/menu"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
@@ -142,7 +151,7 @@ const Header = () => {
                 </button>
                 <nav
                   id="navbarCollapse"
-                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-white px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:opacity-100 ${
+                  className={`navbar absolute right-0 z-30 w-[250px] mr-5 lg:mr-0 rounded px-6 py-4 duration-300 bg-white dark:bg-black border dark:border-gray-800 lg:border-0 lg:visible lg:static lg:w-auto lg:!bg-transparent lg:opacity-100 ${
                     navbarOpen
                       ? "visibility top-full opacity-100"
                       : "invisible top-[120%] opacity-0"
@@ -150,21 +159,19 @@ const Header = () => {
                 >
                   <ul className="block lg:flex lg:space-x-12">
                     {menuData.map((menuItem, index) => (
-                      <li
-                        key={"menu-" + menuItem.id}
-                        className="group relative"
-                      >
+                      <li key={"menu-" + menuItem.id}>
                         {menuItem.path ? (
                           <Link
                             href={menuItem.path}
-                            className={`flex py-2 text-base group-hover:opacity-70 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
-                              menuItem.isActive ? "font-extrabold" : ""
+                            className={`flex py-2 text-base group-hover:opacity-70 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 text-black dark:text-white ${
+                              pathname == menuItem.path ? "font-extrabold" : ""
                             } ${
-                              sticky || pathname != "/"
+                              sticky ||
+                              (pathname !== "/" &&
+                                pathname !== "/about" &&
+                                !pathname?.includes("/menu"))
                                 ? "text-black dark:text-white"
-                                : "text-white"
-                            } ${
-                              sticky || !pathname?.includes("/menu")
+                                : navbarOpen
                                 ? "text-black dark:text-white"
                                 : "text-white"
                             }`}
@@ -191,15 +198,29 @@ const Header = () => {
                         )}
                       </li>
                     ))}
+                    <li className="my-2">
+                      <Link
+                        href="https://admin.bitespace.in/signin"
+                        target="_blank"
+                        className="text-center bg-primary dark:bg-primary/70 transition duration-500 w-full block py-3 text-base font-bold text-white rounded-xl lg:hidden hover:bg-transparent hover:dark:bg-transparent hover:text-primary border-2 border-transparent hover:border-primary"
+                      >
+                        Partner With Us
+                      </Link>
+                    </li>
                   </ul>
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
                 <Link
-                  href="/signin"
-                  className="hidden border-b border-primary px-7 py-3 text-base font-bold text-primary hover:opacity-70 md:block"
+                  href="https://admin.bitespace.in/signin"
+                  target="_blank"
+                  className={`hidden bg-primary dark:bg-primary/70 transition duration-500 px-7 py-3 text-base font-bold text-white rounded-xl lg:block hover:bg-transparent hover:dark:bg-transparent hover:text-primary border-2 border-transparent hover:border-primary ${
+                    !sticky && !pathname?.includes("/category")
+                      ? "bg-primary/70"
+                      : ""
+                  }`}
                 >
-                  Sign In
+                  Partner With Us
                 </Link>
                 {/* <div>
                   <ThemeToggler sticky={sticky} />

@@ -3,13 +3,15 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
-      {/* <Head>
-        <title>Bite Space Admin</title>
+      <Head>
+        {/* <title>Bite Space Admin</title> */}
         <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta name="description" content="A food web app to show food details of the restaurants" />
+        <meta
+          name="description"
+          content="A food web app to show food details of the restaurants"
+        />
         <link rel="icon" href="/logo.ico" />
-      </Head> */}
+      </Head>
       <body>
         <Main />
         <NextScript />

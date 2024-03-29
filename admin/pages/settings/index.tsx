@@ -142,7 +142,7 @@ const Settings = () => {
           } else {
             const currentDate = new Date();
             const { data: imgData, error: imgErr } = await supabase.storage
-              .from("test")
+              .from("restaurants")
               .upload(
                 currentDate.getTime() + "-" + imagesData[i].name,
                 imagesData[i]
@@ -152,7 +152,7 @@ const Settings = () => {
 
             const image_url =
               process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/test/" +
+              "/restaurants/" +
               imgData.path;
 
             new_images.push(image_url);
@@ -167,7 +167,7 @@ const Settings = () => {
 
         for (var i = 0; i < removeImages.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(removeImages[i])]);
 
           if (error) throw error;
@@ -310,7 +310,7 @@ const Settings = () => {
           if (dishes[i].images) {
             for (var i = 0; i < dishes[i].images.length; i++) {
               const { error } = await supabase.storage
-                .from("test")
+                .from("dishes")
                 .remove([getFilenameFromURL(dishes[i].images[i])]);
 
               if (error) throw error;
@@ -320,7 +320,7 @@ const Settings = () => {
           // delete dish video
           if (dishes[i].video) {
             const { error } = await supabase.storage
-              .from("test")
+              .from("dishes")
               .remove([getFilenameFromURL(dishes[i].video)]);
 
             if (error) throw error;
@@ -346,7 +346,7 @@ const Settings = () => {
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(restaurant.images[i])]);
 
           if (error) throw error;

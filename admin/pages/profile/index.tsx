@@ -84,14 +84,14 @@ const Profile = () => {
       if (imageData) {
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
-          .from("test")
+          .from("admins")
           .upload(currentDate.getTime() + "-" + imageData.name, imageData);
 
         if (imgErr) throw imgErr;
 
         if (image) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("admins")
             .remove([getFilenameFromURL(image)]);
 
           if (error) throw error;
@@ -99,7 +99,7 @@ const Profile = () => {
 
         image_url =
           process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/test/" +
+          "/admins/" +
           imgData.path;
       }
 
