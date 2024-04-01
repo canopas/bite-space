@@ -1,40 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bite Space Admin Panel
+
+Welcome to the Bite Space Admin Panel! This is the part of our application where restaurant owners can manage their data, including categories, menus, dishes, and account information.
+
+## Features
+
+📁 <b>Manage Categories:</b> Organize your menu items by managing categories, making it easy for users to navigate.
+
+🍽️ <b>Manage Menus:</b> Add, edit, or remove menu items to keep your restaurant's menu up-to-date.
+
+🥘 <b>Manage Dishes:</b> Control the details of each dish, including descriptions, prices, and availability.
+
+👤 <b>Manage Account Information:</b> Update your restaurant's contact information and other account details.
+
+👥 <b>Invite Staff and Members:</b> Grant access to your team members and staff to manage dishes, media, and other account-related tasks.
 
 ## Getting Started
 
-First, run the development server:
+To get started with the Bite Space admin panel, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- <b>Clone the Repository:</b> Clone this repository to your local machine using `git clone <repo>`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- <b>Navigate to Admin Folder:</b> Enter the admin folder using `cd admin`.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- <b>Install Dependencies:</b> Install dependencies by running `npm install`.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- <b>Set Environment Variables:</b> Set up environment variables for Supabase. You can find the necessary variables in the `.env.example` file. Rename it to `.env.local` and fill in the required values.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- <b>Run the Application:</b> Start the application by running `npm run dev`.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- <b>Access the Admin Panel:</b> Open your browser and go to `http://localhost:3000` to access the Bite Space admin panel.
 
-## Learn More
+## Support
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+If you encounter any issues or have any questions regarding the Bite Space admin panel, feel free to reach out to us We're here to help!
