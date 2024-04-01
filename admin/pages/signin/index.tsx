@@ -99,14 +99,13 @@ const SignIn = () => {
         });
       }
 
-      const { error: updateError } = await supabase.from("admins").upsert({
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        reset_password: null,
-      });
+      const { data: _, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: process.env.NEXT_PUBLIC_SUPABASE_USER!,
+          password: process.env.NEXT_PUBLIC_SUPABASE_USER_PWD!,
+        });
 
-      if (updateError) throw updateError;
+      if (authError) throw authError;
 
       if (path === "/signin") {
         router.push("/");

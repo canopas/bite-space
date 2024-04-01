@@ -142,7 +142,7 @@ const Settings = () => {
           } else {
             const currentDate = new Date();
             const { data: imgData, error: imgErr } = await supabase.storage
-              .from("test")
+              .from("restaurants")
               .upload(
                 currentDate.getTime() + "-" + imagesData[i].name,
                 imagesData[i]
@@ -152,7 +152,7 @@ const Settings = () => {
 
             const image_url =
               process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/test/" +
+              "/restaurants/" +
               imgData.path;
 
             new_images.push(image_url);
@@ -167,7 +167,7 @@ const Settings = () => {
 
         for (var i = 0; i < removeImages.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(removeImages[i])]);
 
           if (error) throw error;
@@ -280,19 +280,15 @@ const Settings = () => {
         .eq("id", id)
         .single();
 
-      if (restaurantErr) {
-        throw restaurantErr;
-      }
+      if (restaurantErr) throw restaurantErr;
 
       // get menus data
       const { data: menus, error: menusErr } = await supabase
         .from("menus")
         .select("id")
-        .eq("restaurant_id", restaurant?.id);
+        .eq("restaurant_id", restaurant.id);
 
-      if (menusErr) {
-        throw menusErr;
-      }
+      if (menusErr) throw menusErr;
 
       for (var i = 0; i < menus.length; i++) {
         // get dishes by menu
@@ -301,16 +297,14 @@ const Settings = () => {
           .select("id, images, video")
           .eq("menu_id", menus[i]?.id);
 
-        if (dishesErr) {
-          throw dishesErr;
-        }
+        if (dishesErr) throw dishesErr;
 
         for (var j = 0; j < dishes.length; j++) {
           // delete dish images
           if (dishes[i].images) {
             for (var i = 0; i < dishes[i].images.length; i++) {
               const { error } = await supabase.storage
-                .from("test")
+                .from("dishes")
                 .remove([getFilenameFromURL(dishes[i].images[i])]);
 
               if (error) throw error;
@@ -320,7 +314,7 @@ const Settings = () => {
           // delete dish video
           if (dishes[i].video) {
             const { error } = await supabase.storage
-              .from("test")
+              .from("dishes")
               .remove([getFilenameFromURL(dishes[i].video)]);
 
             if (error) throw error;
@@ -342,11 +336,58 @@ const Settings = () => {
           .throwOnError();
       }
 
+      // get categories data
+      const { data: categories, error: catErr } = await supabase
+        .from("categories")
+        .select("id, image")
+        .eq("restaurant_id", restaurant.id);
+
+      if (catErr) throw catErr;
+
+      // delete restaurant images
+      if (categories.length > 0) {
+        for (var i = 0; i < categories.length; i++) {
+          const { error } = await supabase.storage
+            .from("categories")
+            .remove([getFilenameFromURL(categories[i].image)]);
+
+          if (error) throw error;
+        }
+      }
+
+      // delete categories
+      await supabase
+        .from("categories")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
+      // delete from admins_roles_restaurants
+      await supabase
+        .from("admins_roles_restaurants")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
+      // delete invitations
+      await supabase
+        .from("pending_invitations")
+        .delete()
+        .eq("invited_for", restaurant.id)
+        .throwOnError();
+
+      // delete roles
+      await supabase
+        .from("roles")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
       // delete restaurant images
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(restaurant.images[i])]);
 
           if (error) throw error;
@@ -359,6 +400,8 @@ const Settings = () => {
         .delete()
         .eq("id", restaurant.id)
         .throwOnError();
+
+      window.location.replace(process.env.NEXT_PUBLIC_ADMIN_BASE_URL!);
     } catch (error) {
       console.error("Error while deleting account: ", error);
     } finally {

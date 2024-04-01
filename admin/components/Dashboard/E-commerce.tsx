@@ -22,7 +22,7 @@ const ECommerce = () => {
           const { data, error: categoriesError } = await supabase
             .from("categories")
             .select("id")
-            .neq("restaurant_id", 0);
+            .eq("restaurant_id", 0);
 
           if (categoriesError) throw categoriesError;
 

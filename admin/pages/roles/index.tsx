@@ -31,7 +31,7 @@ const RolesPage = () => {
       setRolesData(data);
       setIsDataLoading(false);
     } catch (error) {
-      console.log("Error while fetching roles: ", error);
+      console.error("Error while fetching roles: ", error);
     }
   };
 
@@ -53,7 +53,7 @@ const RolesPage = () => {
 
       setRolesCount(data.length);
     } catch (error) {
-      console.log("Error while count roles: ", error);
+      console.error("Error while count roles: ", error);
     }
   };
 

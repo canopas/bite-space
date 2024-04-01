@@ -26,7 +26,7 @@ const EditRolePage = () => {
 
         setName(data.name);
       } catch (error) {
-        console.log("Error while fetching role: ", error);
+        console.error("Error while fetching role: ", error);
       }
     };
 

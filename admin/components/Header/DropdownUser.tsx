@@ -112,10 +112,18 @@ const DropdownUser = React.memo(function Hello({ sessionUser }: any) {
   };
 
   const UserLogout = async () => {
-    setDropdownOpen(!dropdownOpen);
-    await logout("token");
-    await logout("login-info");
-    router.push("/signin");
+    try {
+      setDropdownOpen(!dropdownOpen);
+      await logout("token");
+      await logout("login-info");
+
+      const { error: err } = await supabase.auth.signOut();
+      if (err) throw err;
+
+      router.push("/signin");
+    } catch (error) {
+      console.error("Error while logout: ", error);
+    }
   };
 
   return (

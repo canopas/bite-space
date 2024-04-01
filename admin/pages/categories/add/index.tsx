@@ -59,14 +59,14 @@ const AddCategoryPage = () => {
       if (image) {
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
-          .from("test")
+          .from("categories")
           .upload(currentDate.getTime() + "-" + image.name, image);
 
         if (imgErr) throw imgErr;
 
         image_url =
           process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/test/" +
+          "/categories/" +
           imgData.path;
       }
 

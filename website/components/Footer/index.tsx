@@ -32,7 +32,7 @@ const Footer = () => {
                     Space
                   </p>
                 </Link>
-                <p className="mb-9 text-base font-medium leading-relaxed text-body-color">
+                <p className="mb-9 text-base leading-relaxed text-gray-600 dark:text-gray-300">
                   Where passion meets the palate – Welcome to a world of
                   culinary delight!
                 </p>
@@ -48,25 +48,16 @@ const Footer = () => {
                   <li>
                     <Link
                       href="/"
-                      className="mb-4 inline-block text-base font-medium text-body-color hover:text-primary"
+                      className="mb-4 inline-block text-base text-gray-600 dark:text-gray-300 hover:text-primary"
                     >
                       {" "}
-                      Privacy Policy{" "}
+                      Contact Us{" "}
                     </Link>
                   </li>
                   <li>
                     <Link
-                      href="/"
-                      className="mb-4 inline-block text-base font-medium text-body-color hover:text-primary"
-                    >
-                      {" "}
-                      Terms of Use{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/"
-                      className="mb-4 inline-block text-base font-medium text-body-color hover:text-primary"
+                      href="/about"
+                      className="mb-4 inline-block text-base text-gray-600 dark:text-gray-300 hover:text-primary"
                     >
                       {" "}
                       About{" "}
@@ -79,8 +70,8 @@ const Footer = () => {
         </div>
         <div className="py-8 bg-white dark:bg-black">
           <div className="container">
-            <p className="text-center text-base text-body-color dark:text-white">
-              Copyright by &nbsp;
+            <p className="text-center text-base text-gray-600 dark:text-white">
+              © {""}
               <a
                 href="https://canopas.com"
                 className="font-bold"

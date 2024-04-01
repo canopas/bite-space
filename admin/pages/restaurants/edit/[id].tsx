@@ -60,7 +60,7 @@ const EditRestaurantPage = () => {
           } else {
             const currentDate = new Date();
             const { data: imgData, error: imgErr } = await supabase.storage
-              .from("test")
+              .from("restaurants")
               .upload(
                 currentDate.getTime() + "-" + imagesData[i].name,
                 imagesData[i]
@@ -70,7 +70,7 @@ const EditRestaurantPage = () => {
 
             const image_url =
               process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/test/" +
+              "/restaurants/" +
               imgData.path;
 
             new_images.push(image_url);
@@ -85,7 +85,7 @@ const EditRestaurantPage = () => {
 
         for (var i = 0; i < removeImages.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(removeImages[i])]);
 
           if (error) throw error;
