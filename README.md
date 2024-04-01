@@ -16,9 +16,16 @@ A food web app for food lovers which is built in Next.js to discover popular foo
 
 🍴 <b>Browse by Categories:</b> Users can explore all available categories, making it easy to find specific types of cuisine or dishes they're interested in.
 
+🌮 <b>Browse Restaurants by Cuisines:</b> Users can browse restaurants categorized by cuisines, making it convenient to explore different culinary traditions.
+
 📋 <b>Restaurant Menus:</b> Users have access to detailed restaurant menus, allowing them to peruse dishes and make informed decisions before dining out.
 
 🤝 <b>Partner with Us:</b> Restaurant and cafe owners can easily partner with us to showcase their establishments and reach a wider audience of food enthusiasts.
+
+ℹ️ <b>About Us Page:</b> Learn more about Bite Space and its mission on our About Us page
+
+We're actively working on Bite Space 🚧 and have exciting plans for future features, <br />
+Stay tuned for these upcoming features to further enhance your Bite Space experience!
 
 ## Technologies Used
 

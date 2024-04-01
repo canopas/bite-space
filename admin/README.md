@@ -4,6 +4,8 @@ Welcome to the Bite Space Admin Panel! This is the part of our application where
 
 ## Features
 
+🔐 <b>Sign In, Sign Up, and Forgot Password:</b> Users can securely sign in to their accounts, register for new accounts, and reset forgotten passwords, ensuring a smooth and secure user experience.
+
 📁 <b>Manage Categories:</b> Organize your menu items by managing categories, making it easy for users to navigate.
 
 🍽️ <b>Manage Menus:</b> Add, edit, or remove menu items to keep your restaurant's menu up-to-date.
