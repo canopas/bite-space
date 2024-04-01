@@ -8,9 +8,9 @@ AWS.config.update({
 
 const ses = new AWS.SES({ apiVersion: "latest" });
 
-export async function sendEmail({ to, from, subject, message }: any) {
+export async function sendEmail({ to, subject, message }: any) {
   const params = {
-    Source: from,
+    Source: process.env.NEXT_PUBLIC_MAIL_SENDER!,
     Destination: { ToAddresses: [to] },
     Message: {
       Subject: { Data: subject },

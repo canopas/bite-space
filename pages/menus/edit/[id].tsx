@@ -11,6 +11,7 @@ const EditMenuPage = () => {
 
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [restaurantId, setRestaurantId] = useState<number>(0);
   const [name, setName] = useState<string>("");
 
   useEffect(() => {
@@ -18,12 +19,13 @@ const EditMenuPage = () => {
       try {
         const { data, error } = await supabase
           .from("menus")
-          .select("id, name")
+          .select("id, restaurant_id, name")
           .eq("id", id)
           .single();
 
         if (error) throw error;
 
+        setRestaurantId(data.restaurant_id);
         setName(data.name);
       } catch (error) {
         console.error("Error while fetching menu: ", error);
@@ -58,6 +60,7 @@ const EditMenuPage = () => {
 
       let { error } = await supabase.from("menus").upsert({
         id: id,
+        restaurant_id: restaurantId,
         name: name,
       });
 

@@ -74,7 +74,7 @@ const RestaurantsPage = () => {
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("restaurants")
             .remove([getFilenameFromURL(restaurant.images[i])]);
 
           if (error) throw error;

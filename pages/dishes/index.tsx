@@ -99,7 +99,7 @@ const DishesPage = () => {
       if (dish.images) {
         for (var i = 0; i < dish.images.length; i++) {
           const { error } = await supabase.storage
-            .from("test")
+            .from("dishes")
             .remove([getFilenameFromURL(dish.images[i])]);
 
           if (error) throw error;
@@ -108,7 +108,7 @@ const DishesPage = () => {
 
       if (dish.video) {
         const { error } = await supabase.storage
-          .from("test")
+          .from("dishes")
           .remove([getFilenameFromURL(dish.video)]);
 
         if (error) throw error;

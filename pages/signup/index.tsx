@@ -73,6 +73,14 @@ const SignUp = () => {
         process.env.NEXT_PUBLIC_CRYPTO_SECRET!
       ).toString();
 
+      const { data: _, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: process.env.NEXT_PUBLIC_SUPABASE_USER!,
+          password: process.env.NEXT_PUBLIC_SUPABASE_USER_PWD!,
+        });
+
+      if (authError) throw authError;
+
       const { data: user, error } = await supabase
         .from("admins")
         .insert({

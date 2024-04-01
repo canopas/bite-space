@@ -99,7 +99,7 @@ const CategoriesPage = () => {
   const deleteRecord = async (id: number, key: number) => {
     try {
       const { data, error } = await supabase.storage
-        .from("test")
+        .from("categories")
         .remove([getFilenameFromURL(categoriesData[key].image)]);
 
       if (error) throw error;

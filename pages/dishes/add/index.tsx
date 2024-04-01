@@ -77,7 +77,7 @@ const AddDishPage = () => {
         for (var i = 0; i < imagesData.length; i++) {
           const currentDate = new Date();
           const { data: imgData, error: imgErr } = await supabase.storage
-            .from("test")
+            .from("dishes")
             .upload(
               currentDate.getTime() + "-" + imagesData[i].name,
               imagesData[i]
@@ -87,7 +87,7 @@ const AddDishPage = () => {
 
           const image_url =
             process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/test/" +
+            "/dishes/" +
             imgData.path;
 
           images.push(image_url);
@@ -95,14 +95,14 @@ const AddDishPage = () => {
       } else if (videoData) {
         const currentDate = new Date();
         const { data: videoStore, error: videoErr } = await supabase.storage
-          .from("test")
+          .from("dishes")
           .upload(currentDate.getTime() + "-" + videoData.name, videoData);
 
         if (videoErr) throw videoErr;
 
         video =
           process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/test/" +
+          "/dishes/" +
           videoStore.path;
       }
 

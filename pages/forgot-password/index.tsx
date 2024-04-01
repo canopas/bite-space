@@ -73,7 +73,6 @@ const ForgotPasswordPage = () => {
 
       await sendEmail({
         to: email,
-        from: "dharti.r@canopas.com",
         subject: "Bite Space - Reset Password Link",
         message: render(
           ForgotPasswordEmail(
