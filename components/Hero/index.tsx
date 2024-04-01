@@ -163,7 +163,7 @@ const Hero = () => {
             <div className="text-center text-base font-bold sm:text-xl md:text-3xl xl:text-5xl">
               with <span className="text-primary"> every </span> bite.
             </div>
-            <div className="hidden text-center text-xs sm:block md:text-base xl:mt-5 xl:text-xl">
+            <div className="text-center text-xs md:text-base xl:mt-5 xl:text-xl">
               Where passion meets the palate – Welcome to a world of culinary
               delight!
             </div>
