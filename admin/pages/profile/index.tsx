@@ -33,35 +33,35 @@ const Profile = () => {
     }
   );
 
+  const fetchAdminData = async () => {
+    try {
+      const user = await getCookiesValue("login-info");
+
+      const { data, error } = await supabase
+        .from("admins")
+        .select("id, name, email, password, image")
+        .eq("id", user.split("/")[0])
+        .single();
+
+      if (error) throw error;
+
+      setPreviewFileData({
+        previewType: "image",
+        previewUrl: data.image,
+        previewName: "",
+        isDragging: false,
+      });
+
+      setName(data.name);
+      setEmail(data.email);
+      setImage(data.image);
+      setPassword(data.password);
+    } catch (error) {
+      console.error("Error while fetching admin: ", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const user = await getCookiesValue("login-info");
-
-        const { data, error } = await supabase
-          .from("admins")
-          .select("id, name, email, password, image")
-          .eq("id", user.split("/")[0])
-          .single();
-
-        if (error) throw error;
-
-        setPreviewFileData({
-          previewType: "image",
-          previewUrl: data.image,
-          previewName: "",
-          isDragging: false,
-        });
-
-        setName(data.name);
-        setEmail(data.email);
-        setImage(data.image);
-        setPassword(data.password);
-      } catch (error) {
-        console.error("Error while fetching admin: ", error);
-      }
-    };
-
     fetchAdminData();
   }, []);
 
@@ -121,11 +121,16 @@ const Profile = () => {
         throw err;
       }
 
+      setErrors([]);
+
+      const user = await getCookiesValue("login-info");
+
       const { error } = await supabase.from("admins").upsert({
-        id: 8,
+        id: user.split("/")[0],
         name: name,
         email: email,
         image: image_url,
+        role: user.split("/")[1],
       });
 
       if (error) throw error;
@@ -179,13 +184,15 @@ const Profile = () => {
       }
 
       if (confirm("Are you sure you want to change password?")) {
+        const user = await getCookiesValue("login-info");
+
         var encryptedPassword = CryptoJS.AES.encrypt(
           newPassword,
           process.env.NEXT_PUBLIC_CRYPTO_SECRET!
         ).toString();
 
         const { error } = await supabase.from("admins").upsert({
-          id: 8,
+          id: user.split("/")[0],
           name: name,
           email: email,
           password: encryptedPassword,
@@ -209,6 +216,10 @@ const Profile = () => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
       showChangePwdPopup(false);
     }
+  };
+
+  const resetFormData = async () => {
+    fetchAdminData();
   };
 
   return (
@@ -353,6 +364,7 @@ const Profile = () => {
                     type="button"
                     className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 disabled:cursor-wait disabled:opacity-30 dark:border-strokedark dark:text-white"
                     disabled={isFormLoading}
+                    onClick={() => resetFormData()}
                   >
                     Cancel
                   </button>

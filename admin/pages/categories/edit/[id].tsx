@@ -122,7 +122,7 @@ const EditCategoryPage = () => {
 
       router.push("/categories");
     } catch (error) {
-      console.error(error);
+      console.error("Error while adding category: ", error);
     } finally {
       setIsLoading(false);
     }

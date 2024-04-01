@@ -1,6 +1,12 @@
-# Bite Space
+<img src="./media/cta_banner.png"/>
 
-## Welcome to the Bite Space Web App – Your Ultimate Culinary Companion!
+# Bite Space – Your Ultimate Culinary Companion!
+
+Bite Space is a web application designed to help users discover new restaurants and cuisines, explore menus, and find their next favorite dish. Whether you're a foodie looking for your next culinary adventure or a restaurant owner seeking to expand your reach, FoodFinder has you covered.
+
+<a href="https://bitespace.in" target="_blank"><img src="./media/logo.png"/></a>
+
+## Welcome to the Bite Space
 
 A food web app for food lovers which is built in nextjs to discover popular foods and restaurants/cafes near you or where you want.
 

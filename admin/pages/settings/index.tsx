@@ -280,19 +280,15 @@ const Settings = () => {
         .eq("id", id)
         .single();
 
-      if (restaurantErr) {
-        throw restaurantErr;
-      }
+      if (restaurantErr) throw restaurantErr;
 
       // get menus data
       const { data: menus, error: menusErr } = await supabase
         .from("menus")
         .select("id")
-        .eq("restaurant_id", restaurant?.id);
+        .eq("restaurant_id", restaurant.id);
 
-      if (menusErr) {
-        throw menusErr;
-      }
+      if (menusErr) throw menusErr;
 
       for (var i = 0; i < menus.length; i++) {
         // get dishes by menu
@@ -301,9 +297,7 @@ const Settings = () => {
           .select("id, images, video")
           .eq("menu_id", menus[i]?.id);
 
-        if (dishesErr) {
-          throw dishesErr;
-        }
+        if (dishesErr) throw dishesErr;
 
         for (var j = 0; j < dishes.length; j++) {
           // delete dish images
@@ -342,6 +336,53 @@ const Settings = () => {
           .throwOnError();
       }
 
+      // get categories data
+      const { data: categories, error: catErr } = await supabase
+        .from("categories")
+        .select("id, image")
+        .eq("restaurant_id", restaurant.id);
+
+      if (catErr) throw catErr;
+
+      // delete restaurant images
+      if (categories.length > 0) {
+        for (var i = 0; i < categories.length; i++) {
+          const { error } = await supabase.storage
+            .from("categories")
+            .remove([getFilenameFromURL(categories[i].image)]);
+
+          if (error) throw error;
+        }
+      }
+
+      // delete categories
+      await supabase
+        .from("categories")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
+      // delete from admins_roles_restaurants
+      await supabase
+        .from("admins_roles_restaurants")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
+      // delete invitations
+      await supabase
+        .from("pending_invitations")
+        .delete()
+        .eq("invited_for", restaurant.id)
+        .throwOnError();
+
+      // delete roles
+      await supabase
+        .from("roles")
+        .delete()
+        .eq("restaurant_id", restaurant.id)
+        .throwOnError();
+
       // delete restaurant images
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
@@ -359,6 +400,8 @@ const Settings = () => {
         .delete()
         .eq("id", restaurant.id)
         .throwOnError();
+
+      window.location.replace(process.env.NEXT_PUBLIC_ADMIN_BASE_URL!);
     } catch (error) {
       console.error("Error while deleting account: ", error);
     } finally {

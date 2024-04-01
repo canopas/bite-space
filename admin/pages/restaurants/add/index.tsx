@@ -126,11 +126,7 @@ const AddRestaurantPage = () => {
         user.split("/")[0] + "/" + user.split("/")[1] + "/" + restaurant.id
       );
 
-      if (user.split("/")[1] != "admin") {
-        router.push("/");
-      } else {
-        router.push("/restaurants");
-      }
+      window.location.replace(process.env.NEXT_PUBLIC_ADMIN_BASE_URL!);
     } catch (error) {
       console.error("Error while saving restaurant data: ", error);
     } finally {

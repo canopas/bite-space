@@ -24,7 +24,11 @@ const YouMayLike = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const { data, error } = await supabase.from("restaurants").select();
+        const { data, error } = await supabase
+          .from("restaurants")
+          .select()
+          .range(0, 4);
+
         if (error) throw error;
 
         data.map((item) => {
@@ -34,7 +38,7 @@ const YouMayLike = () => {
 
         setRestaurantsData(data);
       } catch (error) {
-        console.error(error);
+        console.error("Error while fetching restaurants data: ", error);
         setError(error);
       } finally {
         setIsLoading(false);

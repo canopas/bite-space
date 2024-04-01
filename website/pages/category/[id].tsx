@@ -33,6 +33,7 @@ const Category = () => {
         const { data: categoriesData, error: categoriesError } = await supabase
           .from("categories")
           .select("id, restaurant_id, image")
+          .neq("restaurant_id", 0)
           .contains("tags", [data.name.toLowerCase()]);
 
         if (categoriesError) throw categoriesError;
