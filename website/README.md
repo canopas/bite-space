@@ -2,7 +2,7 @@
 
 Welcome to Bite Space! This is the user-facing part of our application, where users can explore restaurants, cuisines, and menus.
 
-<a href="https://bitespace.in" target="_blank"><img src="../media/logo.png"/></a>
+<img src="../media/website.gif"/>
 
 ## Features
 
@@ -17,6 +17,8 @@ Welcome to Bite Space! This is the user-facing part of our application, where us
 🤝 <b>Partner with Us:</b> Restaurant and cafe owners can easily partner with us to showcase their establishments and reach a wider audience of food enthusiasts.
 
 ℹ️ <b>About Us Page:</b> Learn more about Bite Space and its mission on our About Us page
+
+🌙 <b>Dark Mode:</b> Enjoy a visually comfortable experience with our dark mode feature, perfect for nighttime browsing or reducing eye strain.
 
 ## Getting Started
 
@@ -36,4 +38,4 @@ To get started with the Bite Space website, follow these steps:
 
 ## Support
 
-If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us We're here to help!
+If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us, We're here to help!

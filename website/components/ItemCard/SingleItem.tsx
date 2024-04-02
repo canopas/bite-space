@@ -2,11 +2,21 @@ import { ItemProps } from "@/types/card-item";
 import Image from "next/image";
 
 const SingleItem = ({ item }: { item: ItemProps }) => {
-  const { id, name, tags, image, video, price, rating, restaurants } = item;
+  const {
+    id,
+    name,
+    description,
+    tags,
+    image,
+    video,
+    price,
+    rating,
+    restaurants,
+  } = item;
   return (
     <>
       <div
-        className="wow fadeInUp relative flex h-full flex-col overflow-hidden rounded-xl bg-gradient-to-r from-white to-black shadow-one"
+        className="wow fadeInUp relative flex h-full flex-col overflow-hidden rounded-xl bg-gradient-to-r from-white to-black shadow-one bg-cover"
         style={{ backgroundImage: `url(${image})` }}
         data-wow-delay=".1s"
       >
@@ -35,22 +45,19 @@ const SingleItem = ({ item }: { item: ItemProps }) => {
           )}
         </div>
         <div
-          className={`flex-auto bg-black bg-opacity-70 p-5 text-white ${
+          className={`flex-auto bg-black bg-opacity-70 p-5 ${
             video ? "z-[1]" : ""
           }`}
         >
-          <div className="mb-4">
-            <div className="dark:text-whit block text-xl font-bold">{name}</div>
-            <p className="text-sm">{tags ? tags.join(", ") : " "}</p>
-          </div>
-          <div className="mb-4 flex justify-between border-b border-white border-opacity-20 pb-4 text-base font-medium">
-            <div className="flex gap-5">
-              <p>⭐ {rating}</p>
+          <div className="mb-4 border-b border-gray-300 border-opacity-20 pb-4 text-gray-200 dark:text-gray-300">
+            <div className="mb-3 flex justify-between text-lg font-bold">
+              <p>{name}</p>
+              <p>₹{price}</p>
             </div>
-            <div className="text-lg font-bold text-white/70">₹{price}</div>
+            <p className="text-xs">{description}</p>
           </div>
-          <div className="">
-            <div className="text-xl font-bold hover:text-primary dark:hover:text-primary sm:text-2xl">
+          <div className="text-white flex flex-col gap-2">
+            <div className="text-xl font-bold sm:text-2xl">
               {restaurants.name}
             </div>
             <p className="text-sm">{restaurants.address}</p>

@@ -24,6 +24,8 @@ A food web app for food lovers which is built in Next.js to discover popular foo
 
 ℹ️ <b>About Us Page:</b> Learn more about Bite Space and its mission on our About Us page
 
+🌙 <b>Dark Mode:</b> Enjoy a visually comfortable experience with our dark mode feature, perfect for nighttime browsing or reducing eye strain.
+
 We're actively working on Bite Space 🚧 and have exciting plans for future features, <br />
 Stay tuned for these upcoming features to further enhance your Bite Space experience!
 
@@ -41,8 +43,12 @@ The project is divided into two main parts:
 ### Website
 The website folder contains all the files related to the user-facing portion of the application. For more information on setting up and running the website, refer to the website [README](./website/README.md) file.
 
+<img src="./media/website.gif"/>
+
 ### Admin Panel
 The admin panel folder houses all the files for managing restaurant data and accounts. For detailed instructions on setting up and using the admin panel, refer to the admin panel [README](./admin/README.md) file.
+
+<img src="./media/admin_panel.gif" />
 
 ## Contributing
 We welcome contributions from the community. To contribute to this project, please follow these guidelines:
@@ -56,7 +62,7 @@ We welcome contributions from the community. To contribute to this project, plea
 
 ## Credits
 
-Bite Space is owned and maintained by the [Canopas team](https://canopas.com/). You can reach out them on Github at [canopas](https://github.com/canopas) for questions or need support. You can follow them on Twitter at [@canopassoftware](https://twitter.com/canopassoftware) for more updates. If you are interested in building web apps or designing products, please let us know. We'd love to hear from you!
+Bite Space is owned and maintained by the [Canopas team](https://canopas.com/). You can reach out to them on Github at [canopas](https://github.com/canopas) for questions or need support. You can follow them on Twitter at [@canopassoftware](https://twitter.com/canopassoftware) for more updates. If you are interested in building web apps or designing products, please let us know. We'd love to hear from you!
 
 <a href="https://canopas.com/contact" target="_blank"><img src="./media/cta_button.png" width="300" /></a>
 

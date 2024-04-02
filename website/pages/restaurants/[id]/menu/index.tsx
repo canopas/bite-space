@@ -232,7 +232,7 @@ const Menu = () => {
                                           ₹{data.price}
                                         </p>
                                       </div>
-                                      <p className="text-sm text-white/90">
+                                      <p className="text-xs text-white/90">
                                         {data.description}
                                       </p>
                                     </div>
@@ -331,72 +331,76 @@ const Menu = () => {
               </div>
               <div className="reel scrollbar-hidden">
                 <div className="reelsContainer scrollbar-hidden">
-                  {menuData.map((item: any) => (
-                    <div key={"mobile-menu-" + item.id} className="reel">
-                      <div className="reelsContainer scrollbar-hidden h-full w-full">
-                        {item.dishes.map((data: any) => (
-                          <div
-                            key={"mobile-dish-" + data.id}
-                            className="reel relative w-full"
-                          >
-                            {data.video ? (
-                              <video
-                                loop
-                                autoPlay
-                                muted
-                                playsInline
-                                webkit-playsinline
-                                className="h-full w-full rounded-xl object-cover"
-                              >
-                                <source src={data.video} type="video/mp4" />
-                              </video>
-                            ) : (
-                              <Swiper
-                                modules={[Autoplay, EffectFade]}
-                                slidesPerView={1}
-                                loop={true}
-                                autoplay={true}
-                                effect="fade"
-                                className="h-screen w-full"
-                              >
-                                {data.images.map((data: any) => (
-                                  <div key={"mobile-image-" + data}>
-                                    <SwiperSlide>
-                                      <div
-                                        className="h-full"
-                                        style={{
-                                          backgroundImage: `url(${data})`,
-                                        }}
-                                      >
-                                        <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
-                                          <Image
-                                            src={data}
-                                            height={100}
-                                            width={100}
-                                            alt="menu-dish-image"
-                                            className="w-full"
-                                          />
+                  {menuData.map((item: any) =>
+                    item.dishes.length > 0 ? (
+                      <div key={"mobile-menu-" + item.id} className="reel">
+                        <div className="reelsContainer scrollbar-hidden h-full w-full">
+                          {item.dishes.map((data: any) => (
+                            <div
+                              key={"mobile-dish-" + data.id}
+                              className="reel relative w-full"
+                            >
+                              {data.video ? (
+                                <video
+                                  loop
+                                  autoPlay
+                                  muted
+                                  playsInline
+                                  webkit-playsinline
+                                  className="h-full w-full rounded-xl object-cover"
+                                >
+                                  <source src={data.video} type="video/mp4" />
+                                </video>
+                              ) : (
+                                <Swiper
+                                  modules={[Autoplay, EffectFade]}
+                                  slidesPerView={1}
+                                  loop={true}
+                                  autoplay={true}
+                                  effect="fade"
+                                  className="h-screen w-full"
+                                >
+                                  {data.images.map((data: any) => (
+                                    <div key={"mobile-image-" + data}>
+                                      <SwiperSlide>
+                                        <div
+                                          className="h-full"
+                                          style={{
+                                            backgroundImage: `url(${data})`,
+                                          }}
+                                        >
+                                          <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
+                                            <Image
+                                              src={data}
+                                              height={100}
+                                              width={100}
+                                              alt="menu-dish-image"
+                                              className="w-full"
+                                            />
+                                          </div>
                                         </div>
-                                      </div>
-                                    </SwiperSlide>
-                                  </div>
-                                ))}
-                              </Swiper>
-                            )}
-                            <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
-                              <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
-                                <p className="min-w-2/5">{data.name}</p>
-                                <p className="text-lg text-white/70">
-                                  ₹{data.price}
-                                </p>
+                                      </SwiperSlide>
+                                    </div>
+                                  ))}
+                                </Swiper>
+                              )}
+                              <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
+                                <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
+                                  <p className="min-w-2/5">{data.name}</p>
+                                  <p className="text-lg text-white/70">
+                                    ₹{data.price}
+                                  </p>
+                                </div>
+                                <p className="">{data.description}</p>
                               </div>
-                              <p className="">{data.description}</p>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ) : (
+                      ""
+                    )
+                  )}
                 </div>
               </div>
             </div>

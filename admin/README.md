@@ -2,6 +2,8 @@
 
 Welcome to the Bite Space Admin Panel! This is the part of our application where restaurant owners can manage their data, including categories, menus, dishes, and account information.
 
+<img src="../media/admin_panel.gif" />
+
 ## Features
 
 🔐 <b>Sign In, Sign Up, and Forgot Password:</b> Users can securely sign in to their accounts, register for new accounts, and reset forgotten passwords, ensuring a smooth and secure user experience.
@@ -34,4 +36,4 @@ To get started with the Bite Space admin panel, follow these steps:
 
 ## Support
 
-If you encounter any issues or have any questions regarding the Bite Space admin panel, feel free to reach out to us We're here to help!
+If you encounter any issues or have any questions regarding the Bite Space admin panel, feel free to reach out to us, We're here to help!
