@@ -2,7 +2,7 @@
 
 # Bite Space – Your Ultimate Culinary Companion!
 
-Bite Space is a web application designed to help users discover new restaurants and cuisines, explore menus, and find their next favorite dish. Whether you're a foodie looking for your next culinary adventure or a restaurant owner seeking to expand your reach, Bite Space has you covered.
+Bite space is a platform, where users can discover new restaurants and cuisines, explore menus, and find their next favorite dish. Whether you're a foodie looking for your next culinary adventure or a restaurant owner seeking to expand your reach, Bite Space has you covered.
 
 <a href="https://bitespace.in" target="_blank"><img src="./media/logo.png"/></a>
 
@@ -59,6 +59,10 @@ We welcome contributions from the community. To contribute to this project, plea
 - Push your changes to your fork.
 - Submit a pull request with a clear description of your changes.
 - Please ensure your code follows the project's coding standards and includes appropriate documentation.
+
+## Creating Issues
+
+Found a bug or have a suggestion for improvement? We'd love to hear from you! Please create an issue on our [GitHub repository](https://github.com/canopas/bite-space/issues) and provide as much detail as possible. Your feedback helps us make Bite Space better for everyone!
 
 ## Credits
 

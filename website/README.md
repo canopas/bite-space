@@ -38,4 +38,4 @@ To get started with the Bite Space website, follow these steps:
 
 ## Support
 
-If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us, we're here to help!
+If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us at GitHub [canopas](https://github.com/canopas) or [@canopassoftware](https://twitter.com/canopassoftware), we're here to help!
