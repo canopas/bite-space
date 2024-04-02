@@ -14,7 +14,7 @@ Welcome to Bite Space! This is the user-facing part of our application, where us
 
 📋 <b>Restaurant Menus:</b> Users have access to detailed restaurant menus, allowing them to peruse dishes and make informed decisions before dining out.
 
-🤝 <b>Partner with Us:</b> Restaurant and cafe owners can easily partner with us to showcase their establishments and reach a wider audience of food enthusiasts.
+🤝 <b>Partner with Us:</b> Restaurant and café owners can easily partner with us to showcase their establishments and reach a wider audience of food enthusiasts.
 
 ℹ️ <b>About Us Page:</b> Learn more about Bite Space and its mission on our About Us page
 
@@ -38,4 +38,4 @@ To get started with the Bite Space website, follow these steps:
 
 ## Support
 
-If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us, We're here to help!
+If you encounter any issues or have any questions regarding the Bite Space website, feel free to reach out to us, we're here to help!

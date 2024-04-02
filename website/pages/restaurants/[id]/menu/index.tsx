@@ -406,7 +406,7 @@ const Menu = () => {
             </div>
           ) : (
             <div className="flex h-screen w-full items-center justify-center text-black/50 dark:text-white/70">
-              {isRestaurantLoading ? "Loading..." : "No Data Found"}
+              {isRestaurantLoading ? "Loading..." : "No dishes available at the moment."}
             </div>
           )}
         </section>

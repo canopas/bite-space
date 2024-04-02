@@ -36,4 +36,4 @@ To get started with the Bite Space admin panel, follow these steps:
 
 ## Support
 
-If you encounter any issues or have any questions regarding the Bite Space admin panel, feel free to reach out to us, We're here to help!
+If you encounter any issues or have any questions regarding the Bite Space admin panel, feel free to reach out to us, we're here to help!
