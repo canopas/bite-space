@@ -75,7 +75,7 @@ const About = () => {
               convenience evolved into a visionary project aimed at
               revolutionizing the way we approach food. From that moment of
               inspiration,{" "}
-              <span className="font-bold text-white">
+              <span className="text-black dark:text-white font-bold">
                 Bite <span className="text-primary">Space</span>
               </span>{" "}
               was born. <br /> <br /> Today, our small idea has blossomed into a

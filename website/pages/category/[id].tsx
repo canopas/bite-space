@@ -71,35 +71,30 @@ const Category = () => {
   return (
     <RootLayout>
       <section className="py-16 md:py-20 lg:py-28">
-        {categoryData ? (
+        {!isRestaurantsLoading && categoryData ? (
           <div className="container">
             <SectionTitle
               title={categoryData.name}
               paragraph={categoryData.description}
               customClass="mx-auto mb-16 mt-20 capitalize animated-fade-y"
             />
-            {/* {!isRestaurantsLoading ? (
-            <div className="animated-fade-y mb-5 grid w-full grid-cols-2 gap-5 sm:grid-cols-4 lg:w-2/3 xl:w-1/2">
-              <button className="rounded-full border border-black px-5 py-2 font-semibold transition-all duration-500 hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
-                Filter
-              </button>
-              <button className="rounded-full border border-black px-5 py-2 font-semibold transition-all duration-500 hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
-                Pure Veg
-              </button>
-              <button className="rounded-full border border-black px-5 py-2 font-semibold transition-all duration-500 hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
-                Price
-              </button>
-              <button className="rounded-full border border-black px-5 py-2 font-semibold transition-all duration-500 hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
-                Place
-              </button>
-            </div>
-          ) : (
-            ""
-          )} */}
             <Restaurant
               isLoading={isRestaurantsLoading}
               restaurantsData={restaurantsData}
             />
+          </div>
+        ) : isRestaurantsLoading ? (
+          <div className="container flex flex-col gap-10 mt-20">
+            <div className="animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 h-10 w-1/2"></div>
+            <div className="mx-auto animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 h-10 w-full"></div>
+            <div className="mt-10 grid h-80 grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:h-60 xl:grid-cols-3">
+              <div className="animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900"></div>
+              <div className="animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900"></div>
+              <div className="animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900"></div>
+              <div className="hidden animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 md:block"></div>
+              <div className="hidden animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 md:block"></div>
+              <div className="hidden animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 md:block"></div>
+            </div>
           </div>
         ) : (
           <div className="flex h-screen w-full items-center justify-center text-black/50 dark:text-white/70">
