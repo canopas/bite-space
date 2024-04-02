@@ -16,7 +16,7 @@ Welcome to Bite Space! This is the user-facing part of our application, where us
 
 🤝 <b>Partner with Us:</b> Restaurant and café owners can easily partner with us to showcase their establishments and reach a wider audience of food enthusiasts.
 
-ℹ️ <b>About Us Page:</b> Learn more about Bite Space and its mission on our About Us page
+📢 <b>About Us:</b> Learn more about Bite Space and its mission on our About Us page.
 
 🌙 <b>Dark Mode:</b> Enjoy a visually comfortable experience with our dark mode feature, perfect for nighttime browsing or reducing eye strain.
 
