@@ -17,7 +17,7 @@ const ItemCard = () => {
       try {
         const { data: dishesData, error } = await supabase
           .from("dishes")
-          .select("menu_id, name, price, images, video, tags")
+          .select("menu_id, name, description, price, images, video, tags")
           .range(0, 8);
 
         if (error) throw error;
@@ -26,7 +26,7 @@ const ItemCard = () => {
           dishesData.map(async (dish) => {
             const { data: menuData, error: menuError } = await supabase
               .from("menus")
-              .select("*, restaurants(id, name, address)")
+              .select("id, restaurant_id, restaurants(id, name, address)")
               .eq("id", dish.menu_id)
               .single();
 
@@ -65,7 +65,7 @@ const ItemCard = () => {
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
             {itemData.map((item: any) => (
               <div key={"item-card-" + item.id}>
-                <InView triggerOnce>
+                <InView triggerOnce className="animated-fade-y">
                   {({ inView, ref, entry }) => (
                     <Link
                       ref={ref}

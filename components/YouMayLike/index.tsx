@@ -27,14 +27,9 @@ const YouMayLike = () => {
         const { data, error } = await supabase
           .from("restaurants")
           .select()
-          .range(0, 4);
+          .range(0, 3);
 
         if (error) throw error;
-
-        data.map((item) => {
-          item.rating = 4.3;
-          item.reviews = 150;
-        });
 
         setRestaurantsData(data);
       } catch (error) {
@@ -107,18 +102,6 @@ const YouMayLike = () => {
                             <p className="text-sm text-gray-200 sm:text-base">
                               {item.address}
                             </p>
-                            <div className="flex items-center justify-between font-extrabold">
-                              <p className="">
-                                {item.reviews}{" "}
-                                <span className="text-sm font-normal text-gray-200">
-                                  {" "}
-                                  Reviews
-                                </span>
-                              </p>
-                              <p className="rounded-full px-4 sm:py-2">
-                                ⭐ {item.rating}
-                              </p>
-                            </div>
                           </div>
                         </div>
                       </Link>
