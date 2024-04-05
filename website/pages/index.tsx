@@ -19,7 +19,6 @@ function Home() {
         <FoodCategory />
         <ItemCard />
         <YouMayLike />
-        <Cuisines />
       </RootLayout>
     </>
   );

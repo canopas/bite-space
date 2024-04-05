@@ -21,7 +21,8 @@ const Cuisines = () => {
                   "/restaurants/" +
                   encodeURIComponent(
                     item.name.toLowerCase().replace(/\s+/g, "-")
-                  )
+                  ) +
+                  "/cuisines"
                 }
                 key={"cuisine-" + item.id}
                 className="cursor-pointer rounded-xl border p-5 text-center hover:border-primary/10 hover:bg-primary hover:bg-opacity-10"
