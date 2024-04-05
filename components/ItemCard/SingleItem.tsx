@@ -31,6 +31,7 @@ const SingleItem = ({ item }: { item: ItemProps }) => {
               className="h-full w-full object-cover"
               height={100}
               width={100}
+              loading="lazy"
             />
           )}
         </div>
@@ -41,7 +42,7 @@ const SingleItem = ({ item }: { item: ItemProps }) => {
         >
           <div className="mb-4 border-b border-gray-300 border-opacity-20 pb-4 text-gray-200 dark:text-gray-300">
             <div className="mb-3 flex justify-between text-lg font-bold">
-              <p>{name}</p>
+              <p className="text-white">{name}</p>
               <p>₹{price}</p>
             </div>
             <p className="text-xs">{description}</p>

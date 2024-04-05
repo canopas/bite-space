@@ -91,7 +91,7 @@ const Header = () => {
                         ? "text-black dark:text-white"
                         : "text-white"
                     } ${
-                      sticky || !pathname?.includes("/menu")
+                      sticky || !pathname?.includes("/restaurants")
                         ? "text-black dark:text-white"
                         : "text-white"
                     }`}
@@ -119,7 +119,7 @@ const Header = () => {
                       sticky ||
                       (pathname !== "/" &&
                         pathname !== "/about" &&
-                        !pathname?.includes("/menu"))
+                        !pathname?.includes("/restaurants"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
@@ -133,7 +133,7 @@ const Header = () => {
                       sticky ||
                       (pathname !== "/" &&
                         pathname !== "/about" &&
-                        !pathname?.includes("/menu"))
+                        !pathname?.includes("/restaurants"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
@@ -147,7 +147,7 @@ const Header = () => {
                       sticky ||
                       (pathname !== "/" &&
                         pathname !== "/about" &&
-                        !pathname?.includes("/menu"))
+                        !pathname?.includes("/restaurants"))
                         ? "bg-black dark:bg-white"
                         : "bg-white"
                     }`}
@@ -174,7 +174,7 @@ const Header = () => {
                               sticky ||
                               (pathname !== "/" &&
                                 pathname !== "/about" &&
-                                !pathname?.includes("/menu"))
+                                !pathname?.includes("/restaurants"))
                                 ? "text-black dark:text-white"
                                 : navbarOpen
                                 ? "text-black dark:text-white"
