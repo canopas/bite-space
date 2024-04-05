@@ -2,17 +2,7 @@ import { ItemProps } from "@/types/card-item";
 import Image from "next/image";
 
 const SingleItem = ({ item }: { item: ItemProps }) => {
-  const {
-    id,
-    name,
-    description,
-    tags,
-    image,
-    video,
-    price,
-    rating,
-    restaurants,
-  } = item;
+  const { name, description, image, video, price, menus } = item;
   return (
     <>
       <div
@@ -58,9 +48,9 @@ const SingleItem = ({ item }: { item: ItemProps }) => {
           </div>
           <div className="text-white flex flex-col gap-2">
             <div className="text-xl font-bold sm:text-2xl">
-              {restaurants.name}
+              {menus.restaurants.name}
             </div>
-            <p className="text-sm">{restaurants.address}</p>
+            <p className="text-sm">{menus.restaurants.address}</p>
           </div>
         </div>
       </div>

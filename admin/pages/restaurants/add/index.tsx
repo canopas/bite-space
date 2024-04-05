@@ -19,6 +19,7 @@ const AddRestaurantPage = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [phone, setPhone] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
 
   const [imagesData, setImagesData] = useState<any[]>([]);
   const images: string[] = [];
@@ -99,6 +100,7 @@ const AddRestaurantPage = () => {
           phone: parseInt(phone),
           tags: tags.map((tag) => tag.toLowerCase()),
           week_days: [],
+          is_public: isPublic,
         })
         .select()
         .single();
@@ -235,6 +237,39 @@ const AddRestaurantPage = () => {
             />
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "phone")?.message}
+            </div>
+          </div>
+          <div>
+            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              Visibility Type <span className="text-meta-1">*</span>
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="radio"
+                id="public"
+                name="is_public"
+                value="true"
+                checked={isPublic}
+                aria-checked={isPublic}
+                onChange={(e) => setIsPublic(e.target.value === "true")}
+                className="h-5 w-5 accent-orange-600 cursor-pointer"
+              />
+              <label htmlFor="public" className="cursor-pointer">
+                Public
+              </label>
+              <input
+                type="radio"
+                id="private"
+                name="is_public"
+                value="false"
+                checked={!isPublic}
+                aria-checked={!isPublic}
+                onChange={(e) => setIsPublic(e.target.value === "true")}
+                className="h-5 w-5 accent-orange-600 cursor-pointer"
+              />
+              <label htmlFor="private" className="cursor-pointer">
+                Private
+              </label>
             </div>
           </div>
           <div>

@@ -26,8 +26,9 @@ const YouMayLike = () => {
       try {
         const { data, error } = await supabase
           .from("restaurants")
-          .select()
-          .range(0, 3);
+          .select("*")
+          .eq("is_public", true)
+          .limit(4);
 
         if (error) throw error;
 
