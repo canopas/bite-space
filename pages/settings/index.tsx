@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { z } from "zod";
 import { TagsInput } from "react-tag-input-component";
-import { getCookiesValue } from "@/utils/jwt-auth";
+import { getCookiesValue, setSessionForUser } from "@/utils/jwt-auth";
 
 const week_days_list = [
   {
@@ -58,6 +58,7 @@ const Settings = () => {
   const [weekDays, setWeekDays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
+  const [isPublic, setIsPublic] = useState<boolean>(true);
 
   const [imagesData, setImagesData] = useState<any[]>([]);
   const new_images: string[] = [];
@@ -92,7 +93,7 @@ const Settings = () => {
       const { data, error } = await supabase
         .from("restaurants")
         .select(
-          "id, name, description, address, phone, images, tags, week_days, start_time, end_time"
+          "id, name, description, address, phone, images, tags, week_days, start_time, end_time, is_public"
         )
         .eq("id", user.split("/")[2])
         .single();
@@ -108,6 +109,7 @@ const Settings = () => {
       setWeekDays(data.week_days);
       setStartTime(data.start_time);
       setEndTime(data.end_time);
+      setIsPublic(data.is_public);
       isSetImages ? await manageAccountImages(data.images) : "";
     } catch (error) {
       console.error("Error while fetching data: ", error);
@@ -216,11 +218,11 @@ const Settings = () => {
           .array(z.string().min(3))
           .min(1, { message: "Tags is required" }),
         description: z.string().min(5),
-        week_days: z
-          .array(z.number().gt(0))
-          .min(1, { message: "Week days is required" }),
-        start_time: z.string().min(5),
-        end_time: z.string().min(5),
+        // week_days: z
+        //   .array(z.number().gt(0))
+        //   .min(1, { message: "Week days is required" }),
+        // start_time: z.string().min(5),
+        // end_time: z.string().min(5),
       });
 
       const response = mySchema.safeParse({
@@ -229,9 +231,9 @@ const Settings = () => {
         address: address,
         tags: tags,
         description: description,
-        week_days: weekDays,
-        start_time: startTime,
-        end_time: endTime,
+        // week_days: weekDays,
+        // start_time: startTime,
+        // end_time: endTime,
       });
 
       if (!response.success) {
@@ -253,9 +255,10 @@ const Settings = () => {
         address: address,
         tags: tags.map((tag) => tag.toLowerCase()),
         phone: parseInt(phone),
-        week_days: weekDays,
-        start_time: startTime,
-        end_time: endTime,
+        // week_days: weekDays,
+        // start_time: startTime,
+        // end_time: endTime,
+        is_public: isPublic,
       });
 
       if (error) throw error;
@@ -400,6 +403,12 @@ const Settings = () => {
         .delete()
         .eq("id", restaurant.id)
         .throwOnError();
+
+      const user = await getCookiesValue("login-info");
+      await setSessionForUser(
+        "login-info",
+        user.split("/")[0] + "/" + user.split("/")[1] + "/" + 0
+      );
 
       window.location.replace(process.env.NEXT_PUBLIC_ADMIN_BASE_URL!);
     } catch (error) {
@@ -625,6 +634,38 @@ const Settings = () => {
 
                   <div>
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                      Visibility Type <span className="text-meta-1">*</span>
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        id="public"
+                        name="is_public"
+                        value="true"
+                        checked={isPublic}
+                        onChange={(e) => setIsPublic(e.target.value === "true")}
+                        className="h-5 w-5 accent-orange-600 cursor-pointer"
+                      />
+                      <label htmlFor="public" className="cursor-pointer">
+                        Public
+                      </label>
+                      <input
+                        type="radio"
+                        id="private"
+                        name="is_public"
+                        value="false"
+                        checked={!isPublic}
+                        onChange={(e) => setIsPublic(e.target.value === "true")}
+                        className="h-5 w-5 accent-orange-600 cursor-pointer"
+                      />
+                      <label htmlFor="private" className="cursor-pointer">
+                        Private
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* <div>
+                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                       Opening Week Days <span className="text-meta-1">*</span>
                     </label>
                     <div className="flex flex-wrap gap-5">
@@ -662,9 +703,9 @@ const Settings = () => {
                           ?.message
                       }
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="flex flex-wrap gap-5.5">
+                  {/* <div className="flex flex-wrap gap-5.5">
                     <div>
                       <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                         Start Time <span className="text-meta-1">*</span>
@@ -699,7 +740,7 @@ const Settings = () => {
                         }
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="flex justify-end gap-4.5">
                     <button
