@@ -60,7 +60,14 @@ const FoodCategory = () => {
               <div key={"food-category-" + item.id}>
                 <SwiperSlide>
                   <Link
-                    href={`/category/${item.id}`}
+                    href={
+                      "/category/" +
+                      encodeURIComponent(
+                        item.name.toLowerCase().replace(/\s+/g, "-")
+                      ) +
+                      "-" +
+                      btoa(item.id.toString())
+                    }
                     className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
                   >
                     <Image

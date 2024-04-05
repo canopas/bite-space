@@ -74,7 +74,16 @@ const ItemCard = () => {
                   {({ inView, ref, entry }) => (
                     <Link
                       ref={ref}
-                      href={`/restaurants/${item.menus.restaurants.id}/menu`}
+                      href={
+                        "/restaurants/" +
+                        encodeURIComponent(
+                          item.menus.restaurants.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")
+                        ) +
+                        "-" +
+                        btoa(item.menus.restaurants.id.toString())
+                      }
                       className={`h-full w-full ${
                         inView ? "animated-fade-y" : ""
                       }`}
