@@ -15,27 +15,32 @@ const ItemCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: dishesData, error } = await supabase
-          .from("dishes")
-          .select("menu_id, name, description, price, images, video, tags")
-          .range(0, 8);
+        // Fetch menu IDs associated with public restaurants
+        const { data: menusData, error: menuError } = await supabase
+          .from("menus")
+          .select("id, restaurants(id)")
+          .eq("restaurants.is_public", true)
+          .not("restaurants", "is", null);
 
-        if (error) throw error;
+        if (menuError) throw menuError;
+
+        // Extract menu IDs
+        const menuIds = menusData.map((menu) => menu.id);
+
+        // Fetch dishes associated with the obtained menu IDs
+        const { data: dishesData, error: dishesError } = await supabase
+          .from("dishes")
+          .select("*, menus(id, restaurants(id, name, address))")
+          .in("menu_id", menuIds)
+          .limit(9);
+
+        if (dishesError) throw dishesError;
 
         const restaurant = await Promise.all(
           dishesData.map(async (dish) => {
-            const { data: menuData, error: menuError } = await supabase
-              .from("menus")
-              .select("id, restaurant_id, restaurants(id, name, address)")
-              .eq("id", dish.menu_id)
-              .single();
-
-            if (menuError) throw menuError;
-
             return {
               ...dish,
-              ...menuData,
-              image: dish.images[0],
+              image: dish.images ? dish.images[0] : "",
               rating: 4.2,
             };
           })
@@ -69,7 +74,7 @@ const ItemCard = () => {
                   {({ inView, ref, entry }) => (
                     <Link
                       ref={ref}
-                      href={`/restaurants/${item.restaurant_id}/menu`}
+                      href={`/restaurants/${item.menus.restaurants.id}/menu`}
                       className={`h-full w-full ${
                         inView ? "animated-fade-y" : ""
                       }`}

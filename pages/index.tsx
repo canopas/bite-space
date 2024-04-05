@@ -6,10 +6,11 @@ import ItemCard from "@/components/ItemCard";
 import YouMayLike from "@/components/YouMayLike";
 import { Inter } from "@next/font/google";
 import RootLayout from "./layout";
+import withScrollRestoration from "@/components/withScrollRestoration";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+function Home() {
   return (
     <>
       <RootLayout>
@@ -23,3 +24,5 @@ export default function Home() {
     </>
   );
 }
+
+export default withScrollRestoration(Home);
