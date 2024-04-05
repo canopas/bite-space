@@ -80,7 +80,11 @@ const Header = () => {
                   sticky ? "py-5" : "py-8"
                 } `}
               >
-                <Link href="/" className="text-3xl font-extrabold text-primary">
+                <Link
+                  target="_top"
+                  href="/"
+                  className="text-3xl font-extrabold text-primary"
+                >
                   <span
                     className={`${
                       sticky || (pathname !== "/" && pathname !== "/about")
@@ -162,6 +166,7 @@ const Header = () => {
                       <li key={"menu-" + menuItem.id}>
                         {menuItem.path ? (
                           <Link
+                            target="_top"
                             href={menuItem.path}
                             className={`flex py-2 text-base group-hover:opacity-70 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 text-black dark:text-white ${
                               pathname == menuItem.path ? "font-extrabold" : ""

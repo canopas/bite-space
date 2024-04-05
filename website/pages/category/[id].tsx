@@ -45,23 +45,40 @@ const Category = () => {
                 .from("restaurants")
                 .select("id, name, address")
                 .eq("id", category.restaurant_id)
+                .eq("is_public", true)
                 .single();
 
-            if (restaurantError) throw restaurantError;
+            if (restaurantError)
+              console.error(
+                "Error fetching restaurant details:",
+                restaurantError
+              );
 
-            return {
-              ...restaurantData,
-              image: category.image,
-              rating: 0,
-              reviews: 0,
-            };
+            if (restaurantData) {
+              return {
+                ...restaurantData,
+                image: category.image,
+                rating: 0,
+                reviews: 0,
+              };
+            } else {
+              return {
+                id: 0,
+                name: "",
+                address: "",
+                image: category.image,
+                rating: 0,
+                reviews: 0,
+              };
+            }
           })
         );
 
         setRestaurantsData(restaurant);
-        setIsRestaurantsLoading(false);
       } catch (error) {
         console.error("Error fetching category data:", error);
+      } finally {
+        setIsRestaurantsLoading(false);
       }
     };
 

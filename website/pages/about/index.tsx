@@ -1,5 +1,6 @@
 "use client";
 
+import withScrollRestoration from "@/components/withScrollRestoration";
 import RootLayout from "@/pages/layout";
 import Image from "next/image";
 import Link from "next/link";
@@ -85,7 +86,7 @@ const About = () => {
             </p>
           </div>
         </div>
-        <div className="bg-primary bg-opacity-30 flex flex-col justify-center items-center gap-10 py-16 md:py-20 lg:py-32 my-20">
+        <div className="bg-primary bg-opacity-30 flex flex-col justify-center items-center gap-10 py-16 md:py-20 lg:py-32 my-20 select-none">
           <p className="text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold">
             Ready to embark on a culinary adventure with us?
           </p>
@@ -140,4 +141,4 @@ const About = () => {
   );
 };
 
-export default About;
+export default withScrollRestoration(About);

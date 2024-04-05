@@ -106,7 +106,7 @@ const Menu = () => {
                       <div className="text-3xl font-bold text-white sm:text-4xl md:text-[50px]">
                         {restaurantData.name}
                       </div>
-                      <p className="mt-4 text-base !leading-relaxed text-white md:text-lg">
+                      <p className="mt-4 text-base !leading-relaxed text-white md:text-lg select-none">
                         {restaurantData.description}
                       </p>
                       <div className="mt-10 flex w-full flex-col gap-5 text-xs text-white sm:text-base lg:flex-row">
@@ -232,7 +232,7 @@ const Menu = () => {
                                           ₹{data.price}
                                         </p>
                                       </div>
-                                      <p className="text-xs text-white/90">
+                                      <p className="text-xs text-white/90 select-none">
                                         {data.description}
                                       </p>
                                     </div>
@@ -279,7 +279,7 @@ const Menu = () => {
                       <div className="text-3xl font-bold text-white">
                         {restaurantData.name}
                       </div>
-                      <p className="mt-4 border-b border-white/10 pb-5 text-base text-white">
+                      <p className="mt-4 border-b border-white/10 pb-5 text-base text-white select-none">
                         {restaurantData.description}
                       </p>
                       <div className="mt-10 flex w-full flex-col gap-5 text-xs text-white">
@@ -391,7 +391,9 @@ const Menu = () => {
                                     ₹{data.price}
                                   </p>
                                 </div>
-                                <p className="">{data.description}</p>
+                                <p className="select-none">
+                                  {data.description}
+                                </p>
                               </div>
                             </div>
                           ))}
@@ -406,7 +408,9 @@ const Menu = () => {
             </div>
           ) : (
             <div className="flex h-screen w-full items-center justify-center text-black/50 dark:text-white/70">
-              {isRestaurantLoading ? "Loading..." : "No dishes available at the moment."}
+              {isRestaurantLoading
+                ? "Loading..."
+                : "No dishes available at the moment."}
             </div>
           )}
         </section>
