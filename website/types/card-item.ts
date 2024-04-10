@@ -5,6 +5,7 @@ export type ItemProps = {
   tags?: string[];
   image: string;
   video?: string;
+  video_thumbnail?: string;
   price: number;
   rating: number;
   menus: {
