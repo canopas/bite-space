@@ -14,6 +14,8 @@ import { InView } from "react-intersection-observer";
 import { useRouter } from "next/router";
 import RootLayout from "@/pages/layout";
 import NotFound from "@/components/PageNotFound";
+import VideoPlayer from "@/components/VideoPlayer";
+import MenuDish from "@/components/SkeletonPlaceholders/MenuDish";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -21,6 +23,7 @@ const RestaurantMenu = () => {
   const suffix = id?.toString().substring(id?.lastIndexOf("-") + 1);
 
   const [isRestaurantLoading, setIsRestaurantLoading] = useState(true);
+  const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState<any | null>(null);
   const [menuData, setMenuData] = useState<any[]>([]);
 
@@ -59,7 +62,9 @@ const RestaurantMenu = () => {
             menusData.map(async (menu) => {
               const { data: dishData, error: dishError } = await supabase
                 .from("dishes")
-                .select("id, name, description, price, images, video")
+                .select(
+                  "id, name, description, price, images, video, video_thumbnail"
+                )
                 .eq("menu_id", menu.id);
 
               if (dishError) {
@@ -76,6 +81,8 @@ const RestaurantMenu = () => {
           setMenuData(dishes);
         } catch (error) {
           console.error("Error fetching dishes data:", error);
+        } finally {
+          setIsDishesLoading(false);
         }
       }
     };
@@ -178,70 +185,75 @@ const RestaurantMenu = () => {
                             <p className="border-b border-black/10 pb-2 text-3xl font-bold dark:border-white/30">
                               {item.name}
                             </p>
-                            <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                              {item.dishes.map((data: any) => (
-                                <div
-                                  key={"desktop-dish-" + data.id}
-                                  id={"desktop-dish-" + data.id}
-                                  className="animated-fade-y relative w-full"
-                                >
-                                  {data.video ? (
-                                    <video
-                                      loop
-                                      autoPlay
-                                      muted
-                                      playsInline
-                                      webkit-playsinline
-                                      className="h-[30rem] w-full rounded-xl object-cover"
-                                    >
-                                      <source
+                            {isDishesLoading ? (
+                              <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                <MenuDish classes="h-[30rem]" />
+                                <MenuDish classes="h-[30rem]" />
+                                <MenuDish classes="h-[30rem]" />
+                                <MenuDish classes="h-[30rem]" />
+                              </div>
+                            ) : (
+                              <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {item.dishes.map((data: any) => (
+                                  <div
+                                    key={"desktop-dish-" + data.id}
+                                    id={"desktop-dish-" + data.id}
+                                    className="animated-fade-y relative w-full"
+                                  >
+                                    {data.video ? (
+                                      <VideoPlayer
                                         src={data.video}
-                                        type="video/mp4"
+                                        poster={data.video_thumbnail}
+                                        classes={
+                                          "h-[30rem] w-full rounded-xl object-cover"
+                                        }
                                       />
-                                    </video>
-                                  ) : (
-                                    <Swiper
-                                      modules={[Autoplay, EffectFade]}
-                                      slidesPerView={1}
-                                      loop={true}
-                                      autoplay={true}
-                                      effect="fade"
-                                      className="h-[30rem] w-full rounded-xl"
-                                    >
-                                      {data.images.map((data: any) => (
-                                        <div
-                                          key={"desktop-image-" + data}
-                                          id={"image-" + data}
-                                        >
-                                          <SwiperSlide>
-                                            <Image
-                                              src={data}
-                                              height={100}
-                                              width={100}
-                                              alt="menu-dish-image"
-                                              className="h-full w-full object-cover"
-                                            />
-                                          </SwiperSlide>
+                                    ) : (
+                                      <Swiper
+                                        modules={[Autoplay, EffectFade]}
+                                        slidesPerView={1}
+                                        loop={true}
+                                        autoplay={true}
+                                        effect="fade"
+                                        className="h-[30rem] w-full rounded-xl"
+                                      >
+                                        {data.images.map((data: any) => (
+                                          <div
+                                            key={"desktop-image-" + data}
+                                            id={"image-" + data}
+                                          >
+                                            <SwiperSlide>
+                                              <Image
+                                                src={data}
+                                                height={100}
+                                                width={100}
+                                                alt="menu-dish-image"
+                                                className="h-full w-full object-cover"
+                                              />
+                                            </SwiperSlide>
+                                          </div>
+                                        ))}
+                                      </Swiper>
+                                    )}
+                                    <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                      <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
+                                        <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                          <p className="min-w-2/5 text-white">
+                                            {data.name}
+                                          </p>
+                                          <p className="text-lg">
+                                            ₹{data.price}
+                                          </p>
                                         </div>
-                                      ))}
-                                    </Swiper>
-                                  )}
-                                  <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                                    <div className="absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
-                                      <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
-                                        <p className="min-w-2/5 text-white">
-                                          {data.name}
+                                        <p className="text-xs">
+                                          {data.description}
                                         </p>
-                                        <p className="text-lg">₹{data.price}</p>
                                       </div>
-                                      <p className="text-xs">
-                                        {data.description}
-                                      </p>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
-                            </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
                       </InView>
@@ -330,68 +342,71 @@ const RestaurantMenu = () => {
                   {menuData.map((item: any) =>
                     item.dishes.length > 0 ? (
                       <div key={"mobile-menu-" + item.id} className="reel">
-                        <div className="reelsContainer scrollbar-hidden h-full w-full">
-                          {item.dishes.map((data: any) => (
-                            <div
-                              key={"mobile-dish-" + data.id}
-                              className="reel relative w-full"
-                            >
-                              {data.video ? (
-                                <video
-                                  loop
-                                  autoPlay
-                                  muted
-                                  playsInline
-                                  webkit-playsinline
-                                  className="h-full w-full rounded-xl object-cover"
-                                >
-                                  <source src={data.video} type="video/mp4" />
-                                </video>
-                              ) : (
-                                <Swiper
-                                  modules={[Autoplay, EffectFade]}
-                                  slidesPerView={1}
-                                  loop={true}
-                                  autoplay={true}
-                                  effect="fade"
-                                  className="h-screen w-full"
-                                >
-                                  {data.images.map((data: any) => (
-                                    <div key={"mobile-image-" + data}>
-                                      <SwiperSlide>
-                                        <div
-                                          className="h-full"
-                                          style={{
-                                            backgroundImage: `url(${data})`,
-                                          }}
-                                        >
-                                          <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
-                                            <Image
-                                              src={data}
-                                              height={100}
-                                              width={100}
-                                              alt="menu-dish-image"
-                                              className="w-full"
-                                            />
+                        {isDishesLoading ? (
+                          <div className="reelsContainer scrollbar-hidden h-full w-full">
+                            <MenuDish classes="reel" />
+                          </div>
+                        ) : (
+                          <div className="reelsContainer scrollbar-hidden h-full w-full">
+                            {item.dishes.map((data: any) => (
+                              <div
+                                key={"mobile-dish-" + data.id}
+                                className="reel relative w-full"
+                              >
+                                {data.video ? (
+                                  <VideoPlayer
+                                    src={data.video}
+                                    poster={data.video_thumbnail}
+                                    classes={
+                                      "h-full w-full rounded-xl object-cover"
+                                    }
+                                  />
+                                ) : (
+                                  <Swiper
+                                    modules={[Autoplay, EffectFade]}
+                                    slidesPerView={1}
+                                    loop={true}
+                                    autoplay={true}
+                                    effect="fade"
+                                    className="h-screen w-full"
+                                  >
+                                    {data.images.map((data: any) => (
+                                      <div key={"mobile-image-" + data}>
+                                        <SwiperSlide>
+                                          <div
+                                            className="h-full"
+                                            style={{
+                                              backgroundImage: `url(${data})`,
+                                            }}
+                                          >
+                                            <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
+                                              <Image
+                                                src={data}
+                                                height={100}
+                                                width={100}
+                                                alt="menu-dish-image"
+                                                className="w-full"
+                                              />
+                                            </div>
                                           </div>
-                                        </div>
-                                      </SwiperSlide>
-                                    </div>
-                                  ))}
-                                </Swiper>
-                              )}
-                              <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
-                                <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
-                                  <p className="min-w-2/5">{data.name}</p>
-                                  <p className="text-lg text-white/70">
-                                    ₹{data.price}
-                                  </p>
+                                        </SwiperSlide>
+                                      </div>
+                                    ))}
+                                  </Swiper>
+                                )}
+                                <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
+                                  <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
+                                    <p className="min-w-2/5">{data.name}</p>
+                                    <p className="text-lg text-white/70">
+                                      ₹{data.price}
+                                    </p>
+                                  </div>
+                                  <p>{data.description}</p>
                                 </div>
-                                <p className="">{data.description}</p>
                               </div>
-                            </div>
-                          ))}
-                        </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ) : (
                       ""

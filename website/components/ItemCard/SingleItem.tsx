@@ -1,8 +1,10 @@
 import { ItemProps } from "@/types/card-item";
 import Image from "next/image";
+import VideoPlayer from "../VideoPlayer";
 
 const SingleItem = ({ item }: { item: ItemProps }) => {
-  const { name, description, image, video, price, menus } = item;
+  const { name, description, image, video, video_thumbnail, price, menus } =
+    item;
   return (
     <>
       <div
@@ -11,19 +13,12 @@ const SingleItem = ({ item }: { item: ItemProps }) => {
         data-wow-delay=".1s"
       >
         <div className="relative block h-[20rem] w-full">
-          {video ? (
-            <video
-              loop
-              autoPlay
-              muted
-              playsInline
-              webkit-playsinline
-              className={` w-full object-cover ${
-                video ? "h-[35rem]" : "h-full"
-              }`}
-            >
-              <source src={video} type="video/mp4" />
-            </video>
+          {video && video_thumbnail ? (
+            <VideoPlayer
+              src={video}
+              poster={video_thumbnail}
+              classes={"h-[35rem] w-full rounded-xl object-cover"}
+            />
           ) : (
             <Image
               src={image}
