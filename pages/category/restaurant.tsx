@@ -31,26 +31,13 @@ const Restaurant = ({
                 key={"may-like-" + item.id}
                 className="animated-fade-y group relative h-full cursor-pointer"
               >
-                {item.video ? (
-                  <video
-                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    webkit-playsinline
-                  >
-                    <source src={item.video} type="video/mp4" />
-                  </video>
-                ) : (
-                  <Image
-                    src={item.image as string}
-                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
-                    alt="item-image"
-                    height={100}
-                    width={100}
-                  />
-                )}
+                <Image
+                  src={item.image as string}
+                  className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
+                  alt="item-image"
+                  height={100}
+                  width={100}
+                />
                 <p className="absolute -mt-14 w-full bg-black bg-opacity-35 pb-2 pl-5 pt-2 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
                   {item.name}
                 </p>
@@ -60,7 +47,7 @@ const Restaurant = ({
                 <div className="absolute bottom-0 flex w-full flex-col gap-2">
                   <div className="flex items-center justify-between font-extrabold">
                     {item.reviews > 0 ? (
-                      <p className="">
+                      <p>
                         {item.reviews}{" "}
                         <span className="text-sm font-normal"> Reviews</span>
                       </p>
