@@ -7,6 +7,7 @@ import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
+import VideoPlayer from "@/components/VideoPlayer";
 
 const DishesPage = () => {
   const [restaurantId, setRestaurantId] = useState<number>(0);
@@ -38,7 +39,9 @@ const DishesPage = () => {
 
       const { data: dishes, error } = await supabase
         .from("dishes")
-        .select(`id, name, images, video, price, menus(*), categories(name)`)
+        .select(
+          `id, name, images, video, video_thumbnail, price, menus(*), categories(name)`
+        )
         .range((page - 1) * pageSize, pageSize * page - 1)
         .in("menu_id", arrayOfIds);
 
@@ -207,14 +210,11 @@ const DishesPage = () => {
                         <div className="flex flex-col gap-4 pl-5 items-center">
                           <div className="h-25 w-17 rounded-md">
                             {dish.video ? (
-                              <video
-                                loop
-                                autoPlay
-                                muted
-                                className={` h-full w-full object-cover`}
-                              >
-                                <source src={dish.video} type="video/mp4" />
-                              </video>
+                              <VideoPlayer
+                                src={dish.video}
+                                poster={dish.video_thumbnail}
+                                classes={"h-full w-full object-cover"}
+                              />
                             ) : (
                               <Image
                                 src={dish.images[0]}
