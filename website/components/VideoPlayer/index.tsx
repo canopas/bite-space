@@ -30,7 +30,7 @@ const VideoPlayer = ({ src, poster, classes }: VideoPlayerProps) => {
         autoPlay
         muted
         playsInline
-        webkit-playsinline
+        webkit-playsinline="true"
         className={`${classes} transition duration-500 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}

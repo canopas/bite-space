@@ -8,6 +8,69 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 // import "./typewriter";
 
+const banners = [
+  {
+    400: "/images/banner/1-400w.webp",
+    800: "/images/banner/1-800w.webp",
+    1600: "/images/banner/1.webp",
+    lazy: false,
+  },
+  {
+    400: "/images/banner/2-400w.webp",
+    800: "/images/banner/2-800w.webp",
+    1600: "/images/banner/2.webp",
+    lazy: false,
+  },
+  {
+    400: "/images/banner/3-400w.webp",
+    800: "/images/banner/3-800w.webp",
+    1600: "/images/banner/3.webp",
+    lazy: false,
+  },
+  {
+    400: "/images/banner/4-400w.webp",
+    800: "/images/banner/4-800w.webp",
+    1600: "/images/banner/4.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/5-400w.webp",
+    800: "/images/banner/5-800w.webp",
+    1600: "/images/banner/5.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/6-400w.webp",
+    800: "/images/banner/6-800w.webp",
+    1600: "/images/banner/6.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/7-400w.webp",
+    800: "/images/banner/7-800w.webp",
+    1600: "/images/banner/7.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/8-400w.webp",
+    800: "/images/banner/8-800w.webp",
+    1600: "/images/banner/8.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/9-400w.webp",
+    800: "/images/banner/9-800w.webp",
+    1600: "/images/banner/9.webp",
+    lazy: true,
+  },
+  {
+    400: "/images/banner/10-400w.webp",
+    800: "/images/banner/10-800w.webp",
+    1600: "/images/banner/10.webp",
+    lazy: true,
+  },
+];
+
 const Hero = () => {
   return (
     <>
@@ -20,139 +83,24 @@ const Hero = () => {
             autoplay={true}
             className="h-screen"
           >
-            <SwiperSlide>
-              <Image
-                src="/images/banner/1.webp"
-                className="h-full w-full object-cover"
-                alt="banner-slide-image"
-                height={100}
-                width={100}
-                priority
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="h-full w-full">
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/2.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                  <Image
-                    src="/images/banner/3.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                </div>
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/4.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                  <Image
-                    src="/images/banner/5.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="h-full w-full">
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/6.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                  <Image
-                    src="/images/banner/7.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                </div>
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/8.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                  <Image
-                    src="/images/banner/9.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                    priority
-                  />
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="h-full w-full">
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/10.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                  />
-                  <Image
-                    src="/images/banner/11.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                  />
-                </div>
-                <div className="flex h-1/2 w-full">
-                  <Image
-                    src="/images/banner/12.webp"
-                    className="h-full w-3/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                  />
-                  <Image
-                    src="/images/banner/13.webp"
-                    className="h-full w-1/4 object-cover"
-                    alt="banner-slide-image"
-                    height={50}
-                    width={50}
-                  />
-                </div>
-              </div>
-            </SwiperSlide>
+            {banners.map((banner, key) => (
+              <SwiperSlide key={key}>
+                <img
+                  src={banner[400]}
+                  srcSet={`${banner[400]} 400w, ${banner[800]} 800w, ${banner[1600]} 1600w`}
+                  className="h-full w-full object-cover"
+                  alt="banner-slide-image"
+                  loading={banner.lazy ? "lazy" : "eager"}
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
       </div>
       <div className="w-full">
         <div className="absolute top-0 z-10 h-screen w-full bg-black bg-opacity-60">
-          <div className="flex h-full select-none flex-col gap-2 capitalize text-white md:gap-5">
-            <div className="flex h-1/2 items-end justify-center text-xl font-extrabold sm:text-3xl md:text-5xl xl:text-7xl">
+          <div className="flex h-full select-none flex-col capitalize text-white gap-5">
+            <div className="flex flex-col xs:flex-row h-1/2 items-center justify-end xs:items-end xs:justify-center font-extrabold text-3xl md:text-5xl xl:text-7xl">
               Elevate your{" "}
               <span className="px-1 text-primary sm:px-2 md:px-4">
                 {" "}
@@ -163,7 +111,7 @@ const Hero = () => {
             <div className="text-center text-base font-bold sm:text-xl md:text-3xl xl:text-5xl">
               with <span className="text-primary"> every </span> bite.
             </div>
-            <div className="text-center text-xs md:text-base xl:mt-5 xl:text-xl">
+            <div className="text-center text-xs md:text-base xl:mt-5 xl:text-xl px-10 xs:px-0">
               Where passion meets the palate – Welcome to a world of culinary
               delight!
             </div>

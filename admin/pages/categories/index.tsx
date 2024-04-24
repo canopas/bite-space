@@ -44,6 +44,7 @@ const CategoriesPage = () => {
       const query = supabase
         .from("categories")
         .select("id, restaurant_id, name, image, tags")
+        .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1);
 
       if (role == "super-admin") {

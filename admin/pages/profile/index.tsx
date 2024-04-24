@@ -4,7 +4,11 @@ import Image from "next/image";
 import supabase from "@/utils/supabase";
 import { useEffect, useState } from "react";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
-import { getFilenameFromURL } from "@/utils/image";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
 import { z } from "zod";
 import CryptoJS from "crypto-js";
 import { getCookiesValue } from "@/utils/jwt-auth";
@@ -82,10 +86,17 @@ const Profile = () => {
       let image_url = image;
 
       if (imageData) {
+        const webpBlob = await convertToWebP(imageData);
+
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
           .from("admins")
-          .upload(currentDate.getTime() + "-" + imageData.name, imageData);
+          .upload(
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(imageData.name),
+            webpBlob
+          );
 
         if (imgErr) throw imgErr;
 

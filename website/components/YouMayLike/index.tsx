@@ -24,6 +24,7 @@ const YouMayLike = () => {
           .from("restaurants")
           .select("*")
           .eq("is_public", true)
+          .order('id', { ascending: true })
           .limit(4);
 
         if (error) return error;
@@ -48,9 +49,9 @@ const YouMayLike = () => {
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
-            {restaurants.map((item: any) => (
+            {restaurants.map((item: any, key: any) => (
               <Link
-                key={"may-like-" + item.id}
+                key={key}
                 href={
                   "/restaurants/" +
                   encodeURIComponent(
@@ -69,19 +70,16 @@ const YouMayLike = () => {
                   effect="fade"
                   className="sm:h-[25rem]"
                 >
-                  {item.images.map((data: any) => (
-                    <div key={"image-" + data}>
-                      <SwiperSlide>
-                        <Image
-                          src={data}
-                          height={100}
-                          width={100}
-                          className="h-full w-full object-cover"
-                          alt="item-image"
-                          loading="lazy"
-                        />
-                      </SwiperSlide>
-                    </div>
+                  {item.images.map((data: any, key: any) => (
+                    <SwiperSlide key={key}>
+                      <Image
+                        src={data}
+                        fill
+                        className="h-full w-full object-cover"
+                        alt="item-image"
+                        loading="lazy"
+                      />
+                    </SwiperSlide>
                   ))}
                 </Swiper>
                 <div className="absolute top-0 z-[1] h-full w-full bg-gradient-to-t from-black/70 to-transparent md:via-transparent">

@@ -30,6 +30,7 @@ const PendingInvitationsPage = () => {
         .select(
           "*, admins(name, email), restaurants(id, name), roles(id, name)"
         )
+        .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("email", userData.email);
 
