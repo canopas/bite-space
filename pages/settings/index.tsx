@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import supabase from "@/utils/supabase";
-import { getFilenameFromURL } from "@/utils/image";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
 import { useEffect, useState } from "react";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { z } from "zod";
@@ -137,17 +141,21 @@ const Settings = () => {
 
       let arr: string[] = [];
       if (imagesData) {
+        const currentDate = new Date();
         for (var i = 0; i < imagesData.length; i++) {
           if (imagesData[i].previewUrl) {
             arr.push(imagesData[i].previewUrl);
             new_images.push(imagesData[i].previewUrl);
           } else {
-            const currentDate = new Date();
+            const webpBlob = await convertToWebP(imagesData[i]);
+
             const { data: imgData, error: imgErr } = await supabase.storage
               .from("restaurants")
               .upload(
-                currentDate.getTime() + "-" + imagesData[i].name,
-                imagesData[i]
+                currentDate.getTime() +
+                  "-" +
+                  changeFileExtensionToWebpExtension(imagesData[i].name),
+                webpBlob
               );
 
             if (imgErr) throw imgErr;

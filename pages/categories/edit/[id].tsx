@@ -6,7 +6,11 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/router";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
-import { getFilenameFromURL } from "@/utils/image";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
 import { TagsInput } from "react-tag-input-component";
 
 const EditCategoryPage = () => {
@@ -72,10 +76,17 @@ const EditCategoryPage = () => {
       let image_url = image;
 
       if (imageData) {
+        const webpBlob = await convertToWebP(imageData);
+
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
           .from("categories")
-          .upload(currentDate.getTime() + "-" + imageData.name, imageData);
+          .upload(
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(imageData.name),
+            webpBlob
+          );
 
         if (imgErr) throw imgErr;
 
