@@ -14,12 +14,12 @@ import SectionTitle from "@/components/Common/SectionTitle";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import { useRouter } from "next/router";
-import RootLayout from "@/pages/layout";
+import RootLayout from "@/components/Layout/root";
 import NoDataFound from "@/components/NoDataFound";
 
 const CuisineRestaurant = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { restaurant } = router.query;
 
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
   const [restaurants, setRestaurantsData] = useState<any[]>([]);
@@ -27,11 +27,11 @@ const CuisineRestaurant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (id) {
+        if (restaurant) {
           const { data, error } = await supabase
             .from("restaurants")
             .select("*")
-            .contains("tags", [(id as string)?.replace(/-/g, " ")]);
+            .contains("tags", [(restaurant as string)?.replace(/-/g, " ")]);
 
           if (error) throw error;
 
@@ -45,7 +45,7 @@ const CuisineRestaurant = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [restaurant]);
 
   return (
     <>
@@ -53,7 +53,7 @@ const CuisineRestaurant = () => {
         <section className="py-16 md:py-20 lg:py-28">
           <div className="container">
             <SectionTitle
-              title={(id as string)?.replace(/-/g, " ")}
+              title={(restaurant as string)?.replace(/-/g, " ")}
               paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
               customClass="mb-28 mt-20 capitalize animated-fade-y"
             />
