@@ -86,8 +86,7 @@ const CuisineRestaurant = () => {
                           <SwiperSlide>
                             <Image
                               src={data}
-                              height={100}
-                              width={100}
+                              fill
                               className="h-full w-full object-cover"
                               alt="item-image"
                             />

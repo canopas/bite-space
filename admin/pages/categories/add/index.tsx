@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getCookiesValue } from "@/utils/jwt-auth";
 import { TagsInput } from "react-tag-input-component";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+} from "@/utils/image";
 
 const AddCategoryPage = () => {
   const router = useRouter();
@@ -57,10 +61,17 @@ const AddCategoryPage = () => {
       let image_url: string = "";
 
       if (image) {
+        const webpBlob = await convertToWebP(image);
+
         const currentDate = new Date();
         const { data: imgData, error: imgErr } = await supabase.storage
           .from("categories")
-          .upload(currentDate.getTime() + "-" + image.name, image);
+          .upload(
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(image.name),
+            webpBlob
+          );
 
         if (imgErr) throw imgErr;
 

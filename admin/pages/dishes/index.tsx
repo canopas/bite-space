@@ -42,6 +42,7 @@ const DishesPage = () => {
         .select(
           `id, name, images, video, video_thumbnail, price, menus(*), categories(name)`
         )
+        .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .in("menu_id", arrayOfIds);
 

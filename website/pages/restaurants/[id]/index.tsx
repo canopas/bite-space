@@ -102,8 +102,7 @@ const RestaurantMenu = () => {
                   {restaurantData.images ? (
                     <Image
                       src={restaurantData.images[0]}
-                      height={100}
-                      width={100}
+                      fill
                       alt="restaurant-cover-image"
                       className="h-full w-full object-cover"
                     />
@@ -225,8 +224,7 @@ const RestaurantMenu = () => {
                                             <SwiperSlide>
                                               <Image
                                                 src={data}
-                                                height={100}
-                                                width={100}
+                                                fill
                                                 alt="menu-dish-image"
                                                 className="h-full w-full object-cover"
                                               />
@@ -272,8 +270,7 @@ const RestaurantMenu = () => {
                   {restaurantData.images ? (
                     <Image
                       src={restaurantData.images[0]}
-                      height={100}
-                      width={100}
+                      fill
                       alt="restaurant-cover-image"
                       className="h-full w-full object-cover"
                     />
@@ -382,8 +379,7 @@ const RestaurantMenu = () => {
                                             <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
                                               <Image
                                                 src={data}
-                                                height={100}
-                                                width={100}
+                                                fill
                                                 alt="menu-dish-image"
                                                 className="w-full"
                                               />

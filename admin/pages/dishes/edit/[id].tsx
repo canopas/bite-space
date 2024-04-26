@@ -8,7 +8,11 @@ import { useRouter } from "next/router";
 import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
-import { getFilenameFromURL } from "@/utils/image";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 interface PreviewData {
@@ -101,12 +105,16 @@ const EditDishPage = () => {
             arr.push(imagesData[i].previewUrl);
             new_images.push(imagesData[i].previewUrl);
           } else {
+            const webpBlob = await convertToWebP(imagesData[i]);
+
             const currentDate = new Date();
             const { data: imgData, error: imgErr } = await supabase.storage
               .from("dishes")
               .upload(
-                currentDate.getTime() + "-" + imagesData[i].name,
-                imagesData[i]
+                currentDate.getTime() +
+                  "-" +
+                  changeFileExtensionToWebpExtension(imagesData[i].name),
+                webpBlob
               );
 
             if (imgErr) throw imgErr;
@@ -173,11 +181,15 @@ const EditDishPage = () => {
         }
 
         if (thumbnailData) {
+          const webpBlob = await convertToWebP(thumbnailData);
+
           const { data: imgData, error: imgErr } = await supabase.storage
             .from("dishes")
             .upload(
-              currentDate.getTime() + "-" + thumbnailData.name,
-              thumbnailData
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(thumbnailData.name),
+              webpBlob
             );
 
           if (imgErr) throw imgErr;
@@ -272,7 +284,7 @@ const EditDishPage = () => {
 
         const { data: categories, error: categoryError } = await supabase
           .from("categories")
-          .select()
+          .select("id, name")
           .eq("restaurant_id", restaurantId);
 
         if (categoryError) throw categoryError;
@@ -344,7 +356,7 @@ const EditDishPage = () => {
     setCookiesInfo();
     fetchOptionsData();
     fetchDishData();
-  }, [id, restaurantId]);
+  }, []);
 
   const handleFilesUploading = async (files: any) => {
     setImagesData(files);

@@ -9,6 +9,10 @@ import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getCookiesValue } from "@/utils/jwt-auth";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+} from "@/utils/image";
 
 const AddDishPage = () => {
   const router = useRouter();
@@ -92,14 +96,19 @@ const AddDishPage = () => {
           : z.null(),
       });
 
+      const currentDate = new Date();
+
       if (isImagesChecked && imagesData) {
         for (var i = 0; i < imagesData.length; i++) {
-          const currentDate = new Date();
+          const webpBlob = await convertToWebP(imagesData[i]);
+
           const { data: imgData, error: imgErr } = await supabase.storage
             .from("dishes")
             .upload(
-              currentDate.getTime() + "-" + imagesData[i].name,
-              imagesData[i]
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(imagesData[i].name),
+              webpBlob
             );
 
           if (imgErr) throw imgErr;

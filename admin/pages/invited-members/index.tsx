@@ -23,6 +23,7 @@ const InvitedMembersPage = () => {
       const { data, error } = await supabase
         .from("pending_invitations")
         .select("*, admins(name, email), roles(name)")
+        .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("invited_for", user.split("/")[2]);
 
