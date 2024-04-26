@@ -53,7 +53,7 @@ const CuisineRestaurant = () => {
         <section className="py-16 md:py-20 lg:py-28">
           <div className="container">
             <SectionTitle
-              title={(id as string)?.replace(/-/g, " ")}
+              title={(restaurant as string)?.replace(/-/g, " ")}
               paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
               customClass="mb-28 mt-20 capitalize animated-fade-y"
             />
