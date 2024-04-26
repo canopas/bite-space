@@ -24,7 +24,7 @@ const YouMayLike = () => {
           .from("restaurants")
           .select("*")
           .eq("is_public", true)
-          .order('id', { ascending: true })
+          .order("id", { ascending: true })
           .limit(4);
 
         if (error) return error;
@@ -45,13 +45,14 @@ const YouMayLike = () => {
           <SectionTitle
             title="You May Like This"
             paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
-            customClass="mb-28 mt-20"
+            customClass="mb-12 sm:mb-28 mt-20"
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
             {restaurants.map((item: any, key: any) => (
               <Link
-                key={key}
+                target="_top"
+                key={"may-like-" + item.id}
                 href={
                   "/restaurants/" +
                   encodeURIComponent(
@@ -74,7 +75,8 @@ const YouMayLike = () => {
                     <SwiperSlide key={key}>
                       <Image
                         src={data}
-                        fill
+                        height={100}
+                        width={100}
                         className="h-full w-full object-cover"
                         alt="item-image"
                         loading="lazy"

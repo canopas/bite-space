@@ -3,10 +3,10 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ScrollToTop from "@/components/ScrollToTop";
-import Providers from "./providers";
+import Providers from "../../pages/providers";
 import Head from "next/head";
 
-export default function RootLayout({
+export default function LayoutWithoutFooter({
   children,
 }: {
   children: React.ReactNode;
@@ -19,8 +19,6 @@ export default function RootLayout({
       <Providers>
         <Header />
         {children}
-        <Footer />
-        <ScrollToTop />
       </Providers>
     </div>
   );

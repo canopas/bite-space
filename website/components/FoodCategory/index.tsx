@@ -44,7 +44,7 @@ const FoodCategory = () => {
           <SectionTitle
             title="What's on your mind?"
             paragraph="We believe in the power of expression – so go ahead, let your thoughts flow."
-            customClass="mx-auto text-center mb-28 mt-20"
+            customClass="mx-auto text-center mb-12 sm:mb-28 mt-20"
           />
 
           <Swiper
