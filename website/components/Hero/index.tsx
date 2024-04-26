@@ -6,7 +6,6 @@ import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
-// import "./typewriter";
 
 const banners = [
   {
@@ -115,27 +114,6 @@ const Hero = () => {
               Where passion meets the palate – Welcome to a world of culinary
               delight!
             </div>
-            {/* <div className="mt-2 flex justify-center p-3 text-center text-white xs:p-0">
-              <Link
-                href="/search"
-                className="flex w-96 cursor-pointer items-center gap-2 rounded-full border-2 bg-white bg-opacity-20 p-2 pl-3 md:gap-3 md:p-4"
-              >
-                <svg viewBox="0 0 20 21" className="h-4 fill-current md:h-5">
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M13.0998 8.84232C13.0998 11.7418 10.7493 14.0922 7.84989 14.0922C4.95046 14.0922 2.6 11.7418 2.6 8.84232C2.6 5.94289 4.95046 3.59243 7.84989 3.59243C10.7493 3.59243 13.0998 5.94289 13.0998 8.84232ZM12.1431 14.1802C10.9686 15.1261 9.47534 15.6922 7.84989 15.6922C4.0668 15.6922 1 12.6254 1 8.84232C1 5.05923 4.0668 1.99243 7.84989 1.99243C11.633 1.99243 14.6998 5.05923 14.6998 8.84232C14.6998 10.4974 14.1128 12.0153 13.1357 13.1993L18.319 17.9606C18.7226 18.3313 18.7359 18.9637 18.3483 19.3511C17.9634 19.7357 17.3365 19.7254 16.9645 19.3282L12.1431 14.1802Z"
-                  ></path>
-                </svg>
-                <div
-                  className="typewrite text-sm md:text-base"
-                  data-period="2000"
-                  data-type='[ "Hunt for Taste, Discover Delight", "Find Your Culinary Treasure Here.", "Where Every Bite Tells a Story?", "Explore the Gastronomic Universe" ]'
-                >
-                  <span className="wrap"></span>
-                </div>
-              </Link>
-            </div> */}
           </div>
         </div>
       </div>
