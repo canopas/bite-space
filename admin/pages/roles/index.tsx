@@ -22,6 +22,7 @@ const RolesPage = () => {
       const { data, error } = await supabase
         .from("roles")
         .select("id, name")
+        .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("restaurant_id", user.split("/")[2])
         .neq("restaurant_id", 0);

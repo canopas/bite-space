@@ -6,10 +6,9 @@ const NotFound = () => {
       <div className="animated-fade-y flex h-screen w-full">
         <Image
           className="object-cover w-full h-full"
-          src="/images/banner/2.webp"
+          src="/images/not-found.webp"
           alt="Not Found Image"
-          height={100}
-          width={100}
+          fill
           loading="lazy"
         />
       </div>

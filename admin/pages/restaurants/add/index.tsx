@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import { getCookiesValue, setSessionForUser } from "@/utils/jwt-auth";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+} from "@/utils/image";
 
 const AddRestaurantPage = () => {
   const router = useRouter();
@@ -49,13 +53,17 @@ const AddRestaurantPage = () => {
       });
 
       if (imagesData) {
+        const currentDate = new Date();
         for (var i = 0; i < imagesData.length; i++) {
-          const currentDate = new Date();
+          const webpBlob = await convertToWebP(imagesData[i]);
+
           const { data: imgData, error: imgErr } = await supabase.storage
             .from("restaurants")
             .upload(
-              currentDate.getTime() + "-" + imagesData[i].name,
-              imagesData[i]
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(imagesData[i].name),
+              webpBlob
             );
 
           if (imgErr) throw imgErr;

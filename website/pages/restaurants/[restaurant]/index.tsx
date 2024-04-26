@@ -97,7 +97,7 @@ const RestaurantMenu = () => {
     fetchDishes();
   }, [restaurant, router, suffix]);
 
-  const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);;
+  const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {

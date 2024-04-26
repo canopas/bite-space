@@ -17,6 +17,7 @@ const About = () => {
               alt="Background Image"
               height={100}
               width={100}
+              loading="lazy"
             />
             <Image
               className="object-cover w-1/2 h-full"
@@ -24,6 +25,7 @@ const About = () => {
               alt="Background Image"
               height={100}
               width={100}
+              loading="lazy"
             />
           </div>
           <div className="absolute top-0 bg-black h-screen w-full bg-opacity-60 py-[10rem]">

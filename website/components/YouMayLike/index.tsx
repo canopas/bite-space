@@ -49,7 +49,7 @@ const YouMayLike = () => {
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
-            {restaurants.map((item: any) => (
+            {restaurants.map((item: any, key: any) => (
               <Link
                 target="_top"
                 key={"may-like-" + item.id}

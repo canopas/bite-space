@@ -32,6 +32,7 @@ const ItemCard = () => {
           .from("dishes")
           .select("*, menus(id, restaurants(id, name, address))")
           .in("menu_id", menuIds)
+          .order('id', { ascending: true })
           .limit(9);
 
         if (dishesError) throw dishesError;
@@ -59,7 +60,7 @@ const ItemCard = () => {
   }, []);
 
   return (
-    <section className="bg-primary/10 py-16 md:py-20 lg:py-28">
+    <section className="bg-primary bg-opacity-10 py-16 md:py-20 lg:py-28">
       <div className="container">
         <SectionTitle
           title="Most browsed items from the location"
@@ -68,8 +69,8 @@ const ItemCard = () => {
         />
         {itemData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
-            {itemData.map((item: any) => (
-              <div key={"item-card-" + item.id}>
+            {itemData.map((item: any, key: any) => (
+              <div key={"item-card-" + key}>
                 <InView triggerOnce className="animated-fade-y">
                   {({ inView, ref, entry }) => (
                     <Link

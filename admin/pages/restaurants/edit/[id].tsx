@@ -7,7 +7,11 @@ import { z } from "zod";
 import { useRouter } from "next/router";
 import { TagsInput } from "react-tag-input-component";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
-import { getFilenameFromURL } from "@/utils/image";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
 
 const EditRestaurantPage = () => {
   const router = useRouter();
@@ -53,17 +57,21 @@ const EditRestaurantPage = () => {
 
       let arr: string[] = [];
       if (imagesData) {
+        const currentDate = new Date();
         for (var i = 0; i < imagesData.length; i++) {
           if (imagesData[i].previewUrl) {
             arr.push(imagesData[i].previewUrl);
             new_images.push(imagesData[i].previewUrl);
           } else {
-            const currentDate = new Date();
+            const webpBlob = await convertToWebP(imagesData[i]);
+
             const { data: imgData, error: imgErr } = await supabase.storage
               .from("restaurants")
               .upload(
-                currentDate.getTime() + "-" + imagesData[i].name,
-                imagesData[i]
+                currentDate.getTime() +
+                  "-" +
+                  changeFileExtensionToWebpExtension(imagesData[i].name),
+                webpBlob
               );
 
             if (imgErr) throw imgErr;
