@@ -5,7 +5,7 @@ import Hero from "@/components/Hero";
 import ItemCard from "@/components/ItemCard";
 import YouMayLike from "@/components/YouMayLike";
 import { Inter } from "@next/font/google";
-import RootLayout from "../components/Layout/layout";
+import RootLayout from "../components/Layout/root";
 import withScrollRestoration from "@/components/withScrollRestoration";
 
 const inter = Inter({ subsets: ["latin"] });

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { CategoryData, RestaurantData } from "@/types/category-by-id";
 import { useRouter } from "next/router";
 import Restaurant from "./restaurant";
-import RootLayout from "../../components/Layout/layout";
+import RootLayout from "../../components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 
 const Category = () => {

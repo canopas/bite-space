@@ -1,6 +1,6 @@
 "use client";
 
-import RootLayout from "@/components/Layout/layout";
+import RootLayout from "@/components/Layout/root";
 import withScrollRestoration from "@/components/withScrollRestoration";
 import Image from "next/image";
 import Link from "next/link";

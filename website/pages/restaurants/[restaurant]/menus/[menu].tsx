@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDish from "@/components/SkeletonPlaceholders/MenuDish";
-import LayoutWithoutFooter from "@/components/Layout/layoutWithoutFooter";
+import LayoutWithoutFooter from "@/components/Layout/withoutFooter";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -34,8 +34,8 @@ const RestaurantMenu = () => {
           const { data: menusData, error } = await supabase
             .from("menus")
             .select("id, name")
-            .eq("restaurant_id", atob(suffix!));
-          // .eq("id", atob(menuSuffix!));
+            .eq("restaurant_id", atob(suffix!))
+            .eq("id", atob(menuSuffix!));
 
           if (error) return error;
 

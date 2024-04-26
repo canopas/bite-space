@@ -14,7 +14,7 @@ import SectionTitle from "@/components/Common/SectionTitle";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import { useRouter } from "next/router";
-import RootLayout from "@/components/Layout/layout";
+import RootLayout from "@/components/Layout/root";
 import NoDataFound from "@/components/NoDataFound";
 
 const CuisineRestaurant = () => {

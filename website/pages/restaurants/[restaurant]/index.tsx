@@ -3,7 +3,7 @@
 import supabase from "@/utils/supabase";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,7 +12,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { InView } from "react-intersection-observer";
 import { useRouter } from "next/router";
-import RootLayout from "@/components/Layout/layout";
+import RootLayout from "@/components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDish from "@/components/SkeletonPlaceholders/MenuDish";
@@ -97,13 +97,12 @@ const RestaurantMenu = () => {
     fetchDishes();
   }, [restaurant, router, suffix]);
 
+  const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const resizableRestaurantDiv = document.getElementById(
-        "resizableRestaurantDiv"
-      );
+      const resizableRestaurantDiv = resizableRestaurantDivRef.current;
       if (!resizableRestaurantDiv || scrolled) return;
 
       if (window.scrollY > 0) {
@@ -113,9 +112,7 @@ const RestaurantMenu = () => {
     };
 
     const handleScrollUp = () => {
-      const resizableRestaurantDiv = document.getElementById(
-        "resizableRestaurantDiv"
-      );
+      const resizableRestaurantDiv = resizableRestaurantDivRef.current;
       if (!resizableRestaurantDiv || !scrolled) return;
 
       if (window.scrollY === 0) {
@@ -308,7 +305,7 @@ const RestaurantMenu = () => {
           <section className="sm:hidden">
             <div className="scrollbar-hidden mb-10 animated-fade">
               <div
-                id="resizableRestaurantDiv"
+                ref={resizableRestaurantDivRef}
                 className="smooth-resize h-screen relative capitalize mb-10"
               >
                 <div className="h-full w-full">
