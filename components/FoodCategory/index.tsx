@@ -15,7 +15,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const FoodCategory = () => {
-  const [error, setError] = useState<any | null>(null);
   const [foodData, setFoodData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -24,13 +23,13 @@ const FoodCategory = () => {
         const { data, error } = await supabase
           .from("categories")
           .select()
-          .eq("restaurant_id", 0);
+          .eq("restaurant_id", 0)
+          .order('id', { ascending: true });
 
         if (error) throw error;
 
         setFoodData(data);
       } catch (error) {
-        setError(error);
         console.error("Error fetching data:", error);
       }
     };
@@ -56,33 +55,29 @@ const FoodCategory = () => {
             navigation
             className="food-category-swiper !hidden h-[27rem] lg:!block"
           >
-            {foodData.map((item) => (
-              <div key={"food-category-" + item.id}>
-                <SwiperSlide>
-                  <Link
-                    href={
-                      "/category/" +
-                      encodeURIComponent(
-                        item.name.toLowerCase().replace(/\s+/g, "-")
-                      ) +
-                      "-" +
-                      btoa(item.id.toString())
-                    }
-                    className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
-                  >
-                    <Image
-                      src={item.image}
-                      height={100}
-                      width={300}
-                      className="h-[16rem] rounded-2xl object-cover"
-                      alt="item-image"
-                    />
-                    <p className="text-center text-lg font-black">
-                      {item.name}
-                    </p>
-                  </Link>
-                </SwiperSlide>
-              </div>
+            {foodData.map((item, key) => (
+              <SwiperSlide key={key}>
+                <Link
+                  href={
+                    "/category/" +
+                    encodeURIComponent(
+                      item.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.id.toString())
+                  }
+                  className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
+                >
+                  <Image
+                    src={item.image}
+                    height={100}
+                    width={300}
+                    className="h-[16rem] rounded-2xl object-cover"
+                    alt="item-image"
+                  />
+                  <p className="text-center text-lg font-black">{item.name}</p>
+                </Link>
+              </SwiperSlide>
             ))}
           </Swiper>
 
@@ -94,26 +89,22 @@ const FoodCategory = () => {
             navigation
             className="food-category-swiper !hidden h-[27rem] md:!block lg:!hidden"
           >
-            {foodData.map((item) => (
-              <div key={"food-category-" + item.id}>
-                <SwiperSlide>
-                  <Link
-                    href={`/category/${item.id}`}
-                    className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
-                  >
-                    <Image
-                      src={item.image}
-                      height={100}
-                      width={100}
-                      className="h-[16rem] w-full rounded-2xl object-cover"
-                      alt="item-image"
-                    />
-                    <p className="text-center text-lg font-black">
-                      {item.name}
-                    </p>
-                  </Link>
-                </SwiperSlide>
-              </div>
+            {foodData.map((item, key) => (
+              <SwiperSlide key={key}>
+                <Link
+                  href={`/category/${item.id}`}
+                  className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
+                >
+                  <Image
+                    src={item.image}
+                    height={100}
+                    width={100}
+                    className="h-[16rem] w-full rounded-2xl object-cover"
+                    alt="item-image"
+                  />
+                  <p className="text-center text-lg font-black">{item.name}</p>
+                </Link>
+              </SwiperSlide>
             ))}
           </Swiper>
 
@@ -125,26 +116,22 @@ const FoodCategory = () => {
             navigation
             className="food-category-swiper !hidden h-[27rem] sm:!block md:!hidden"
           >
-            {foodData.map((item) => (
-              <div key={"food-category-" + item.id}>
-                <SwiperSlide>
-                  <Link
-                    href={`/category/${item.id}`}
-                    className="flex h-72 w-64 cursor-pointer flex-col"
-                  >
-                    <Image
-                      src={item.image}
-                      height={100}
-                      width={100}
-                      className="h-[16rem] w-full rounded-2xl object-cover"
-                      alt="item-image"
-                    />
-                    <p className="text-center text-lg font-black">
-                      {item.name}
-                    </p>
-                  </Link>
-                </SwiperSlide>
-              </div>
+            {foodData.map((item, key) => (
+              <SwiperSlide key={key}>
+                <Link
+                  href={`/category/${item.id}`}
+                  className="flex h-72 w-64 cursor-pointer flex-col"
+                >
+                  <Image
+                    src={item.image}
+                    height={100}
+                    width={100}
+                    className="h-[16rem] w-full rounded-2xl object-cover"
+                    alt="item-image"
+                  />
+                  <p className="text-center text-lg font-black">{item.name}</p>
+                </Link>
+              </SwiperSlide>
             ))}
           </Swiper>
 
@@ -156,26 +143,22 @@ const FoodCategory = () => {
             navigation
             className="food-category-swiper h-[27rem] sm:!hidden"
           >
-            {foodData.map((item) => (
-              <div key={"food-category-" + item.id}>
-                <SwiperSlide>
-                  <Link
-                    href={`/category/${item.id}`}
-                    className="flex h-80 w-full cursor-pointer flex-col gap-2"
-                  >
-                    <Image
-                      src={item.image}
-                      height={100}
-                      width={100}
-                      className="h-[16rem] w-full rounded-2xl object-cover"
-                      alt="item-image"
-                    />
-                    <p className="text-center text-lg font-black">
-                      {item.name}
-                    </p>
-                  </Link>
-                </SwiperSlide>
-              </div>
+            {foodData.map((item, key) => (
+              <SwiperSlide key={key}>
+                <Link
+                  href={`/category/${item.id}`}
+                  className="flex h-80 w-full cursor-pointer flex-col gap-2"
+                >
+                  <Image
+                    src={item.image}
+                    height={100}
+                    width={100}
+                    className="h-[16rem] w-full rounded-2xl object-cover"
+                    alt="item-image"
+                  />
+                  <p className="text-center text-lg font-black">{item.name}</p>
+                </Link>
+              </SwiperSlide>
             ))}
           </Swiper>
         </div>
