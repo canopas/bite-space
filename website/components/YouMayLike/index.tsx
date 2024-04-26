@@ -24,6 +24,7 @@ const YouMayLike = () => {
           .from("restaurants")
           .select("*")
           .eq("is_public", true)
+          .order("id", { ascending: true })
           .limit(4);
 
         if (error) return error;
@@ -44,12 +45,13 @@ const YouMayLike = () => {
           <SectionTitle
             title="You May Like This"
             paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
-            customClass="mb-28 mt-20"
+            customClass="mb-12 sm:mb-28 mt-20"
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
             {restaurants.map((item: any) => (
               <Link
+                target="_top"
                 key={"may-like-" + item.id}
                 href={
                   "/restaurants/" +
@@ -69,19 +71,17 @@ const YouMayLike = () => {
                   effect="fade"
                   className="sm:h-[25rem]"
                 >
-                  {item.images.map((data: any) => (
-                    <div key={"image-" + data}>
-                      <SwiperSlide>
-                        <Image
-                          src={data}
-                          height={100}
-                          width={100}
-                          className="h-full w-full object-cover"
-                          alt="item-image"
-                          loading="lazy"
-                        />
-                      </SwiperSlide>
-                    </div>
+                  {item.images.map((data: any, key: any) => (
+                    <SwiperSlide key={key}>
+                      <Image
+                        src={data}
+                        height={100}
+                        width={100}
+                        className="h-full w-full object-cover"
+                        alt="item-image"
+                        loading="lazy"
+                      />
+                    </SwiperSlide>
                   ))}
                 </Swiper>
                 <div className="absolute top-0 z-[1] h-full w-full bg-gradient-to-t from-black/70 to-transparent md:via-transparent">

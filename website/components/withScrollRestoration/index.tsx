@@ -14,17 +14,24 @@ function withScrollRestoration(WrappedComponent: any) {
           window.sessionStorage.setItem(
             `scrollY:${router.asPath}`,
             window.scrollY.toString()
-          );
-        }
-      };
-
-      const handleRouteComplete = (url: any) => {
+            );
+          }
+        };
+        
+        const handleRouteComplete = (url: any) => {
         const scrollY = window.sessionStorage.getItem(`scrollY:${url}`);
         if (scrollY) {
-          window.scrollTo(0, parseInt(scrollY));
+          if (url?.includes("/restaurants")) {
+            // restaurants data is taking time to load that's why added timout to scroll the page
+            setTimeout(function () {
+              window.scroll(0, parseInt(scrollY));
+            }, 900);
+          } else {
+            window.scrollTo(0, parseInt(scrollY));
+          }
         }
       };
-
+      
       const handlePopState = () => {
         // Retrieve the scroll position for the previous page
         const scrollY = window.sessionStorage.getItem(`scrollY:${prevPageUrl}`);

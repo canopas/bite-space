@@ -64,7 +64,7 @@ const ItemCard = () => {
         <SectionTitle
           title="Most browsed items from the location"
           paragraph="Connect Locally: Must-Visit Places in Your Neighborhood. In our vibrant community, explore top-rated local experiences."
-          customClass="mb-28"
+          customClass="mb-12 sm:mb-28"
         />
         {itemData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
@@ -73,6 +73,7 @@ const ItemCard = () => {
                 <InView triggerOnce className="animated-fade-y">
                   {({ inView, ref, entry }) => (
                     <Link
+                      target="_top"
                       ref={ref}
                       href={
                         "/restaurants/" +

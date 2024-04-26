@@ -58,6 +58,18 @@ input#checkboxLabel:checked ~ .box span {
 }
 
 @keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInY {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -69,7 +81,11 @@ input#checkboxLabel:checked ~ .box span {
 }
 
 .animated-fade-y {
-  animation: fadeIn 0.9s ease-out;
+  animation: fadeInY 0.9s ease-out;
+}
+
+.animated-fade {
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .animated-fade-y-on-scroll {
@@ -80,4 +96,8 @@ input#checkboxLabel:checked ~ .box span {
 .animated-fade-y-on-scroll.animate {
   opacity: 1;
   animation: fadeIn 0.5s ease-out;
+}
+
+.smooth-resize {
+  transition: height 0.5s ease-in-out;
 }

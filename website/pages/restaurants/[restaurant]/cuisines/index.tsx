@@ -14,12 +14,12 @@ import SectionTitle from "@/components/Common/SectionTitle";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import { useRouter } from "next/router";
-import RootLayout from "@/pages/layout";
+import RootLayout from "@/components/Layout/layout";
 import NoDataFound from "@/components/NoDataFound";
 
 const CuisineRestaurant = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { restaurant } = router.query;
 
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
   const [restaurants, setRestaurantsData] = useState<any[]>([]);
@@ -27,11 +27,11 @@ const CuisineRestaurant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (id) {
+        if (restaurant) {
           const { data, error } = await supabase
             .from("restaurants")
             .select("*")
-            .contains("tags", [(id as string)?.replace(/-/g, " ")]);
+            .contains("tags", [(restaurant as string)?.replace(/-/g, " ")]);
 
           if (error) throw error;
 
@@ -45,7 +45,7 @@ const CuisineRestaurant = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [restaurant]);
 
   return (
     <>
@@ -86,8 +86,7 @@ const CuisineRestaurant = () => {
                           <SwiperSlide>
                             <Image
                               src={data}
-                              height={100}
-                              width={100}
+                              fill
                               className="h-full w-full object-cover"
                               alt="item-image"
                             />

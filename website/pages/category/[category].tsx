@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
 import { CategoryData, RestaurantData } from "@/types/category-by-id";
 import { useRouter } from "next/router";
 import Restaurant from "./restaurant";
-import RootLayout from "../layout";
+import RootLayout from "../../components/Layout/layout";
 import NotFound from "@/components/PageNotFound";
 
 const Category = () => {
   const router = useRouter();
-  const { id } = router.query;
-  const suffix = id?.toString().substring(id?.lastIndexOf("-") + 1);
+  const { category } = router.query;
+  const suffix = category?.toString().substring(category?.lastIndexOf("-") + 1);
 
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
   const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
@@ -38,6 +38,7 @@ const Category = () => {
               .from("categories")
               .select("id, restaurant_id, image")
               .neq("restaurant_id", 0)
+              .order('id', { ascending: false })
               .contains("tags", [data.name.toLowerCase()]);
 
           if (categoriesError) throw categoriesError;
