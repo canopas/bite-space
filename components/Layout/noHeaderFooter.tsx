@@ -6,7 +6,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import Providers from "../../pages/providers";
 import Head from "next/head";
 
-export default function LayoutWithoutFooter({
+export default function NoHeaderFooterLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -17,7 +17,6 @@ export default function LayoutWithoutFooter({
         <title>Bite Space</title>
       </Head>
       <Providers>
-        <Header />
         {children}
       </Providers>
     </div>

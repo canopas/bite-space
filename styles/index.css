@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: "Inter", sans-serif;
+  @apply font-inter;
 }
 
 body::-webkit-scrollbar,
