@@ -33,7 +33,7 @@ const Footer = () => {
                 <ul>
                   <li>
                     <Link
-                      href="/"
+                      href="mailto:contact@bitespace.in"
                       className="mb-4 inline-block text-base text-gray-600 dark:text-gray-300 hover:text-primary"
                     >
                       {" "}

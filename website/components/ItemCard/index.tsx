@@ -8,12 +8,17 @@ import SingleItem from "./SingleItem";
 import supabase from "@/utils/supabase";
 import { InView } from "react-intersection-observer";
 
+// Manage twice data calling issue using this flag
+let dataCalled: any = false;
+
 const ItemCard = () => {
-  const [error, setError] = useState<any | null>(null);
-  const [itemData, setMostBrowsedItemData] = useState<any | null>(null);
+  const [itemData, setMostBrowsedItemData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (dataCalled) return;
+      dataCalled = true;
+
       try {
         // Fetch menu IDs associated with public restaurants
         const { data: menusData, error: menuError } = await supabase
@@ -32,7 +37,7 @@ const ItemCard = () => {
           .from("dishes")
           .select("*, menus(id, restaurants(id, name, address))")
           .in("menu_id", menuIds)
-          .order('id', { ascending: true })
+          .order("id", { ascending: true })
           .limit(9);
 
         if (dishesError) throw dishesError;
@@ -49,10 +54,7 @@ const ItemCard = () => {
 
         setMostBrowsedItemData(restaurant);
       } catch (error) {
-        setError(error);
         console.error("Error fetching data:", error);
-      } finally {
-        setError(null);
       }
     };
 
@@ -65,7 +67,7 @@ const ItemCard = () => {
         <SectionTitle
           title="Most browsed items from the location"
           paragraph="Connect Locally: Must-Visit Places in Your Neighborhood. In our vibrant community, explore top-rated local experiences."
-          customClass="mb-12 sm:mb-28"
+          customClass="mb-12 xl:mb-28"
         />
         {itemData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">

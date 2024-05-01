@@ -1,4 +1,4 @@
-const MenuDish = ({ classes }: any) => {
+const MenuDishSkeleton = ({ classes }: any) => {
   return (
     <div
       className={`${classes} relative animate-pulse w-full bg-gray-200 dark:bg-gray-900 rounded-xl`}
@@ -14,4 +14,4 @@ const MenuDish = ({ classes }: any) => {
   );
 };
 
-export default MenuDish;
+export default MenuDishSkeleton;

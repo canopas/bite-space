@@ -13,24 +13,34 @@ import SectionTitle from "../Common/SectionTitle";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import CategorySwiperSkeleton from "../SkeletonPlaceholders/CategorySwiper";
+
+// Manage twice data calling issue using this flag
+let dataCalled: any = false;
 
 const FoodCategory = () => {
-  const [foodData, setFoodData] = useState<any[]>([]);
+  const [isFoodLoading, setIsFoodLoading] = useState(true);
+  const [foodData, setFoodData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
+      if (dataCalled) return;
+      dataCalled = true;
+
       try {
         const { data, error } = await supabase
           .from("categories")
-          .select()
+          .select("*")
           .eq("restaurant_id", 0)
-          .order('id', { ascending: true });
+          .order("id", { ascending: true });
 
         if (error) throw error;
 
         setFoodData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsFoodLoading(false);
       }
     };
 
@@ -39,128 +49,163 @@ const FoodCategory = () => {
 
   return (
     <>
-      <section className="bg-primary/[.03] py-16 md:py-20 lg:py-28">
+      <section className="py-16 md:py-20 lg:py-28">
         <div className="container">
           <SectionTitle
             title="What's on your mind?"
             paragraph="We believe in the power of expression – so go ahead, let your thoughts flow."
-            customClass="mx-auto text-center mb-12 sm:mb-28 mt-20"
+            customClass="mx-auto text-center mb-12 xl:mb-28 mt-20"
           />
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={4}
-            loop={true}
-            autoplay={true}
-            navigation
-            className="food-category-swiper !hidden h-[27rem] lg:!block"
-          >
-            {foodData.map((item, key) => (
-              <SwiperSlide key={key}>
-                <Link
-                  href={
-                    "/category/" +
-                    encodeURIComponent(
-                      item.name.toLowerCase().replace(/\s+/g, "-")
-                    ) +
-                    "-" +
-                    btoa(item.id.toString())
-                  }
-                  className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
-                >
-                  <Image
-                    src={item.image}
-                    height={100}
-                    width={300}
-                    className="h-[16rem] rounded-2xl object-cover"
-                    alt="item-image"
-                  />
-                  <p className="text-center text-lg font-black">{item.name}</p>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {isFoodLoading ? (
+            <CategorySwiperSkeleton />
+          ) : (
+            <>
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                slidesPerView={4}
+                loop={true}
+                autoplay={true}
+                navigation
+                className="food-category-swiper !hidden h-[27rem] lg:!block"
+              >
+                {foodData.map((item: any, index: any) => (
+                  <SwiperSlide key={"lg-category-index-" + index}>
+                    <Link
+                      href={
+                        "/category/" +
+                        encodeURIComponent(
+                          item.name.toLowerCase().replace(/\s+/g, "-")
+                        ) +
+                        "-" +
+                        btoa(item.id.toString())
+                      }
+                      className="flex h-80 w-full cursor-pointer flex-col gap-2 items-center"
+                    >
+                      <Image
+                        src={item.image}
+                        height={100}
+                        width={300}
+                        className="h-[16rem] w-[15rem] rounded-2xl object-cover"
+                        alt="item-image"
+                      />
+                      <p className="text-center text-lg font-black">
+                        {item.name}
+                      </p>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={3}
-            loop={true}
-            autoplay={true}
-            navigation
-            className="food-category-swiper !hidden h-[27rem] md:!block lg:!hidden"
-          >
-            {foodData.map((item, key) => (
-              <SwiperSlide key={key}>
-                <Link
-                  href={`/category/${item.id}`}
-                  className="flex h-80 w-[15rem] cursor-pointer flex-col gap-2"
-                >
-                  <Image
-                    src={item.image}
-                    height={100}
-                    width={100}
-                    className="h-[16rem] w-full rounded-2xl object-cover"
-                    alt="item-image"
-                  />
-                  <p className="text-center text-lg font-black">{item.name}</p>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                slidesPerView={3}
+                loop={true}
+                autoplay={true}
+                navigation
+                className="food-category-swiper !hidden h-[27rem] md:!block lg:!hidden"
+              >
+                {foodData.map((item: any, index: any) => (
+                  <SwiperSlide key={"md-category-index-" + index}>
+                    <Link
+                      href={
+                        "/category/" +
+                        encodeURIComponent(
+                          item.name.toLowerCase().replace(/\s+/g, "-")
+                        ) +
+                        "-" +
+                        btoa(item.id.toString())
+                      }
+                      className="flex h-80 w-full cursor-pointer flex-col gap-2 items-center"
+                    >
+                      <Image
+                        src={item.image}
+                        height={100}
+                        width={100}
+                        className="h-[16rem] w-[15rem] rounded-2xl object-cover"
+                        alt="item-image"
+                      />
+                      <p className="text-center text-lg font-black">
+                        {item.name}
+                      </p>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={2}
-            loop={true}
-            autoplay={true}
-            navigation
-            className="food-category-swiper !hidden h-[27rem] sm:!block md:!hidden"
-          >
-            {foodData.map((item, key) => (
-              <SwiperSlide key={key}>
-                <Link
-                  href={`/category/${item.id}`}
-                  className="flex h-72 w-64 cursor-pointer flex-col"
-                >
-                  <Image
-                    src={item.image}
-                    height={100}
-                    width={100}
-                    className="h-[16rem] w-full rounded-2xl object-cover"
-                    alt="item-image"
-                  />
-                  <p className="text-center text-lg font-black">{item.name}</p>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                slidesPerView={2}
+                loop={true}
+                autoplay={true}
+                navigation
+                className="food-category-swiper !hidden h-[27rem] sm:!block md:!hidden"
+              >
+                {foodData.map((item: any, index: any) => (
+                  <SwiperSlide key={"sm-category-index-" + index}>
+                    <Link
+                      href={
+                        "/category/" +
+                        encodeURIComponent(
+                          item.name.toLowerCase().replace(/\s+/g, "-")
+                        ) +
+                        "-" +
+                        btoa(item.id.toString())
+                      }
+                      className="flex h-72 w-full cursor-pointer flex-col items-center"
+                    >
+                      <Image
+                        src={item.image}
+                        height={100}
+                        width={100}
+                        className="h-[16rem] w-64 rounded-2xl object-cover"
+                        alt="item-image"
+                      />
+                      <p className="text-center text-lg font-black">
+                        {item.name}
+                      </p>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={1}
-            loop={true}
-            autoplay={true}
-            navigation
-            className="food-category-swiper h-[27rem] sm:!hidden"
-          >
-            {foodData.map((item, key) => (
-              <SwiperSlide key={key}>
-                <Link
-                  href={`/category/${item.id}`}
-                  className="flex h-80 w-full cursor-pointer flex-col gap-2"
-                >
-                  <Image
-                    src={item.image}
-                    height={100}
-                    width={100}
-                    className="h-[16rem] w-full rounded-2xl object-cover"
-                    alt="item-image"
-                  />
-                  <p className="text-center text-lg font-black">{item.name}</p>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                slidesPerView={1}
+                loop={true}
+                autoplay={true}
+                navigation
+                className="food-category-swiper h-[27rem] sm:!hidden"
+              >
+                {foodData.map((item: any, index: any) => (
+                  <SwiperSlide key={"xs-category-index-" + index}>
+                    <Link
+                      href={
+                        "/category/" +
+                        encodeURIComponent(
+                          item.name.toLowerCase().replace(/\s+/g, "-")
+                        ) +
+                        "-" +
+                        btoa(item.id.toString())
+                      }
+                      className="flex items-center h-80 w-full cursor-pointer flex-col"
+                    >
+                      <Image
+                        src={item.image}
+                        height={100}
+                        width={100}
+                        className="h-72 w-80 rounded-2xl object-cover"
+                        alt="item-image"
+                      />
+                      <p className="text-center text-lg font-black">
+                        {item.name}
+                      </p>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </>
+          )}
         </div>
       </section>
     </>

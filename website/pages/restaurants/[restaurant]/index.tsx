@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import RootLayout from "@/components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
-import MenuDish from "@/components/SkeletonPlaceholders/MenuDish";
+import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import Link from "next/link";
 import withScrollRestoration from "@/components/withScrollRestoration";
 
@@ -26,12 +26,16 @@ const RestaurantMenu = () => {
     ?.toString()
     .substring(restaurant?.lastIndexOf("-") + 1);
 
+  const [screenHeight, setScreenHeight] = useState<number>(0);
+
   const [isRestaurantLoading, setIsRestaurantLoading] = useState(true);
   const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState<any | null>(null);
   const [menuData, setMenuData] = useState<any[]>([]);
 
   useEffect(() => {
+    setScreenHeight(window.innerHeight);
+
     const fetchRestaurantData = async () => {
       if (suffix) {
         try {
@@ -95,6 +99,15 @@ const RestaurantMenu = () => {
 
     fetchRestaurantData();
     fetchDishes();
+
+    window.addEventListener("resize", () =>
+      setScreenHeight(window.innerHeight)
+    );
+
+    return () =>
+      window.removeEventListener("resize", () =>
+        setScreenHeight(window.innerHeight)
+      );
   }, [restaurant, router, suffix]);
 
   const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);
@@ -137,7 +150,12 @@ const RestaurantMenu = () => {
           <section className="hidden sm:block select-none">
             <div className="pb-28">
               <div className="relative mx-auto mb-16 capitalize">
-                <div className="animated-fade-y h-screen w-full">
+                <div
+                  className="animated-fade-y w-full"
+                  style={{
+                    height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+                  }}
+                >
                   {restaurantData.images ? (
                     <Image
                       src={restaurantData.images[0]}
@@ -225,10 +243,12 @@ const RestaurantMenu = () => {
                             </p>
                             {isDishesLoading ? (
                               <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                <MenuDish classes="h-[30rem]" />
-                                <MenuDish classes="h-[30rem]" />
-                                <MenuDish classes="h-[30rem]" />
-                                <MenuDish classes="h-[30rem]" />
+                                {Array.from({ length: 4 }).map((_, index) => (
+                                  <MenuDishSkeleton
+                                    key={index}
+                                    classes="h-[30rem]"
+                                  />
+                                ))}
                               </div>
                             ) : (
                               <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -236,14 +256,14 @@ const RestaurantMenu = () => {
                                   <div
                                     key={"desktop-dish-" + data.id}
                                     id={"desktop-dish-" + data.id}
-                                    className="animated-fade-y relative w-full"
+                                    className="animated-fade-y relative w-full h-[30rem]"
                                   >
                                     {data.video ? (
                                       <VideoPlayer
                                         src={data.video}
                                         poster={data.video_thumbnail}
                                         classes={
-                                          "h-[30rem] w-full rounded-xl object-cover"
+                                          "h-full w-full rounded-xl object-cover"
                                         }
                                       />
                                     ) : (
@@ -253,7 +273,7 @@ const RestaurantMenu = () => {
                                         loop={true}
                                         autoplay={true}
                                         effect="fade"
-                                        className="h-[30rem] w-full rounded-xl"
+                                        className="h-full w-full rounded-xl"
                                       >
                                         {data.images.map((data: any) => (
                                           <div
@@ -306,7 +326,10 @@ const RestaurantMenu = () => {
             <div className="scrollbar-hidden mb-10 animated-fade">
               <div
                 ref={resizableRestaurantDivRef}
-                className="smooth-resize h-screen relative capitalize mb-10"
+                className="smooth-resize relative capitalize mb-10"
+                style={{
+                  height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+                }}
               >
                 <div className="h-full w-full">
                   {restaurantData.images ? (
@@ -377,63 +400,62 @@ const RestaurantMenu = () => {
                 </div>
               </div>
               <div className="scrollbar-hidden mx-3">
-                <p className="text-2xl font-bold mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
+                <p className="text-center text-2xl font-bold mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
                   Menus
                 </p>
-                <div className="grid grid-cols-2 gap-3">
-                  {menuData.map((item: any) =>
+                <div className="grid grid-cols-2 gap-3 h-full w-full">
+                  {menuData.map((item: any, index: any) =>
                     item.dishes.length > 0 ? (
-                      <div key={"mobile-menu-" + item.id} className="h-48">
-                        <Link
-                          href={
-                            restaurant +
-                            "/menus/" +
-                            encodeURIComponent(
-                              item.name.toLowerCase().replace(/\s+/g, "-")
-                            ) +
-                            "-" +
-                            btoa(item.id.toString())
-                          }
-                          className="relative h-full cursor-pointer"
-                        >
-                          {item.dishes[0].video ? (
-                            <VideoPlayer
-                              src={item.dishes[0].video}
-                              poster={item.dishes[0].video_thumbnail}
-                              classes={"h-full w-full object-cover rounded-xl"}
-                            />
-                          ) : (
-                            <Swiper
-                              modules={[Autoplay, EffectFade]}
-                              slidesPerView={1}
-                              loop={true}
-                              autoplay={true}
-                              effect="fade"
-                              className="h-48 rounded-xl"
-                            >
-                              {item.dishes[0].images?.map(
-                                (data: any, key: any) => (
-                                  <SwiperSlide key={key}>
-                                    <Image
-                                      src={data}
-                                      height={100}
-                                      width={100}
-                                      className="h-full w-full object-cover"
-                                      alt="item-image"
-                                      loading="lazy"
-                                    />
-                                  </SwiperSlide>
-                                )
-                              )}
-                            </Swiper>
-                          )}
-                          <div className="absolute top-0 z-[1] h-full w-full bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-xl">
-                            <div className="absolute bottom-2 z-[1] w-full px-3 text-white">
-                              <p className="font-extrabold">{item.name}</p>
-                            </div>
+                      <Link
+                        key={"dish-key-" + index}
+                        href={
+                          restaurant +
+                          "/menus/" +
+                          encodeURIComponent(
+                            item.name.toLowerCase().replace(/\s+/g, "-")
+                          ) +
+                          "-" +
+                          btoa(item.id.toString())
+                        }
+                        className="relative h-48 cursor-pointer"
+                      >
+                        {item.dishes[0].video ? (
+                          <VideoPlayer
+                            src={item.dishes[0].video}
+                            poster={item.dishes[0].video_thumbnail}
+                            classes={"h-full w-full object-cover rounded-xl"}
+                          />
+                        ) : (
+                          <Swiper
+                            modules={[Autoplay, EffectFade]}
+                            slidesPerView={1}
+                            loop={true}
+                            autoplay={true}
+                            effect="fade"
+                            className="h-full rounded-xl"
+                          >
+                            {item.dishes[0].images?.map(
+                              (data: any, key: any) => (
+                                <SwiperSlide key={key}>
+                                  <Image
+                                    src={data}
+                                    height={100}
+                                    width={100}
+                                    className="h-full w-full object-cover"
+                                    alt="item-image"
+                                    loading="lazy"
+                                  />
+                                </SwiperSlide>
+                              )
+                            )}
+                          </Swiper>
+                        )}
+                        <div className="absolute top-0 z-[1] h-full w-full bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-xl">
+                          <div className="absolute bottom-2 w-full z-[1] px-3 text-white">
+                            <p className="font-extrabold">{item.name}</p>
                           </div>
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     ) : (
                       ""
                     )

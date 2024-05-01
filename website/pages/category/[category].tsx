@@ -21,6 +21,10 @@ const Category = () => {
 
   useEffect(() => {
     const fetchCategoryData = async () => {
+      if (restaurantsData.length != 0) {
+        return;
+      }
+
       if (suffix) {
         try {
           const { data, error } = await supabase
@@ -38,7 +42,7 @@ const Category = () => {
               .from("categories")
               .select("id, restaurant_id, image")
               .neq("restaurant_id", 0)
-              .order('id', { ascending: false })
+              .order("id", { ascending: false })
               .contains("tags", [data.name.toLowerCase()]);
 
           if (categoriesError) throw categoriesError;
@@ -89,7 +93,7 @@ const Category = () => {
     };
 
     fetchCategoryData();
-  }, [suffix]);
+  }, [restaurantsData.length, suffix]);
 
   return (
     <>
