@@ -9,6 +9,9 @@ module.exports = {
   ],
   darkMode: "class",
   theme: {
+    fontFamily: {
+      inter: ["Inter", "sans-serif"],
+    },
     container: {
       center: true,
       padding: "1rem",

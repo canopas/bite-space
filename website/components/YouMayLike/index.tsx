@@ -14,11 +14,17 @@ import supabase from "@/utils/supabase";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
+// Manage twice data calling issue using this flag
+let dataCalled: any = false;
+
 const YouMayLike = () => {
   const [restaurants, setRestaurantsData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (dataCalled) return;
+      dataCalled = true;
+
       try {
         const { data, error } = await supabase
           .from("restaurants")
@@ -45,7 +51,7 @@ const YouMayLike = () => {
           <SectionTitle
             title="You May Like This"
             paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
-            customClass="mb-12 sm:mb-28 mt-20"
+            customClass="mb-12 xl:mb-28 mt-20"
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">

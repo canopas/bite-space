@@ -6,7 +6,7 @@ type InputElementType = HTMLInputElement;
 
 interface FilePreview {
   previewType: string;
-  previewUrl: string| ArrayBuffer | null;
+  previewUrl: string | ArrayBuffer | null;
   previewName: string;
 }
 
@@ -37,7 +37,7 @@ export default function MultipleFileUpload({
   }, [uploadedFiles]);
 
   const inputRefs = useRef<Array<RefObject<InputElementType> | null>>(
-    new Array().fill(null),
+    new Array().fill(null)
   );
   const selectFile = (index: number) => {
     if (inputRefs.current[index] && inputRefs.current[index]?.current) {
@@ -56,7 +56,7 @@ export default function MultipleFileUpload({
     previewType: any,
     previewUrl: string | ArrayBuffer | null,
     previewName: string,
-    file: any,
+    file: any
   ) => {
     // add file
     setFiles((files) => {
@@ -81,7 +81,7 @@ export default function MultipleFileUpload({
     previewUrl: string | ArrayBuffer | null,
     previewName: string,
     file: any,
-    index: number,
+    index: number
   ) => {
     // update file
     setFiles((files) => {
@@ -102,7 +102,7 @@ export default function MultipleFileUpload({
   const handleFileChange = async (
     event: any,
     index: number,
-    action: string,
+    action: string
   ) => {
     const filesData = event.target.files;
     for (var i = 0; i < filesData.length; i++) {
@@ -158,7 +158,7 @@ export default function MultipleFileUpload({
   return (
     <div className="flex flex-wrap gap-10">
       {filesPreview.map((item: any, index: any) => (
-        <div className="relative flex" key={index}>
+        <div className="relative flex" key={"image-key-" + index}>
           <div className="cursor-pointer" onClick={() => selectFile(index)}>
             {children && children(item)}
             <input
