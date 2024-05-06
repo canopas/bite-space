@@ -7,7 +7,7 @@ import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import { useTheme } from "next-themes";
 
-const Header = () => {
+const Header = ({ manageColor }: { manageColor: boolean }) => {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -81,19 +81,12 @@ const Header = () => {
                 } `}
               >
                 <Link
-                  target="_top"
                   href="/"
                   className="text-3xl font-extrabold text-primary"
                 >
                   <span
-                    className={`${
-                      sticky || (pathname !== "/" && pathname !== "/about")
-                        ? "text-black dark:text-white"
-                        : "text-white"
-                    } ${
-                      sticky || !pathname?.includes("/restaurants")
-                        ? "text-black dark:text-white"
-                        : "text-white"
+                    className={`text-black dark:text-white ${
+                      manageColor ? (sticky ? "text-black" : "text-white") : ""
                     }`}
                   >
                     Bite
@@ -112,45 +105,30 @@ const Header = () => {
                 >
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky || pathname != "/"
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    } ${navbarOpen ? " top-[7px] rotate-45" : ""} ${
-                      sticky ||
-                      (pathname !== "/" &&
-                        pathname !== "/about" &&
-                        !pathname?.includes("/restaurants"))
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    }`}
+                      manageColor
+                        ? sticky
+                          ? "bg-black dark:bg-white"
+                          : "bg-white"
+                        : "bg-black dark:bg-white"
+                    } ${navbarOpen ? " top-[7px] rotate-45" : ""}`}
                   />
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky || pathname != "/"
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    } ${navbarOpen ? "opacity-0 " : ""} ${
-                      sticky ||
-                      (pathname !== "/" &&
-                        pathname !== "/about" &&
-                        !pathname?.includes("/restaurants"))
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    }`}
+                      manageColor
+                        ? sticky
+                          ? "bg-black dark:bg-white"
+                          : "bg-white"
+                        : "bg-black dark:bg-white"
+                    } ${navbarOpen ? "opacity-0 " : ""}`}
                   />
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky || pathname != "/"
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    } ${navbarOpen ? " top-[-8px] -rotate-45" : ""} ${
-                      sticky ||
-                      (pathname !== "/" &&
-                        pathname !== "/about" &&
-                        !pathname?.includes("/restaurants"))
-                        ? "bg-black dark:bg-white"
-                        : "bg-white"
-                    }`}
+                      manageColor
+                        ? sticky
+                          ? "bg-black dark:bg-white"
+                          : "bg-white"
+                        : "bg-black dark:bg-white"
+                    } ${navbarOpen ? " top-[-8px] -rotate-45" : ""}`}
                   />
                 </button>
                 <nav
@@ -163,22 +141,16 @@ const Header = () => {
                 >
                   <ul className="block lg:flex lg:space-x-12">
                     {menuData.map((menuItem, index) => (
-                      <li key={"menu-" + menuItem.id}>
+                      <li key={"header-menu-" + index}>
                         {menuItem.path ? (
                           <Link
-                            target="_top"
                             href={menuItem.path}
                             className={`flex py-2 text-base group-hover:opacity-70 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 text-black dark:text-white ${
                               pathname == menuItem.path ? "font-extrabold" : ""
                             } ${
-                              sticky ||
-                              (pathname !== "/" &&
-                                pathname !== "/about" &&
-                                !pathname?.includes("/restaurants"))
-                                ? "text-black dark:text-white"
-                                : navbarOpen
-                                ? "text-black dark:text-white"
-                                : "text-white"
+                              manageColor && !navbarOpen && !sticky
+                                ? "text-white"
+                                : ""
                             }`}
                           >
                             {menuItem.title}
@@ -220,9 +192,7 @@ const Header = () => {
                   href="https://admin.bitespace.in/signin"
                   target="_blank"
                   className={`hidden bg-primary dark:bg-primary/70 transition duration-500 px-7 py-3 text-base font-bold text-white rounded-xl lg:block hover:bg-transparent hover:dark:bg-transparent hover:text-primary border-2 border-transparent hover:border-primary ${
-                    !sticky && !pathname?.includes("/category")
-                      ? "bg-primary/70"
-                      : ""
+                    !sticky && manageColor ? "bg-primary/70" : ""
                   }`}
                 >
                   Partner With Us

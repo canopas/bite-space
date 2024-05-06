@@ -67,10 +67,10 @@ const CuisineRestaurant = () => {
               </div>
             ) : restaurants.length > 0 ? (
               <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
-                {restaurants.map((item) => (
+                {restaurants.map((item, index) => (
                   <Link
                     href={`/restaurants/${item.id}`}
-                    key={"may-like-" + item.id}
+                    key={"cuisine-restaurant-" + index}
                     className="relative h-full cursor-pointer"
                   >
                     <Swiper
@@ -81,8 +81,8 @@ const CuisineRestaurant = () => {
                       effect="fade"
                       className="sm:h-[25rem]"
                     >
-                      {item.images.map((data: any) => (
-                        <div key={"image-" + data}>
+                      {item.images.map((data: any, index: number) => (
+                        <div key={"cuisine-restaurant-image-" + index}>
                           <SwiperSlide>
                             <Image
                               src={data}

@@ -40,7 +40,7 @@ const Category = () => {
           const { data: categoriesData, error: categoriesError } =
             await supabase
               .from("categories")
-              .select("id, restaurant_id, image")
+              .select("id, name, description, restaurant_id, image")
               .neq("restaurant_id", 0)
               .order("id", { ascending: false })
               .contains("tags", [data.name.toLowerCase()]);
@@ -66,7 +66,7 @@ const Category = () => {
               if (restaurantData) {
                 return {
                   ...restaurantData,
-                  image: category.image,
+                  category: category,
                   rating: 0,
                   reviews: 0,
                 };
@@ -75,7 +75,7 @@ const Category = () => {
                   id: 0,
                   name: "",
                   address: "",
-                  image: category.image,
+                  category: category,
                   rating: 0,
                   reviews: 0,
                 };
