@@ -122,18 +122,23 @@ const RestaurantMenu = () => {
       );
   }, [carouselRef, numDivsToRender, menuData?.length]);
 
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <>
       {menuData ? (
         <NoHeaderFooterLayout>
           <header className="select-none header left-0 top-0 z-40 w-full items-center absolute p-3 flex gap-2 text-white">
-            <Link
-              href={"/restaurants/" + restaurant?.toString()}
+            <button
+              onClick={goBack}
               className="flex gap-2 items-center bg-primary bg-opacity-50 dark:bg-opacity-30 border-b border-primary dark:border-opacity-50 px-3 py-1 text-sm font-semibold rounded-lg"
             >
-              Menus
-            </Link>
-            <span>{">"}</span>
+              <span>{"<"}</span>
+              Back
+            </button>
+            <span>|</span>
             <p className="font-bold text-sm">{menuName} dishes</p>
           </header>
           <section className="select-none">
@@ -190,8 +195,8 @@ const RestaurantMenu = () => {
                                   : "100vh",
                             }}
                           >
-                            {data.images.map((data: any) => (
-                              <div key={"mobile-image-" + data}>
+                            {data.images.map((data: any, index: number) => (
+                              <div key={"mobile-image-" + index}>
                                 <SwiperSlide>
                                   <div
                                     className="h-full"

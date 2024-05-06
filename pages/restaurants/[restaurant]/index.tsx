@@ -7,17 +7,17 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import "swiper/css/effect-fade";
+
 import { InView } from "react-intersection-observer";
 import { useRouter } from "next/router";
+import Link from "next/link";
+
 import RootLayout from "@/components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
-import Link from "next/link";
-import withScrollRestoration from "@/components/withScrollRestoration";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -29,8 +29,12 @@ const RestaurantMenu = () => {
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
   const [isRestaurantLoading, setIsRestaurantLoading] = useState(true);
-  const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState<any | null>(null);
+
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
+  const [categoriesData, setCategoriesData] = useState<any[]>([]);
+
+  const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [menuData, setMenuData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -52,6 +56,27 @@ const RestaurantMenu = () => {
           console.error("Error fetching restaurant data:", error);
         } finally {
           setIsRestaurantLoading(false);
+        }
+      }
+    };
+
+    const fetchCategoriesData = async () => {
+      if (suffix) {
+        try {
+          const { data, error } = await supabase
+            .from("categories")
+            .select("*")
+            .eq("restaurant_id", atob(suffix!))
+            .neq("restaurant_id", 0)
+            .order("id", { ascending: false });
+
+          if (error) throw error;
+
+          setCategoriesData(data);
+        } catch (error) {
+          console.error("Error fetching categpries data:", error);
+        } finally {
+          setIsCategoriesLoading(false);
         }
       }
     };
@@ -98,6 +123,7 @@ const RestaurantMenu = () => {
     };
 
     fetchRestaurantData();
+    fetchCategoriesData();
     fetchDishes();
 
     window.addEventListener("resize", () =>
@@ -108,7 +134,7 @@ const RestaurantMenu = () => {
       window.removeEventListener("resize", () =>
         setScreenHeight(window.innerHeight)
       );
-  }, [restaurant, router, suffix]);
+  }, [suffix]);
 
   const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -146,7 +172,7 @@ const RestaurantMenu = () => {
   return (
     <>
       {restaurantData ? (
-        <RootLayout>
+        <RootLayout manageHeaderColor={true}>
           <section className="hidden sm:block select-none">
             <div className="pb-28">
               <div className="relative mx-auto mb-16 capitalize">
@@ -224,6 +250,51 @@ const RestaurantMenu = () => {
                 </div>
               </div>
               <div className="container">
+                <p className="my-6 text-3xl font-bold">Categories</p>
+                {isCategoriesLoading ? (
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
+                    <div className="h-48 lg:h-52 xl:h-72 bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                    <div className="bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                    <div className="hidden lg:block bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
+                    {categoriesData.map((item: any, index: any) => (
+                      <Link
+                        key={"dish-key-" + index}
+                        href={
+                          restaurant +
+                          "/categories/" +
+                          encodeURIComponent(
+                            item.name.toLowerCase().replace(/\s+/g, "-")
+                          ) +
+                          "-" +
+                          btoa(item.id.toString())
+                        }
+                        className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
+                      >
+                        <div className="h-full capitalize text-center">
+                          <p className="mb-2 font-bold text-lg">{item.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.description}
+                          </p>
+                        </div>
+                        <div className="px-5">
+                          <Image
+                            src={item.image}
+                            height={100}
+                            width={100}
+                            className="h-48 lg:h-52 xl:h-72 w-full object-cover"
+                            alt="item-image"
+                            loading="lazy"
+                          />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="container">
                 {menuData.map((item: any, index) =>
                   item.dishes.length > 0 ? (
                     <div
@@ -245,7 +316,7 @@ const RestaurantMenu = () => {
                               <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                 {Array.from({ length: 4 }).map((_, index) => (
                                   <MenuDishSkeleton
-                                    key={index}
+                                    key={"menu-dish-skeleton-" + index}
                                     classes="h-[30rem]"
                                   />
                                 ))}
@@ -323,10 +394,10 @@ const RestaurantMenu = () => {
             </div>
           </section>
           <section className="sm:hidden">
-            <div className="scrollbar-hidden mb-10 animated-fade">
+            <div className="scrollbar-hidden mb-20 animated-fade">
               <div
                 ref={resizableRestaurantDivRef}
-                className="smooth-resize relative capitalize mb-10"
+                className="smooth-resize relative capitalize mb-16"
                 style={{
                   height: screenHeight != 0 ? screenHeight + "px" : "100vh",
                 }}
@@ -399,10 +470,57 @@ const RestaurantMenu = () => {
                   </div>
                 </div>
               </div>
-              <div className="scrollbar-hidden mx-3">
-                <p className="text-center text-2xl font-bold mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
-                  Menus
+              <div className="scrollbar-hidden mx-3 mb-24">
+                <p className="my-6 text-center text-3xl font-bold">
+                  Categories
                 </p>
+                {isCategoriesLoading ? (
+                  <div className="h-52 w-full bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                ) : (
+                  <div className="flex flex-col gap-5 h-full w-full">
+                    {categoriesData.map((item: any, index: any) => (
+                      <Link
+                        key={"cat-dish-key-" + index}
+                        href={
+                          restaurant +
+                          "/categories/" +
+                          encodeURIComponent(
+                            item.name.toLowerCase().replace(/\s+/g, "-")
+                          ) +
+                          "-" +
+                          btoa(item.id.toString())
+                        }
+                        className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
+                      >
+                        <div className="capitalize text-center">
+                          <p className="mb-2 font-bold text-lg">{item.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.description}
+                          </p>
+                        </div>
+                        <div className="px-5">
+                          <Image
+                            src={item.image}
+                            height={100}
+                            width={100}
+                            className="h-52 w-full object-cover"
+                            alt="item-image"
+                            loading="lazy"
+                          />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="scrollbar-hidden mx-3">
+                <div className="text-center mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
+                  <p className="text-3xl font-bold mb-3">Menus</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Explore the artistry of cuisine with our thoughtfully
+                    curated menu.
+                  </p>
+                </div>
                 <div className="grid grid-cols-2 gap-3 h-full w-full">
                   {menuData.map((item: any, index: any) =>
                     item.dishes.length > 0 ? (
@@ -435,8 +553,10 @@ const RestaurantMenu = () => {
                             className="h-full rounded-xl"
                           >
                             {item.dishes[0].images?.map(
-                              (data: any, key: any) => (
-                                <SwiperSlide key={key}>
+                              (data: any, index: any) => (
+                                <SwiperSlide
+                                  key={"menus-dish-swiper-image-" + index}
+                                >
                                   <Image
                                     src={data}
                                     height={100}
@@ -476,4 +596,4 @@ const RestaurantMenu = () => {
   );
 };
 
-export default withScrollRestoration(RestaurantMenu);
+export default RestaurantMenu;

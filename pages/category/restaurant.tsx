@@ -1,7 +1,7 @@
 "use client";
 
 import NoDataFound from "@/components/NoDataFound";
-import { RestaurantData } from "@/types/category-restaurant";
+import { RestaurantData } from "@/types/category-by-id";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,51 +17,72 @@ const Restaurant = ({
       {restaurantsData && restaurantsData.length > 0 ? (
         <div className="mt-12 flex flex-col gap-5">
           <p className="text-2xl font-bold">Restaurants to explore</p>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
-            {restaurantsData.map((item) => (
-              <Link
-                href={
-                  "/restaurants/" +
-                  encodeURIComponent(
-                    item.name.toLowerCase().replace(/\s+/g, "-")
-                  ) +
-                  "-" +
-                  btoa(item.id.toString())
-                }
-                key={"may-like-" + item.id}
-                className="animated-fade-y group relative h-full cursor-pointer"
+          <div className="grid grid-cols-1 gap-x-4 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+            {restaurantsData.map((item, index) => (
+              <div
+                className="h-full w-full relative"
+                key={"explore-restaurant-" + index}
               >
-                <Image
-                  src={item.image as string}
-                  className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
-                  alt="item-image"
-                  height={100}
-                  width={100}
-                />
-                <p className="absolute -mt-14 w-full bg-black bg-opacity-35 pb-2 pl-5 pt-2 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
-                  {item.name}
-                </p>
-                <p className="mb-9 mt-3 text-sm sm:mb-14 sm:text-base">
-                  {item.address}
-                </p>
-                <div className="absolute bottom-0 flex w-full flex-col gap-2">
-                  <div className="flex items-center justify-between font-extrabold">
-                    {item.reviews > 0 ? (
-                      <p>
-                        {item.reviews}{" "}
-                        <span className="text-sm font-normal"> Reviews</span>
-                      </p>
-                    ) : (
-                      ""
-                    )}
-                    {item.rating > 0 ? (
-                      <p className="px-4 sm:py-2">⭐ {item.rating}</p>
-                    ) : (
-                      ""
-                    )}
+                <Link
+                  href={
+                    "/restaurants/" +
+                    encodeURIComponent(
+                      item.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.id.toString()) +
+                    "/categories/" +
+                    encodeURIComponent(
+                      item.category.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.category.id.toString())
+                  }
+                >
+                  <Image
+                    src={item.category.image as string}
+                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
+                    alt="item-image"
+                    height={100}
+                    width={100}
+                  />
+                </Link>
+                <Link
+                  href={
+                    "/restaurants/" +
+                    encodeURIComponent(
+                      item.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.id.toString())
+                  }
+                  className="w-full absolute bottom-14 md:bottom-[5.25rem] animated-fade-y group cursor-pointer"
+                >
+                  <p className="w-full bg-black bg-opacity-40 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
+                    {item.name}
+                  </p>
+                </Link>
+                <div>
+                  <p className="mt-3 text-sm sm:text-base">{item.address}</p>
+                  <div className="mt-4 flex w-full flex-col gap-2">
+                    <div className="flex items-center justify-between font-extrabold">
+                      {item.reviews > 0 ? (
+                        <p>
+                          {item.reviews}{" "}
+                          <span className="text-sm font-normal"> Reviews</span>
+                        </p>
+                      ) : (
+                        ""
+                      )}
+                      {item.rating > 0 ? (
+                        <p className="px-4 sm:py-2">⭐ {item.rating}</p>
+                      ) : (
+                        ""
+                      )}
+                    </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

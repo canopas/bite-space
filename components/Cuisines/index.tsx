@@ -15,7 +15,7 @@ const Cuisines = () => {
             customClass="mx-auto text-center mb-28 mt-20"
           />
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {cuisineData.map((item) => (
+            {cuisineData.map((item, index) => (
               <Link
                 href={
                   "/restaurants/" +
@@ -24,7 +24,7 @@ const Cuisines = () => {
                   ) +
                   "/cuisines"
                 }
-                key={"cuisine-" + item.id}
+                key={"cuisine-" + index}
                 className="cursor-pointer rounded-xl border p-5 text-center hover:border-primary/10 hover:bg-primary hover:bg-opacity-10"
               >
                 {item.name}

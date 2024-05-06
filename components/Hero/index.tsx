@@ -72,11 +72,11 @@ const banners = [
 ];
 
 const Hero = () => {
-  const [screenHeight, setScreenHeight] = useState<number>(0);
-
+    const [screenHeight, setScreenHeight] = useState<number>(0);
+  
   useEffect(() => {
     setScreenHeight(window.innerHeight);
-    
+
     window.addEventListener("resize", () =>
       setScreenHeight(window.innerHeight)
     );
@@ -99,8 +99,8 @@ const Hero = () => {
             autoplay={true}
             className="h-full"
           >
-            {banners.map((banner, key) => (
-              <SwiperSlide key={key}>
+            {banners.map((banner, index) => (
+              <SwiperSlide key={"banner-" + index}>
                 <img
                   src={banner[400]}
                   srcSet={`${banner[400]} 400w, ${banner[800]} 800w, ${banner[1600]} 1600w`}

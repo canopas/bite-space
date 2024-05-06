@@ -11,30 +11,30 @@ function withScrollRestoration(WrappedComponent: any) {
         if (router.asPath !== url) {
           // Store the previous page URL when navigating away
           setPrevPageUrl(router.asPath);
-          window.sessionStorage.setItem(
+          sessionStorage.setItem(
             `scrollY:${router.asPath}`,
             window.scrollY.toString()
-            );
-          }
-        };
-        
-        const handleRouteComplete = (url: any) => {
-        const scrollY = window.sessionStorage.getItem(`scrollY:${url}`);
+          );
+        }
+      };
+
+      const handleRouteComplete = (url: any) => {
+        const scrollY = sessionStorage.getItem(`scrollY:${url}`);
         if (scrollY) {
           if (url?.includes("/restaurants")) {
             // restaurants data is taking time to load that's why added timout to scroll the page
             setTimeout(function () {
               window.scroll(0, parseInt(scrollY));
-            }, 900);
+            }, 100);
           } else {
             window.scrollTo(0, parseInt(scrollY));
           }
         }
       };
-      
+
       const handlePopState = () => {
         // Retrieve the scroll position for the previous page
-        const scrollY = window.sessionStorage.getItem(`scrollY:${prevPageUrl}`);
+        const scrollY = sessionStorage.getItem(`scrollY:${prevPageUrl}`);
         if (scrollY) {
           window.scrollTo(0, parseInt(scrollY));
         }

@@ -1,7 +1,6 @@
 "use client";
 
 import RootLayout from "@/components/Layout/root";
-import withScrollRestoration from "@/components/withScrollRestoration";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -23,7 +22,7 @@ const About = () => {
 
   return (
     <>
-      <RootLayout>
+      <RootLayout manageHeaderColor={true}>
         <div className="select-none">
           <div
             className="flex w-full"
@@ -168,4 +167,4 @@ const About = () => {
   );
 };
 
-export default withScrollRestoration(About);
+export default About;
