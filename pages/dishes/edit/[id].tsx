@@ -27,7 +27,6 @@ const EditDishPage = () => {
 
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [restaurantId, setRestaurantId] = useState<number | null>(null);
 
   const [menus, setMenusData] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -266,17 +265,14 @@ const EditDishPage = () => {
   };
 
   useEffect(() => {
-    const setCookiesInfo = async () => {
-      const user = await getCookiesValue("login-info");
-      if (user.split("/")[2] != 0) setRestaurantId(user.split("/")[2]);
-    };
-
     const fetchOptionsData = async () => {
+      const user = await getCookiesValue("login-info");
+
       try {
         const { data: menus, error: menuError } = await supabase
           .from("menus")
           .select("id, name")
-          .eq("restaurant_id", restaurantId);
+          .eq("restaurant_id", user.split("/")[2]);
 
         if (menuError) throw menuError;
 
@@ -285,7 +281,7 @@ const EditDishPage = () => {
         const { data: categories, error: categoryError } = await supabase
           .from("categories")
           .select("id, name")
-          .eq("restaurant_id", restaurantId);
+          .eq("restaurant_id", user.split("/")[2]);
 
         if (categoryError) throw categoryError;
 
@@ -353,7 +349,6 @@ const EditDishPage = () => {
       }
     };
 
-    setCookiesInfo();
     fetchOptionsData();
     fetchDishData();
   }, []);
