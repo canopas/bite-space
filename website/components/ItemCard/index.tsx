@@ -8,17 +8,11 @@ import SingleItem from "./SingleItem";
 import supabase from "@/utils/supabase";
 import { InView } from "react-intersection-observer";
 
-// Manage twice data calling issue using this flag
-let dataCalled: any = false;
-
 const ItemCard = () => {
   const [itemData, setMostBrowsedItemData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (dataCalled) return;
-      dataCalled = true;
-
       try {
         // Fetch menu IDs associated with public restaurants
         const { data: menusData, error: menuError } = await supabase
@@ -71,12 +65,11 @@ const ItemCard = () => {
         />
         {itemData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
-            {itemData.map((item: any, key: any) => (
-              <div key={"item-card-" + key}>
+            {itemData.map((item: any, index: any) => (
+              <div key={"item-card-" + index}>
                 <InView triggerOnce className="animated-fade-y">
                   {({ inView, ref, entry }) => (
                     <Link
-                      target="_top"
                       ref={ref}
                       href={
                         "/restaurants/" +

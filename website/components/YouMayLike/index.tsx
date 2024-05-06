@@ -14,17 +14,11 @@ import supabase from "@/utils/supabase";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
-// Manage twice data calling issue using this flag
-let dataCalled: any = false;
-
 const YouMayLike = () => {
   const [restaurants, setRestaurantsData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (dataCalled) return;
-      dataCalled = true;
-
       try {
         const { data, error } = await supabase
           .from("restaurants")
@@ -55,10 +49,9 @@ const YouMayLike = () => {
           />
 
           <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
-            {restaurants.map((item: any, key: any) => (
+            {restaurants.map((item: any, index: any) => (
               <Link
-                target="_top"
-                key={"may-like-" + item.id}
+                key={"may-like-" + index}
                 href={
                   "/restaurants/" +
                   encodeURIComponent(
@@ -77,8 +70,8 @@ const YouMayLike = () => {
                   effect="fade"
                   className="sm:h-[25rem]"
                 >
-                  {item.images.map((data: any, key: any) => (
-                    <SwiperSlide key={key}>
+                  {item.images.map((data: any, index: any) => (
+                    <SwiperSlide key={"restaurant-image-swiper-" + index}>
                       <Image
                         src={data}
                         height={100}

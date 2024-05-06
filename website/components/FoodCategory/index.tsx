@@ -15,18 +15,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import CategorySwiperSkeleton from "../SkeletonPlaceholders/CategorySwiper";
 
-// Manage twice data calling issue using this flag
-let dataCalled: any = false;
-
 const FoodCategory = () => {
   const [isFoodLoading, setIsFoodLoading] = useState(true);
   const [foodData, setFoodData] = useState<any | null>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      if (dataCalled) return;
-      dataCalled = true;
-
       try {
         const { data, error } = await supabase
           .from("categories")
