@@ -18,6 +18,13 @@ import RootLayout from "@/components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import {
+  setCategoryState,
+  setMenusState,
+  setRestaurantsState,
+} from "@/store/restaurant/slice";
+import withScrollRestoration from "@/components/withScrollRestoration";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -27,6 +34,18 @@ const RestaurantMenu = () => {
     .substring(restaurant?.lastIndexOf("-") + 1);
 
   const [screenHeight, setScreenHeight] = useState<number>(0);
+
+  const dispatch = useAppDispatch();
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
+  const restaurantsState = useAppSelector(
+    (state) => state.restaurant.restaurants
+  );
+  const restaurantCategoriesState = useAppSelector(
+    (state) => state.restaurant.categories
+  );
+  const restaurantMenusState = useAppSelector(
+    (state) => state.restaurant.menus
+  );
 
   const [isRestaurantLoading, setIsRestaurantLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState<any | null>(null);
@@ -51,6 +70,7 @@ const RestaurantMenu = () => {
 
           if (error) throw error;
 
+          dispatch(setRestaurantsState({ id: atob(suffix!), data: data }));
           setRestaurantData(data);
         } catch (error) {
           console.error("Error fetching restaurant data:", error);
@@ -72,6 +92,7 @@ const RestaurantMenu = () => {
 
           if (error) throw error;
 
+          dispatch(setCategoryState({ id: atob(suffix!), data: data }));
           setCategoriesData(data);
         } catch (error) {
           console.error("Error fetching categpries data:", error);
@@ -113,6 +134,7 @@ const RestaurantMenu = () => {
             })
           );
 
+          dispatch(setMenusState({ id: atob(suffix!), data: dishes }));
           setMenuData(dishes);
         } catch (error) {
           console.error("Error fetching dishes data:", error);
@@ -122,9 +144,35 @@ const RestaurantMenu = () => {
       }
     };
 
-    fetchRestaurantData();
-    fetchCategoriesData();
-    fetchDishes();
+    if (restaurantsState.length == 0) {
+      fetchRestaurantData();
+      fetchCategoriesData();
+      fetchDishes();
+    } else {
+      if (restaurantsState.some((item: any) => item.id == atob(suffix!))) {
+        setRestaurantData(
+          restaurantsState.filter((item: any) => item.id === atob(suffix!))[0]
+            .data
+        );
+        setIsCategoriesLoading(false);
+        setCategoriesData(
+          restaurantCategoriesState.filter(
+            (item: any) => item.id === atob(suffix!)
+          )[0].data
+        );
+        setIsCategoriesLoading(false);
+        setMenuData(
+          restaurantMenusState.filter(
+            (item: any) => item.id === atob(suffix!)
+          )[0].data
+        );
+        setIsDishesLoading(false);
+      } else {
+        fetchRestaurantData();
+        fetchCategoriesData();
+        fetchDishes();
+      }
+    }
 
     window.addEventListener("resize", () =>
       setScreenHeight(window.innerHeight)
@@ -177,7 +225,7 @@ const RestaurantMenu = () => {
             <div className="pb-28">
               <div className="relative mx-auto mb-16 capitalize">
                 <div
-                  className="animated-fade-y w-full"
+                  className={`w-full ${!isPageReset ? "animated-fade-y" : ""}`}
                   style={{
                     height: screenHeight != 0 ? screenHeight + "px" : "100vh",
                   }}
@@ -193,9 +241,17 @@ const RestaurantMenu = () => {
                     ""
                   )}
                 </div>
-                <div className="animated-fade-y absolute top-0 h-full w-full bg-black bg-opacity-60">
+                <div
+                  className={`absolute top-0 h-full w-full bg-black bg-opacity-60 ${
+                    !isPageReset ? "animated-fade-y" : ""
+                  }`}
+                >
                   <div className="container h-full w-full">
-                    <div className="animated-fade-y absolute bottom-0 pb-20">
+                    <div
+                      className={`absolute bottom-0 pb-20 ${
+                        !isPageReset ? "animated-fade-y" : ""
+                      }`}
+                    >
                       <div className="text-3xl font-bold text-white sm:text-4xl md:text-[50px]">
                         {restaurantData.name}
                       </div>
@@ -306,7 +362,11 @@ const RestaurantMenu = () => {
                           <div
                             ref={ref}
                             className={`mt-20 flex w-full flex-col gap-5 ${
-                              inView ? "animated-fade-y" : ""
+                              inView
+                                ? !isPageReset
+                                  ? "animated-fade-y"
+                                  : ""
+                                : ""
                             }`}
                           >
                             <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
@@ -327,7 +387,9 @@ const RestaurantMenu = () => {
                                   <div
                                     key={"desktop-dish-" + data.id}
                                     id={"desktop-dish-" + data.id}
-                                    className="animated-fade-y relative w-full h-[30rem]"
+                                    className={`relative w-full h-[30rem] ${
+                                      !isPageReset ? "animated-fade-y" : ""
+                                    }`}
                                   >
                                     {data.video ? (
                                       <VideoPlayer
@@ -397,7 +459,9 @@ const RestaurantMenu = () => {
             <div className="scrollbar-hidden mb-20 animated-fade">
               <div
                 ref={resizableRestaurantDivRef}
-                className="smooth-resize relative capitalize mb-16"
+                className={`relative capitalize mb-16 ${
+                  !isPageReset ? "smooth-resize" : ""
+                }`}
                 style={{
                   height: screenHeight != 0 ? screenHeight + "px" : "100vh",
                 }}
@@ -596,4 +660,4 @@ const RestaurantMenu = () => {
   );
 };
 
-export default RestaurantMenu;
+export default withScrollRestoration(RestaurantMenu);

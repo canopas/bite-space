@@ -1,7 +1,9 @@
+import { useAppSelector } from "@/store/store";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const NotFound = () => {
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const NotFound = () => {
   return (
     <div className="select-none">
       <div
-        className="animated-fade-y flex w-full"
+        className={`flex w-full ${!isPageReset ? "animated-fade-y" : ""}`}
         style={{
           height: screenHeight != 0 ? screenHeight + "px" : "100vh",
         }}
@@ -33,7 +35,9 @@ const NotFound = () => {
         />
       </div>
       <div
-        className="animated-fade-y absolute top-0 bg-black w-full bg-opacity-60"
+        className={`absolute top-0 bg-black w-full bg-opacity-60 ${
+          !isPageReset ? "animated-fade-y" : ""
+        }`}
         style={{
           height: screenHeight != 0 ? screenHeight + "px" : "100vh",
         }}

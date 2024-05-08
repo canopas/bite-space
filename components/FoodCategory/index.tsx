@@ -14,8 +14,13 @@ import SectionTitle from "../Common/SectionTitle";
 import "swiper/css";
 import "swiper/css/navigation";
 import CategorySwiperSkeleton from "../SkeletonPlaceholders/CategorySwiper";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setCategoriesState } from "@/store/home/slice";
 
 const FoodCategory = () => {
+  const dispatch = useAppDispatch();
+  const foodDataState = useAppSelector((state) => state.home.categories);
+
   const [isFoodLoading, setIsFoodLoading] = useState(true);
   const [foodData, setFoodData] = useState<any | null>([]);
 
@@ -30,6 +35,7 @@ const FoodCategory = () => {
 
         if (error) throw error;
 
+        dispatch(setCategoriesState(data));
         setFoodData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -38,8 +44,13 @@ const FoodCategory = () => {
       }
     };
 
-    fetchCategories();
-  }, []);
+    if (foodDataState.length == 0) {
+      fetchCategories();
+    } else {
+      setFoodData(foodDataState);
+      setIsFoodLoading(false);
+    }
+  }, [dispatch, foodDataState, foodDataState.length]);
 
   return (
     <>
