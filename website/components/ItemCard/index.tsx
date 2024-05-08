@@ -7,8 +7,13 @@ import SectionTitle from "../Common/SectionTitle";
 import SingleItem from "./SingleItem";
 import supabase from "@/utils/supabase";
 import { InView } from "react-intersection-observer";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setFoodItemsState } from "@/store/home/slice";
 
 const ItemCard = () => {
+  const dispatch = useAppDispatch();
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
+  const itemDataState = useAppSelector((state) => state.home.foodItems);
   const [itemData, setMostBrowsedItemData] = useState<any | null>([]);
 
   useEffect(() => {
@@ -46,14 +51,19 @@ const ItemCard = () => {
           })
         );
 
+        dispatch(setFoodItemsState(restaurant));
         setMostBrowsedItemData(restaurant);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (itemDataState.length == 0) {
+      fetchData();
+    } else {
+      setMostBrowsedItemData(itemDataState);
+    }
+  }, [dispatch, itemDataState, itemDataState.length]);
 
   return (
     <section className="bg-primary bg-opacity-10 py-16 md:py-20 lg:py-28">
@@ -67,7 +77,10 @@ const ItemCard = () => {
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
             {itemData.map((item: any, index: any) => (
               <div key={"item-card-" + index}>
-                <InView triggerOnce className="animated-fade-y">
+                <InView
+                  triggerOnce
+                  className={`${!isPageReset ? "animated-fade-y" : ""}`}
+                >
                   {({ inView, ref, entry }) => (
                     <Link
                       ref={ref}
@@ -82,7 +95,7 @@ const ItemCard = () => {
                         btoa(item.menus.restaurants.id.toString())
                       }
                       className={`h-full w-full ${
-                        inView ? "animated-fade-y" : ""
+                        inView ? (!isPageReset ? "animated-fade-y" : "") : ""
                       }`}
                     >
                       <SingleItem item={item} />

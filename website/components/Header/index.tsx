@@ -80,10 +80,7 @@ const Header = ({ manageColor }: { manageColor: boolean }) => {
                   sticky ? "py-5" : "py-8"
                 } `}
               >
-                <Link
-                  href="/"
-                  className="text-3xl font-extrabold text-primary"
-                >
+                <Link href="/" className="text-3xl font-extrabold text-primary">
                   <span
                     className={`text-black dark:text-white ${
                       manageColor ? (sticky ? "text-black" : "text-white") : ""

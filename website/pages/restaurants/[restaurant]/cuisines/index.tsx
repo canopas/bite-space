@@ -16,10 +16,13 @@ import "swiper/css/effect-fade";
 import { useRouter } from "next/router";
 import RootLayout from "@/components/Layout/root";
 import NoDataFound from "@/components/NoDataFound";
+import { useAppSelector } from "@/store/store";
 
 const CuisineRestaurant = () => {
   const router = useRouter();
   const { restaurant } = router.query;
+
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
 
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
   const [restaurants, setRestaurantsData] = useState<any[]>([]);
@@ -55,7 +58,9 @@ const CuisineRestaurant = () => {
             <SectionTitle
               title={(restaurant as string)?.replace(/-/g, " ")}
               paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
-              customClass="mb-28 mt-20 capitalize animated-fade-y"
+              customClass={`mb-28 mt-20 capitalize ${
+                !isPageReset ? "animated-fade-y" : ""
+              }`}
             />
 
             {isRestaurantsLoading ? (
@@ -66,7 +71,11 @@ const CuisineRestaurant = () => {
                 <div className="hidden animate-pulse rounded-xl bg-gray-200 dark:bg-gray-900 lg:block"></div>
               </div>
             ) : restaurants.length > 0 ? (
-              <div className="animated-fade-y grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2">
+              <div
+                className={`grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2 ${
+                  !isPageReset ? "animated-fade-y" : ""
+                }`}
+              >
                 {restaurants.map((item, index) => (
                   <Link
                     href={`/restaurants/${item.id}`}
