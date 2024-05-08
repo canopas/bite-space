@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useAppDispatch } from "@/store/store";
+import { setIsPageResetState } from "@/store/slice";
 
 function withScrollRestoration(WrappedComponent: any) {
   return function WithScrollRestoration(props: any) {
     const router = useRouter();
     const [prevPageUrl, setPrevPageUrl] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
       const handleRouteChange = (url: any) => {
@@ -20,15 +23,13 @@ function withScrollRestoration(WrappedComponent: any) {
 
       const handleRouteComplete = (url: any) => {
         const scrollY = sessionStorage.getItem(`scrollY:${url}`);
-        if (scrollY) {
-          if (url?.includes("/restaurants")) {
-            // restaurants data is taking time to load that's why added timout to scroll the page
-            setTimeout(function () {
-              window.scroll(0, parseInt(scrollY));
-            }, 100);
-          } else {
-            window.scrollTo(0, parseInt(scrollY));
-          }
+        if (window.history.state.options._h == 0 && scrollY) {
+          dispatch(setIsPageResetState(true));
+          setTimeout(function () {
+            window.scroll(0, parseInt(scrollY));
+          }, 10);
+        } else {
+          dispatch(setIsPageResetState(false));
         }
       };
 
@@ -49,7 +50,7 @@ function withScrollRestoration(WrappedComponent: any) {
         router.events.off("routeChangeComplete", handleRouteComplete);
         window.removeEventListener("popstate", handlePopState);
       };
-    }, [prevPageUrl, router.asPath, router.events]);
+    }, [dispatch, prevPageUrl, router.asPath, router.events]);
 
     return <WrappedComponent {...props} />;
   };

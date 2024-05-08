@@ -10,6 +10,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
+import NoDataFound from "../NoDataFound";
 
 interface ReelProps {
   dishesData: any;
@@ -81,7 +82,7 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
           <div className="reelsContainer scrollbar-hidden w-full">
             <MenuDishSkeleton classes="reel" />
           </div>
-        ) : (
+        ) : dishesData.length > 0 ? (
           <div
             ref={carouselRef}
             className="reelsContainer scrollbar-hidden w-full"
@@ -154,6 +155,15 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
                   </div>
                 </div>
               ))}
+          </div>
+        ) : (
+          <div
+            className="flex items-center justify-center"
+            style={{
+              height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+            }}
+          >
+            <NoDataFound text="😕 Oops, No dishes available at the moment!" />
           </div>
         )}
       </div>

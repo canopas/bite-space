@@ -9,19 +9,34 @@ import { useRouter } from "next/router";
 import Restaurant from "./restaurant";
 import RootLayout from "../../components/Layout/root";
 import NotFound from "@/components/PageNotFound";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setCategoryState, setRestaurantsState } from "@/store/category/slice";
+import withScrollRestoration from "@/components/withScrollRestoration";
 
 const Category = () => {
   const router = useRouter();
   const { category } = router.query;
   const suffix = category?.toString().substring(category?.lastIndexOf("-") + 1);
 
-  const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
+  const categoriesState = useAppSelector((state) => state.category.categories);
+  const categoryRestaurantsState = useAppSelector(
+    (state) => state.category.restaurants
+  );
+
   const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
-  const [restaurantsData, setRestaurantsData] = useState<RestaurantData[]>([]);
+  const [restaurantsData, setCategoriesRestaurantsData] = useState<
+    RestaurantData[]
+  >([]);
+
+  const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategoryData = async () => {
-      if (restaurantsData.length != 0) {
+      if (
+        categoryRestaurantsState.some((item: any) => item.id === atob(suffix!))
+      ) {
         return;
       }
 
@@ -35,20 +50,20 @@ const Category = () => {
 
           if (error) throw error;
 
+          dispatch(setCategoryState({ id: atob(suffix!), data: data }));
           setCategoryData(data);
 
-          const { data: categoriesData, error: categoriesError } =
-            await supabase
-              .from("categories")
-              .select("id, name, description, restaurant_id, image")
-              .neq("restaurant_id", 0)
-              .order("id", { ascending: false })
-              .contains("tags", [data.name.toLowerCase()]);
+          const { data: categoryDatas, error: categoriesError } = await supabase
+            .from("categories")
+            .select("id, name, description, restaurant_id, image")
+            .neq("restaurant_id", 0)
+            .order("id", { ascending: false })
+            .contains("tags", [data.name.toLowerCase()]);
 
           if (categoriesError) throw categoriesError;
 
           const restaurant = await Promise.all(
-            categoriesData.map(async (category) => {
+            categoryDatas.map(async (category) => {
               const { data: restaurantData, error: restaurantError } =
                 await supabase
                   .from("restaurants")
@@ -83,7 +98,11 @@ const Category = () => {
             })
           );
 
-          setRestaurantsData(restaurant);
+          dispatch(
+            setRestaurantsState({ id: atob(suffix!), data: restaurant })
+          );
+
+          setCategoriesRestaurantsData(restaurant);
         } catch (error) {
           console.error("Error fetching category data:", error);
         } finally {
@@ -92,8 +111,25 @@ const Category = () => {
       }
     };
 
-    fetchCategoryData();
-  }, [restaurantsData.length, suffix]);
+    if (categoriesState.length > 0) {
+      if (categoriesState.some((item: any) => item.id == atob(suffix!))) {
+        setCategoryData(
+          categoriesState.filter((item: any) => item.id === atob(suffix!))[0]
+            .data
+        );
+        setCategoriesRestaurantsData(
+          categoryRestaurantsState.filter(
+            (item: any) => item.id === atob(suffix!)
+          )[0].data
+        );
+        setIsRestaurantsLoading(false);
+      } else {
+        fetchCategoryData();
+      }
+    } else if (categoriesState.length == 0) {
+      fetchCategoryData();
+    }
+  }, [dispatch, suffix]);
 
   return (
     <>
@@ -104,7 +140,9 @@ const Category = () => {
               <SectionTitle
                 title={categoryData.name}
                 paragraph={categoryData.description}
-                customClass="mx-auto mb-16 mt-20 animated-fade-y"
+                customClass={`mx-auto mb-16 mt-20 ${
+                  !isPageReset ? "animated-fade-y" : ""
+                }`}
               />
               <Restaurant
                 isRestaurantsLoading={isRestaurantsLoading}
@@ -133,4 +171,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default withScrollRestoration(Category);

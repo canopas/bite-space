@@ -1,6 +1,7 @@
 "use client";
 
 import NoDataFound from "@/components/NoDataFound";
+import { useAppSelector } from "@/store/store";
 import { RestaurantData } from "@/types/category-by-id";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +13,8 @@ const Restaurant = ({
   isRestaurantsLoading: boolean;
   restaurantsData: RestaurantData[];
 }) => {
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
+
   return (
     <>
       {restaurantsData && restaurantsData.length > 0 ? (
@@ -56,7 +59,7 @@ const Restaurant = ({
                     "-" +
                     btoa(item.id.toString())
                   }
-                  className="w-full absolute bottom-14 md:bottom-[5.25rem] animated-fade-y group cursor-pointer"
+                  className={`w-full absolute bottom-[4.75rem] xs:bottom-14 md:bottom-[5.25rem] group cursor-pointer ${!isPageReset ? "animated-fade-y" : ""}`}
                 >
                   <p className="w-full bg-black bg-opacity-40 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
                     {item.name}

@@ -17,6 +17,10 @@ import RootLayout from "@/components/Layout/root";
 import SectionTitle from "@/components/Common/SectionTitle";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import VideoPlayer from "@/components/VideoPlayer";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setCategoryState, setDishesState } from "@/store/category/slice";
+import withScrollRestoration from "@/components/withScrollRestoration";
+import NoDataFound from "@/components/NoDataFound";
 
 const RestaurantCategory = () => {
   const router = useRouter();
@@ -27,6 +31,11 @@ const RestaurantCategory = () => {
   const categorySuffix = category
     ?.toString()
     .substring(category?.lastIndexOf("-") + 1);
+
+  const dispatch = useAppDispatch();
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
+  const categoriesState = useAppSelector((state) => state.category.categories);
+  const categoryDishesState = useAppSelector((state) => state.category.dishes);
 
   const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [dishesData, setDishesData] = useState<any>(null);
@@ -48,6 +57,9 @@ const RestaurantCategory = () => {
           if (error) return error;
 
           if (data) {
+            dispatch(
+              setCategoryState({ id: atob(categorySuffix!), data: data })
+            );
             setCategoryData(data);
 
             const { data: dishData, error: dishError } = await supabase
@@ -60,6 +72,9 @@ const RestaurantCategory = () => {
 
             if (dishError) throw dishError;
 
+            dispatch(
+              setDishesState({ id: atob(categorySuffix!), data: dishData })
+            );
             setDishesData(dishData);
           }
         } catch (error) {
@@ -70,7 +85,27 @@ const RestaurantCategory = () => {
       }
     };
 
-    fetchCategories();
+    if (categoriesState.length > 0) {
+      if (
+        categoriesState.some((item: any) => item.id == atob(categorySuffix!))
+      ) {
+        setCategoryData(
+          categoriesState.filter(
+            (item: any) => item.id === atob(categorySuffix!)
+          )[0].data
+        );
+        setDishesData(
+          categoryDishesState.filter(
+            (item: any) => item.id === atob(categorySuffix!)
+          )[0].data
+        );
+        setIsDishesLoading(false);
+      } else {
+        fetchCategories();
+      }
+    } else if (categoriesState.length == 0) {
+      fetchCategories();
+    }
   }, [categorySuffix, suffix]);
 
   const goBack = () => {
@@ -88,7 +123,9 @@ const RestaurantCategory = () => {
                   <SectionTitle
                     title={categoryData.name}
                     paragraph={categoryData.description}
-                    customClass="mx-auto mb-16 mt-20 animated-fade-y"
+                    customClass={`mx-auto mb-16 mt-20 ${
+                      !isPageReset ? "animated-fade-y" : ""
+                    }`}
                   />
                   {isDishesLoading ? (
                     <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -99,13 +136,15 @@ const RestaurantCategory = () => {
                         />
                       ))}
                     </div>
-                  ) : (
+                  ) : dishesData.length > 0 ? (
                     <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {dishesData.map((data: any) => (
                         <div
                           key={"desktop-dish-" + data.id}
                           id={"desktop-dish-" + data.id}
-                          className="animated-fade-y relative w-full h-[30rem]"
+                          className={`relative w-full h-[30rem] ${
+                            !isPageReset ? "animated-fade-y" : ""
+                          }`}
                         >
                           {data.video ? (
                             <VideoPlayer
@@ -153,6 +192,8 @@ const RestaurantCategory = () => {
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <NoDataFound text="😕 Oops, No dishes available at the moment!" />
                   )}
                 </div>
               </section>
@@ -189,4 +230,4 @@ const RestaurantCategory = () => {
   );
 };
 
-export default RestaurantCategory;
+export default withScrollRestoration(RestaurantCategory);
