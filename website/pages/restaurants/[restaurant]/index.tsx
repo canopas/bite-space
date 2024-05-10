@@ -203,6 +203,7 @@ const RestaurantMenu = () => {
       if (!resizableRestaurantDiv || !scrolled) return;
 
       if (window.scrollY === 0) {
+        resizableRestaurantDiv.classList.add("smooth-resize");
         resizableRestaurantDiv.style.height = "100vh";
         setScrolled(false);
       }
@@ -221,7 +222,7 @@ const RestaurantMenu = () => {
     <>
       {restaurantData ? (
         <RootLayout manageHeaderColor={true}>
-          <section className="hidden sm:block select-none">
+          <section className="hidden sm:block select-none animated-fade">
             <div className="pb-28">
               <div className="relative mx-auto mb-16 capitalize">
                 <div

@@ -55,7 +55,7 @@ const FoodCategory = () => {
   return (
     <>
       <section className="py-16 md:py-20 lg:py-28">
-        <div className="container">
+        <div className="container animated-fade">
           <SectionTitle
             title="What's on your mind?"
             paragraph="We believe in the power of expression – so go ahead, let your thoughts flow."

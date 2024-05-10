@@ -51,7 +51,7 @@ const YouMayLike = () => {
   return (
     <>
       <section className="py-16 md:py-20 lg:py-28">
-        <div className="container">
+        <div className="container animated-fade">
           <SectionTitle
             title="You May Like This"
             paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."

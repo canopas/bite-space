@@ -141,7 +141,7 @@ const RestaurantMenu = () => {
             <span>|</span>
             <p className="font-bold text-sm">{menuName} dishes</p>
           </header>
-          <section className="select-none">
+          <section className="select-none animated-fade">
             <div
               className="reelsContainer scrollbar-hidden animated-fade"
               style={{
