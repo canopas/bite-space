@@ -116,7 +116,7 @@ const RestaurantCategory = () => {
     <>
       {categoryData ? (
         <>
-          <div className="hidden sm:block">
+          <div className="hidden sm:block animated-fade">
             <RootLayout>
               <section className="py-16 md:py-20 lg:py-28">
                 <div className="container">
@@ -199,7 +199,7 @@ const RestaurantCategory = () => {
               </section>
             </RootLayout>
           </div>
-          <div className="sm:hidden">
+          <div className="sm:hidden animated-fade">
             <NoHeaderFooterLayout>
               <header className="select-none header left-0 top-0 z-40 w-full items-center absolute p-3 flex gap-2 text-white">
                 <button
