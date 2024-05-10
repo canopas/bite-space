@@ -67,7 +67,7 @@ const ItemCard = () => {
 
   return (
     <section className="bg-primary bg-opacity-10 py-16 md:py-20 lg:py-28">
-      <div className="container">
+      <div className="container animated-fade">
         <SectionTitle
           title="Most browsed items from the location"
           paragraph="Connect Locally: Must-Visit Places in Your Neighborhood. In our vibrant community, explore top-rated local experiences."
