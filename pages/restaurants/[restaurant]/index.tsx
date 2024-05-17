@@ -25,6 +25,7 @@ import {
   setRestaurantsState,
 } from "@/store/restaurant/slice";
 import withScrollRestoration from "@/components/withScrollRestoration";
+import { setScreenHeightState } from "@/store/slice";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const RestaurantMenu = () => {
     ?.toString()
     .substring(restaurant?.lastIndexOf("-") + 1);
 
-  const [screenHeight, setScreenHeight] = useState<number>(0);
+  const screenHeight = useAppSelector((state) => state.app.screenHeight);
 
   const dispatch = useAppDispatch();
   const isPageReset = useAppSelector((state) => state.app.isPageReset);
@@ -57,7 +58,7 @@ const RestaurantMenu = () => {
   const [menuData, setMenuData] = useState<any[]>([]);
 
   useEffect(() => {
-    setScreenHeight(window.innerHeight);
+    dispatch(setScreenHeightState(window.innerHeight));
 
     const fetchRestaurantData = async () => {
       if (suffix) {
@@ -174,15 +175,15 @@ const RestaurantMenu = () => {
       }
     }
 
-    window.addEventListener("resize", () =>
-      setScreenHeight(window.innerHeight)
-    );
+    window.addEventListener("resize", () => {
+      dispatch(setScreenHeightState(window.innerHeight));
+    });
 
     return () =>
       window.removeEventListener("resize", () =>
-        setScreenHeight(window.innerHeight)
+        dispatch(setScreenHeightState(window.innerHeight))
       );
-  }, [suffix]);
+  }, [suffix, dispatch]);
 
   const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
