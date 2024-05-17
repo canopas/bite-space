@@ -59,7 +59,9 @@ const Restaurant = ({
                     "-" +
                     btoa(item.id.toString())
                   }
-                  className={`w-full absolute bottom-[4.75rem] xs:bottom-14 md:bottom-[5.25rem] group cursor-pointer ${!isPageReset ? "animated-fade-y" : ""}`}
+                  className={`w-full absolute bottom-[4.75rem] xs:bottom-14 md:bottom-[5.25rem] group cursor-pointer ${
+                    !isPageReset ? "animated-fade-y" : ""
+                  }`}
                 >
                   <p className="w-full bg-black bg-opacity-40 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
                     {item.name}

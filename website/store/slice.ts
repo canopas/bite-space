@@ -3,10 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface AppState {
   isPageReset: boolean;
+  screenHeight: number;
 }
 
 const initialState: AppState = {
   isPageReset: false,
+  screenHeight: 0,
 };
 
 export const appSlice = createSlice({
@@ -16,8 +18,11 @@ export const appSlice = createSlice({
     setIsPageResetState: (state, action: PayloadAction<boolean>) => {
       state.isPageReset = action.payload;
     },
+    setScreenHeightState: (state, action: PayloadAction<number>) => {
+      state.screenHeight = action.payload;
+    },
   },
 });
 
-export const { setIsPageResetState } = appSlice.actions;
+export const { setIsPageResetState, setScreenHeightState } = appSlice.actions;
 export const appReducer = appSlice.reducer;
