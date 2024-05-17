@@ -15,7 +15,11 @@ import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import NoHeaderFooterLayout from "@/components/Layout/noHeaderFooter";
-import Link from "next/link";
+import Reels from "@/components/Reel";
+import RootLayout from "@/components/Layout/root";
+import SectionTitle from "@/components/Common/SectionTitle";
+import { useAppSelector } from "@/store/store";
+import NoDataFound from "@/components/NoDataFound";
 
 const RestaurantMenu = () => {
   const router = useRouter();
@@ -25,15 +29,13 @@ const RestaurantMenu = () => {
     .substring(restaurant?.lastIndexOf("-") + 1);
   const menuSuffix = menu?.toString().substring(menu?.lastIndexOf("-") + 1);
 
-  const [screenHeight, setScreenHeight] = useState<number>(0);
+  const isPageReset = useAppSelector((state) => state.app.isPageReset);
 
   const [isDishesLoading, setIsDishesLoading] = useState(true);
   const [menuData, setMenuData] = useState<any>(null);
   const [menuName, setMenuName] = useState<string>("");
 
   useEffect(() => {
-    setScreenHeight(window.innerHeight);
-
     const fetchDishes = async () => {
       if (menuData) return;
 
@@ -111,15 +113,6 @@ const RestaurantMenu = () => {
         }
       };
     }
-
-    window.addEventListener("resize", () =>
-      setScreenHeight(window.innerHeight)
-    );
-
-    return () =>
-      window.removeEventListener("resize", () =>
-        setScreenHeight(window.innerHeight)
-      );
   }, [carouselRef, numDivsToRender, menuData?.length]);
 
   const goBack = () => {
@@ -129,112 +122,107 @@ const RestaurantMenu = () => {
   return (
     <>
       {menuData ? (
-        <NoHeaderFooterLayout>
-          <header className="select-none header left-0 top-0 z-40 w-full items-center absolute p-3 flex gap-2 text-white">
-            <button
-              onClick={goBack}
-              className="flex gap-2 items-center bg-primary bg-opacity-50 dark:bg-opacity-30 border-b border-primary dark:border-opacity-50 px-3 py-1 text-sm font-semibold rounded-lg"
-            >
-              <span>{"<"}</span>
-              Back
-            </button>
-            <span>|</span>
-            <p className="font-bold text-sm">{menuName} dishes</p>
-          </header>
-          <section className="select-none animated-fade">
-            <div
-              className="reelsContainer scrollbar-hidden animated-fade"
-              style={{
-                height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-              }}
-            >
-              {isDishesLoading ? (
-                <div className="reelsContainer scrollbar-hidden w-full">
-                  <MenuDishSkeleton classes="reel" />
-                </div>
-              ) : (
-                <div
-                  ref={carouselRef}
-                  className="reelsContainer scrollbar-hidden w-full"
-                  style={{
-                    height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-                  }}
-                >
-                  {menuData
-                    .slice(0, numDivsToRender)
-                    .map((data: any, index: any) => (
-                      <div
-                        key={"menu-dish-key-" + index}
-                        id={`menu-dish-${index}`}
-                        className={`reel relative carousel-item ${
-                          data ? "animated-fade" : ""
-                        }`}
-                        style={{
-                          height:
-                            screenHeight != 0 ? screenHeight + "px" : "100vh",
-                        }}
-                      >
-                        {data.video ? (
-                          <VideoPlayer
-                            src={data.video}
-                            poster={data.video_thumbnail}
-                            classes={"h-full w-full object-cover"}
-                          />
-                        ) : (
-                          <Swiper
-                            modules={[Autoplay, EffectFade]}
-                            slidesPerView={1}
-                            loop={true}
-                            autoplay={true}
-                            effect="fade"
-                            className="w-full"
-                            style={{
-                              height:
-                                screenHeight != 0
-                                  ? screenHeight + "px"
-                                  : "100vh",
-                            }}
-                          >
-                            {data.images.map((data: any, index: number) => (
-                              <div key={"mobile-image-" + index}>
-                                <SwiperSlide>
-                                  <div
-                                    className="h-full"
-                                    style={{
-                                      backgroundImage: `url(${data})`,
-                                    }}
-                                  >
-                                    <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
-                                      <Image
-                                        src={data}
-                                        height={100}
-                                        width={100}
-                                        alt="menu-dish-image"
-                                        className="w-full"
-                                      />
-                                    </div>
-                                  </div>
-                                </SwiperSlide>
+        <>
+          <div className="hidden sm:block animated-fade">
+            <RootLayout>
+              <section className="py-16 md:py-20 lg:py-28">
+                <div className="container">
+                  <SectionTitle
+                    title={menuName + " Dishes"}
+                    paragraph={""}
+                    customClass={`mx-auto mb-16 mt-20 ${
+                      !isPageReset ? "animated-fade-y" : ""
+                    }`}
+                  />
+                  {isDishesLoading ? (
+                    <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {Array.from({ length: 4 }).map((_, index) => (
+                        <MenuDishSkeleton
+                          key={"category-menu-dish-skeleton-" + index}
+                          classes="h-[30rem]"
+                        />
+                      ))}
+                    </div>
+                  ) : menuData.length > 0 ? (
+                    <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {menuData.map((data: any) => (
+                        <div
+                          key={"desktop-dish-" + data.id}
+                          id={"desktop-dish-" + data.id}
+                          className={`relative w-full h-[30rem] ${
+                            !isPageReset ? "animated-fade-y" : ""
+                          }`}
+                        >
+                          {data.video ? (
+                            <VideoPlayer
+                              src={data.video}
+                              poster={data.video_thumbnail}
+                              classes={"h-full w-full rounded-xl object-cover"}
+                            />
+                          ) : (
+                            <Swiper
+                              modules={[Autoplay, EffectFade]}
+                              slidesPerView={1}
+                              loop={true}
+                              autoplay={true}
+                              effect="fade"
+                              className="h-full w-full rounded-xl"
+                            >
+                              {data.images.map((data: any) => (
+                                <div
+                                  key={"desktop-image-" + data}
+                                  id={"image-" + data}
+                                >
+                                  <SwiperSlide>
+                                    <Image
+                                      src={data}
+                                      fill
+                                      alt="menu-dish-image"
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </SwiperSlide>
+                                </div>
+                              ))}
+                            </Swiper>
+                          )}
+                          <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                            <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
+                              <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                <p className="min-w-2/5 text-white">
+                                  {data.name}
+                                </p>
+                                <p className="text-lg">₹{data.price}</p>
                               </div>
-                            ))}
-                          </Swiper>
-                        )}
-                        <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
-                          <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
-                            <p className="min-w-2/5">{data.name}</p>
-                            <p className="text-lg text-white/70">
-                              ₹{data.price}
-                            </p>
+                              <p className="text-xs">{data.description}</p>
+                            </div>
                           </div>
-                          <p className="text-sm">{data.description}</p>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  ) : (
+                    <NoDataFound text="😕 Oops, No dishes available at the moment!" />
+                  )}
                 </div>
-              )}
-            </div>
-          </section>
-        </NoHeaderFooterLayout>
+              </section>
+            </RootLayout>
+          </div>
+          <div className="sm:hidden animated-fade">
+            <NoHeaderFooterLayout>
+              <header className="select-none header left-0 top-0 z-40 w-full items-center absolute p-3 flex gap-2 text-white">
+                <button
+                  onClick={goBack}
+                  className="flex gap-2 items-center bg-primary bg-opacity-50 dark:bg-opacity-30 border-b border-primary dark:border-opacity-50 px-3 py-1 text-sm font-semibold rounded-lg"
+                >
+                  <span>{"<"}</span>
+                  Back
+                </button>
+                <span>|</span>
+                <p className="font-bold text-sm">{menuName} dishes</p>
+              </header>
+              <Reels dishesData={menuData} isDishesLoading={isDishesLoading} />
+            </NoHeaderFooterLayout>
+          </div>
+        </>
       ) : isDishesLoading ? (
         <div className="h-screen pb-20">
           <div className="flex h-full w-full items-center justify-center bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
