@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-email/render": "^0.0.14",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "aws-sdk": "^2.1583.0",

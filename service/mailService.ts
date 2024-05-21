@@ -10,7 +10,7 @@ const ses = new AWS.SES({ apiVersion: "latest" });
 
 export async function sendEmail({ to, subject, message }: any) {
   const params = {
-    Source: process.env.NEXT_PUBLIC_MAIL_SENDER!,
+    Source: "BiteSpace " + process.env.NEXT_PUBLIC_MAIL_SENDER!,
     Destination: { ToAddresses: [to] },
     Message: {
       Subject: { Data: subject },
