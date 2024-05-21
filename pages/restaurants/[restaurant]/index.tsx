@@ -674,8 +674,8 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         restaurantInfo: null,
-        categories: [],
-        menus: [],
+        categories: null,
+        menus: null,
       },
     };
   }
@@ -705,7 +705,7 @@ export async function getServerSideProps(context: any) {
         return data;
       } catch (error) {
         console.error("Error fetching categpries data:", error);
-        return [];
+        return null;
       }
     }
   };
@@ -721,7 +721,7 @@ export async function getServerSideProps(context: any) {
         return dishes;
       } catch (error) {
         console.error("Error fetching dishes data:", error);
-        return [];
+        return null;
       }
     }
   };

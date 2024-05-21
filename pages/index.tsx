@@ -43,9 +43,9 @@ export async function getServerSideProps(context: any) {
   if (req.url != "/") {
     return {
       props: {
-        foodCategoryData: [],
-        itemCardData: [],
-        youMayLikeData: [],
+        foodCategoryData: null,
+        itemCardData: null,
+        youMayLikeData: null,
       },
     };
   }
@@ -58,7 +58,7 @@ export async function getServerSideProps(context: any) {
       return data;
     } catch (error) {
       console.error("Error fetching data:", error);
-      return [];
+      return null;
     }
   };
 
@@ -73,7 +73,7 @@ export async function getServerSideProps(context: any) {
       return data;
     } catch (error) {
       console.error("Error fetching data:", error);
-      return [];
+      return null;
     }
   };
 
@@ -87,7 +87,7 @@ export async function getServerSideProps(context: any) {
       return data;
     } catch (error) {
       console.error("Error while fetching restaurants data: ", error);
-      return [];
+      return null;
     }
   };
 
