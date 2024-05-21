@@ -15,13 +15,14 @@ import NotFound from "@/components/PageNotFound";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import NoHeaderFooterLayout from "@/components/Layout/noHeaderFooter";
+import { useAppSelector } from "@/store/store";
+import { getMenuDishes } from "@/store/restaurant/slice";
 import Reels from "@/components/Reel";
 import RootLayout from "@/components/Layout/root";
 import SectionTitle from "@/components/Common/SectionTitle";
-import { useAppSelector } from "@/store/store";
 import NoDataFound from "@/components/NoDataFound";
 
-const RestaurantMenu = () => {
+const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
   const router = useRouter();
   const { restaurant, menu } = router.query;
   const suffix = restaurant
@@ -29,52 +30,59 @@ const RestaurantMenu = () => {
     .substring(restaurant?.lastIndexOf("-") + 1);
   const menuSuffix = menu?.toString().substring(menu?.lastIndexOf("-") + 1);
 
+  const menuDishesState = useAppSelector((state) => state.restaurant.menus);
   const isPageReset = useAppSelector((state) => state.app.isPageReset);
 
-  const [isDishesLoading, setIsDishesLoading] = useState(true);
-  const [menuData, setMenuData] = useState<any>(null);
-  const [menuName, setMenuName] = useState<string>("");
+  const [isDishesLoading, setIsDishesLoading] = useState<boolean>(
+    menus ? false : true
+  );
+  const [menuName, setMenuName] = useState<string>(name);
+  const [menusData, setMenuData] = useState<any>(menus);
 
   useEffect(() => {
     const fetchDishes = async () => {
-      if (menuData) return;
+      if (menusData) return;
 
       if (suffix && menuSuffix) {
         try {
-          const { data, error } = await supabase
-            .from("menus")
-            .select("id, name")
-            .eq("restaurant_id", atob(suffix!))
-            .eq("id", atob(menuSuffix!))
-            .single();
-
-          if (error) return error;
+          const { data, error } = await getMenuDishes(suffix, menuSuffix);
+          if (error) throw error;
 
           if (data) {
             setMenuName(data.name);
-
-            const { data: dishData, error: dishError } = await supabase
-              .from("dishes")
-              .select(
-                "id, name, description, price, images, video, video_thumbnail"
-              )
-              .eq("menu_id", data.id)
-              .order("id", { ascending: true });
-
-            if (dishError) throw dishError;
-
-            setMenuData(dishData);
+            setMenuData(data.dishes);
           }
         } catch (error) {
           console.error("Error fetching dishes data:", error);
+          setMenuData([]);
         } finally {
           setIsDishesLoading(false);
         }
       }
     };
 
-    fetchDishes();
-  }, [suffix, menuSuffix, menuData]);
+    if (!menus) {
+      if (menuDishesState.length > 0) {
+        if (
+          menuDishesState
+            .filter((item: any) => item.id === suffix!)[0]
+            .data.some((item: any) => item.id == atob(menuSuffix!))
+        ) {
+          setMenuData(
+            menuDishesState
+              .filter((item: any) => item.id === suffix!)[0]
+              .data.filter((item: any) => item.id == atob(menuSuffix!))[0]
+              .dishes
+          );
+          setIsDishesLoading(false);
+        } else {
+          fetchDishes();
+        }
+      } else if (menuDishesState.length == 0) {
+        fetchDishes();
+      }
+    }
+  }, [suffix, menuSuffix, menusData, menus, isDishesLoading, menuDishesState]);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const [numDivsToRender, setNumDivsToRender] = useState(2); // Initial number of dish to render
@@ -91,7 +99,7 @@ const RestaurantMenu = () => {
         if (entry.isIntersecting) {
           // Increase the number of dish to render
           setNumDivsToRender((prevNumDivs) =>
-            Math.min(prevNumDivs + 1, menuData?.length)
+            Math.min(prevNumDivs + 1, menusData?.length)
           );
         }
       });
@@ -113,7 +121,7 @@ const RestaurantMenu = () => {
         }
       };
     }
-  }, [carouselRef, numDivsToRender, menuData?.length]);
+  }, [carouselRef, numDivsToRender, menusData?.length]);
 
   const goBack = () => {
     router.back();
@@ -121,7 +129,7 @@ const RestaurantMenu = () => {
 
   return (
     <>
-      {menuData ? (
+      {menusData ? (
         <>
           <div className="hidden sm:block animated-fade">
             <RootLayout>
@@ -143,9 +151,9 @@ const RestaurantMenu = () => {
                         />
                       ))}
                     </div>
-                  ) : menuData.length > 0 ? (
+                  ) : menusData.length > 0 ? (
                     <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {menuData.map((data: any) => (
+                      {menusData.map((data: any) => (
                         <div
                           key={"desktop-dish-" + data.id}
                           id={"desktop-dish-" + data.id}
@@ -219,7 +227,7 @@ const RestaurantMenu = () => {
                 <span>|</span>
                 <p className="font-bold text-sm">{menuName} dishes</p>
               </header>
-              <Reels dishesData={menuData} isDishesLoading={isDishesLoading} />
+              <Reels dishesData={menusData} isDishesLoading={isDishesLoading} />
             </NoHeaderFooterLayout>
           </div>
         </>
@@ -233,5 +241,52 @@ const RestaurantMenu = () => {
     </>
   );
 };
+
+interface FetchMenuDataResult {
+  name: string;
+  menus: any;
+}
+
+export async function getServerSideProps(context: any) {
+  const { params, req } = context;
+  const { restaurant, menu } = params;
+  const suffix = restaurant
+    ?.toString()
+    .substring(restaurant?.lastIndexOf("-") + 1);
+  const menuSuffix = menu?.toString().substring(menu?.lastIndexOf("-") + 1);
+
+  if (req.url != "/restaurants/" + restaurant + "/menus/" + menu) {
+    return {
+      props: {
+        name: "",
+        menus: [],
+      },
+    };
+  }
+
+  const fetchMenuData = async (): Promise<FetchMenuDataResult | undefined> => {
+    if (suffix && menuSuffix) {
+      try {
+        const { data, error } = await getMenuDishes(suffix, menuSuffix);
+        if (error) throw error;
+
+        if (data) return { name: data.name, menus: data.dishes };
+      } catch (error) {
+        console.error("Error fetching dishes data:", error);
+        return { name: "", menus: [] };
+      }
+    }
+  };
+
+  const { name, menus }: { name: string; menus: any } =
+    (await fetchMenuData())!;
+
+  return {
+    props: {
+      name,
+      menus,
+    },
+  };
+}
 
 export default RestaurantMenu;

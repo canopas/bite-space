@@ -9,61 +9,36 @@ import supabase from "@/utils/supabase";
 import { InView } from "react-intersection-observer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setFoodItemsState } from "@/store/home/slice";
+import { getItemCardData } from "@/store/category/slice";
 
-const ItemCard = () => {
+const ItemCard = ({ items }: { items: any }) => {
   const dispatch = useAppDispatch();
   const isPageReset = useAppSelector((state) => state.app.isPageReset);
-  const itemDataState = useAppSelector((state) => state.home.foodItems);
-  const [itemData, setMostBrowsedItemData] = useState<any | null>([]);
+  const itemsState = useAppSelector((state) => state.home.foodItems);
+
+  const [itemsData, setMostBrowsedItemData] = useState<any | null>(items);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch menu IDs associated with public restaurants
-        const { data: menusData, error: menuError } = await supabase
-          .from("menus")
-          .select("id, restaurants(id)")
-          .eq("restaurants.is_public", true)
-          .not("restaurants", "is", null);
+        const { data, error } = await getItemCardData();
+        if (error) return error;
 
-        if (menuError) throw menuError;
-
-        // Extract menu IDs
-        const menuIds = menusData.map((menu) => menu.id);
-
-        // Fetch dishes associated with the obtained menu IDs
-        const { data: dishesData, error: dishesError } = await supabase
-          .from("dishes")
-          .select("*, menus(id, restaurants(id, name, address))")
-          .in("menu_id", menuIds)
-          .order("id", { ascending: true })
-          .limit(9);
-
-        if (dishesError) throw dishesError;
-
-        const restaurant = await Promise.all(
-          dishesData.map(async (dish) => {
-            return {
-              ...dish,
-              image: dish.images ? dish.images[0] : "",
-              rating: 4.2,
-            };
-          })
-        );
-
-        dispatch(setFoodItemsState(restaurant));
-        setMostBrowsedItemData(restaurant);
+        dispatch(setFoodItemsState(data));
+        setMostBrowsedItemData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (itemDataState.length == 0) {
-      fetchData();
-    } else {
-      setMostBrowsedItemData(itemDataState);
+    if (!items) {
+      if (itemsState.length == 0) {
+        fetchData();
+      } else {
+        setMostBrowsedItemData(itemsState);
+      }
     }
-  }, [dispatch, itemDataState, itemDataState.length]);
+  }, [dispatch, items, itemsState, itemsState.length]);
 
   return (
     <section className="bg-primary bg-opacity-10 py-16 md:py-20 lg:py-28">
@@ -73,9 +48,9 @@ const ItemCard = () => {
           paragraph="Connect Locally: Must-Visit Places in Your Neighborhood. In our vibrant community, explore top-rated local experiences."
           customClass="mb-12 xl:mb-28"
         />
-        {itemData ? (
+        {itemsData ? (
           <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-x-6 lg:gap-x-8 xl:grid-cols-3">
-            {itemData.map((item: any, index: any) => (
+            {itemsData.map((item: any, index: any) => (
               <div key={"item-card-" + index}>
                 <InView
                   triggerOnce

@@ -16,41 +16,41 @@ import "swiper/css/navigation";
 import CategorySwiperSkeleton from "../SkeletonPlaceholders/CategorySwiper";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCategoriesState } from "@/store/home/slice";
+import { getFoodCategories } from "@/store/category/slice";
 
-const FoodCategory = () => {
+const FoodCategory = ({ categories }: { categories: any }) => {
   const dispatch = useAppDispatch();
-  const foodDataState = useAppSelector((state) => state.home.categories);
+  const categoriesState = useAppSelector((state) => state.home.categories);
 
-  const [isFoodLoading, setIsFoodLoading] = useState(true);
-  const [foodData, setFoodData] = useState<any | null>([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(
+    categories ? false : true
+  );
+  const [categoriesData, setCategoriesData] = useState<any | null>(categories);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data, error } = await supabase
-          .from("categories")
-          .select("*")
-          .eq("restaurant_id", 0)
-          .order("id", { ascending: true });
-
+        const { data, error } = await getFoodCategories();
         if (error) throw error;
 
         dispatch(setCategoriesState(data));
-        setFoodData(data);
+        setCategoriesData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsFoodLoading(false);
+        setIsCategoriesLoading(false);
       }
     };
 
-    if (foodDataState.length == 0) {
-      fetchCategories();
-    } else {
-      setFoodData(foodDataState);
-      setIsFoodLoading(false);
+    if (!categories) {
+      if (categoriesState.length == 0) {
+        fetchCategories();
+      } else {
+        setCategoriesData(categoriesState);
+        setIsCategoriesLoading(false);
+      }
     }
-  }, [dispatch, foodDataState, foodDataState.length]);
+  }, [dispatch, categories, categoriesState, categoriesState.length]);
 
   return (
     <>
@@ -62,7 +62,7 @@ const FoodCategory = () => {
             customClass="mx-auto text-center mb-12 xl:mb-28 mt-20"
           />
 
-          {isFoodLoading ? (
+          {isCategoriesLoading ? (
             <CategorySwiperSkeleton />
           ) : (
             <>
@@ -74,7 +74,7 @@ const FoodCategory = () => {
                 navigation
                 className="food-category-swiper !hidden h-[27rem] lg:!block"
               >
-                {foodData.map((item: any, index: any) => (
+                {categoriesData.map((item: any, index: any) => (
                   <SwiperSlide key={"lg-category-index-" + index}>
                     <Link
                       href={
@@ -110,7 +110,7 @@ const FoodCategory = () => {
                 navigation
                 className="food-category-swiper !hidden h-[27rem] md:!block lg:!hidden"
               >
-                {foodData.map((item: any, index: any) => (
+                {categoriesData.map((item: any, index: any) => (
                   <SwiperSlide key={"md-category-index-" + index}>
                     <Link
                       href={
@@ -146,7 +146,7 @@ const FoodCategory = () => {
                 navigation
                 className="food-category-swiper !hidden h-[27rem] sm:!block md:!hidden"
               >
-                {foodData.map((item: any, index: any) => (
+                {categoriesData.map((item: any, index: any) => (
                   <SwiperSlide key={"sm-category-index-" + index}>
                     <Link
                       href={
@@ -182,7 +182,7 @@ const FoodCategory = () => {
                 navigation
                 className="food-category-swiper h-[27rem] sm:!hidden"
               >
-                {foodData.map((item: any, index: any) => (
+                {categoriesData.map((item: any, index: any) => (
                   <SwiperSlide key={"xs-category-index-" + index}>
                     <Link
                       href={

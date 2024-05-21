@@ -15,23 +15,20 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setRestaurantsState } from "@/store/home/slice";
+import { getYouMayLikeData } from "@/store/category/slice";
 
-const YouMayLike = () => {
+const YouMayLike = ({ restaurants }: { restaurants: any }) => {
   const dispatch = useAppDispatch();
   const isPageReset = useAppSelector((state) => state.app.isPageReset);
   const restaurantsState = useAppSelector((state) => state.home.restaurants);
-  const [restaurants, setRestaurantsData] = useState<any | null>([]);
+  const [restaurantsData, setRestaurantsData] = useState<any | null>(
+    restaurants
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, error } = await supabase
-          .from("restaurants")
-          .select("*")
-          .eq("is_public", true)
-          .order("id", { ascending: true })
-          .limit(4);
-
+        const { data, error } = await getYouMayLikeData();
         if (error) return error;
 
         dispatch(setRestaurantsState(data));
@@ -41,12 +38,14 @@ const YouMayLike = () => {
       }
     };
 
-    if (restaurantsState.length == 0) {
-      fetchData();
-    } else {
-      setRestaurantsData(restaurantsState);
+    if (!restaurants) {
+      if (restaurantsState.length == 0) {
+        fetchData();
+      } else {
+        setRestaurantsData(restaurantsState);
+      }
     }
-  }, [dispatch, restaurantsState, restaurantsState.length]);
+  }, [dispatch, restaurants, restaurantsState, restaurantsState.length]);
 
   return (
     <>
@@ -58,13 +57,13 @@ const YouMayLike = () => {
             customClass="mb-12 xl:mb-28 mt-20"
           />
 
-          {restaurants ? (
+          {restaurantsData ? (
             <div
               className={`grid grid-cols-1 gap-4 xs:gap-10 lg:grid-cols-2 ${
                 !isPageReset ? "animated-fade-y" : ""
               }`}
             >
-              {restaurants.map((item: any, index: any) => (
+              {restaurantsData.map((item: any, index: any) => (
                 <Link
                   key={"may-like-" + index}
                   href={
@@ -76,6 +75,7 @@ const YouMayLike = () => {
                     btoa(item.id.toString())
                   }
                   className="relative h-full cursor-pointer"
+                  aria-label={`View details about ${item.name}`}
                 >
                   <Swiper
                     modules={[Autoplay, EffectFade]}
@@ -92,7 +92,7 @@ const YouMayLike = () => {
                           height={100}
                           width={100}
                           className="h-full w-full object-cover"
-                          alt="item-image"
+                          alt={`Image of ${item.name}`}
                           loading="lazy"
                         />
                       </SwiperSlide>

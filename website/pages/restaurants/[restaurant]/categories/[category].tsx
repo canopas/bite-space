@@ -21,8 +21,15 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCategoryState, setDishesState } from "@/store/category/slice";
 import withScrollRestoration from "@/components/withScrollRestoration";
 import NoDataFound from "@/components/NoDataFound";
+import { getRestaurantCategories } from "@/store/restaurant/slice";
 
-const RestaurantCategory = () => {
+const RestaurantCategory = ({
+  categoryInfo,
+  dishes,
+}: {
+  categoryInfo: any;
+  dishes: any;
+}) => {
   const router = useRouter();
   const { restaurant, category } = router.query;
   const suffix = restaurant
@@ -37,9 +44,11 @@ const RestaurantCategory = () => {
   const categoriesState = useAppSelector((state) => state.category.categories);
   const categoryDishesState = useAppSelector((state) => state.category.dishes);
 
-  const [isDishesLoading, setIsDishesLoading] = useState(true);
-  const [dishesData, setDishesData] = useState<any>(null);
-  const [categoryData, setCategoryData] = useState<any>(null);
+  const [isDishesLoading, setIsDishesLoading] = useState(
+    categoryInfo ? false : true
+  );
+  const [dishesData, setDishesData] = useState<any>(dishes);
+  const [categoryData, setCategoryData] = useState<any>(categoryInfo);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -47,35 +56,22 @@ const RestaurantCategory = () => {
 
       if (suffix && categorySuffix) {
         try {
-          const { data, error } = await supabase
-            .from("categories")
-            .select("id, name, description, image")
-            .eq("restaurant_id", atob(suffix!))
-            .eq("id", atob(categorySuffix!))
-            .single();
-
+          const { data, error } = await getRestaurantCategories(
+            suffix,
+            categorySuffix
+          );
           if (error) return error;
 
           if (data) {
             dispatch(
-              setCategoryState({ id: atob(categorySuffix!), data: data })
+              setCategoryState({ id: categorySuffix!, data: data.category })
             );
-            setCategoryData(data);
-
-            const { data: dishData, error: dishError } = await supabase
-              .from("dishes")
-              .select(
-                "id, name, description, price, images, video, video_thumbnail"
-              )
-              .eq("category_id", data.id)
-              .order("id", { ascending: true });
-
-            if (dishError) throw dishError;
+            setCategoryData(data.category);
 
             dispatch(
-              setDishesState({ id: atob(categorySuffix!), data: dishData })
+              setDishesState({ id: categorySuffix!, data: data.dishes })
             );
-            setDishesData(dishData);
+            setDishesData(data.dishes);
           }
         } catch (error) {
           console.error("Error fetching dishes data:", error);
@@ -85,28 +81,28 @@ const RestaurantCategory = () => {
       }
     };
 
-    if (categoriesState.length > 0) {
-      if (
-        categoriesState.some((item: any) => item.id == atob(categorySuffix!))
-      ) {
-        setCategoryData(
-          categoriesState.filter(
-            (item: any) => item.id === atob(categorySuffix!)
-          )[0].data
-        );
-        setDishesData(
-          categoryDishesState.filter(
-            (item: any) => item.id === atob(categorySuffix!)
-          )[0].data
-        );
-        setIsDishesLoading(false);
-      } else {
+    if (!categoryInfo) {
+      if (categoriesState.length > 0) {
+        if (categoriesState.some((item: any) => item.id == categorySuffix!)) {
+          setCategoryData(
+            categoriesState.filter(
+              (item: any) => item.id === categorySuffix!
+            )[0].data
+          );
+          setDishesData(
+            categoryDishesState.filter(
+              (item: any) => item.id === categorySuffix!
+            )[0].data
+          );
+          setIsDishesLoading(false);
+        } else {
+          fetchCategories();
+        }
+      } else if (categoriesState.length == 0) {
         fetchCategories();
       }
-    } else if (categoriesState.length == 0) {
-      fetchCategories();
     }
-  }, [categorySuffix, suffix]);
+  }, [categorySuffix, suffix, categoryInfo]);
 
   const goBack = () => {
     router.back();
@@ -229,5 +225,59 @@ const RestaurantCategory = () => {
     </>
   );
 };
+
+interface FetchCategoryDataResult {
+  categoryInfo: any;
+  dishes: any;
+}
+
+export async function getServerSideProps(context: any) {
+  const { params, req } = context;
+  const { restaurant, category } = params;
+  const suffix = restaurant
+    ?.toString()
+    .substring(restaurant?.lastIndexOf("-") + 1);
+  const categorySuffix = category
+    ?.toString()
+    .substring(category?.lastIndexOf("-") + 1);
+
+  if (req.url != "/restaurants/" + restaurant + "/categories/" + category) {
+    return {
+      props: {
+        categoryInfo: null,
+        dishes: [],
+      },
+    };
+  }
+
+  const fetchCategoryData = async (): Promise<
+    FetchCategoryDataResult | undefined
+  > => {
+    if (suffix && categorySuffix) {
+      try {
+        const { data, error } = await getRestaurantCategories(
+          suffix,
+          categorySuffix
+        );
+        if (error) throw error;
+
+        if (data) return { categoryInfo: data.category, dishes: data.dishes };
+      } catch (error) {
+        console.error("Error fetching dishes data:", error);
+        return { categoryInfo: null, dishes: [] };
+      }
+    }
+  };
+
+  const { categoryInfo, dishes }: { categoryInfo: any; dishes: any } =
+    (await fetchCategoryData())!;
+
+  return {
+    props: {
+      categoryInfo,
+      dishes,
+    },
+  };
+}
 
 export default withScrollRestoration(RestaurantCategory);
