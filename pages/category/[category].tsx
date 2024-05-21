@@ -10,10 +10,20 @@ import Restaurant from "./restaurant";
 import RootLayout from "../../components/Layout/root";
 import NotFound from "@/components/PageNotFound";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { setCategoryState, setRestaurantsState } from "@/store/category/slice";
+import {
+  getCategoriesData,
+  setCategoryState,
+  setRestaurantsState,
+} from "@/store/category/slice";
 import withScrollRestoration from "@/components/withScrollRestoration";
 
-const Category = () => {
+const Category = ({
+  categoryInfo,
+  restaurants,
+}: {
+  categoryInfo: CategoryData;
+  restaurants: RestaurantData[];
+}) => {
   const router = useRouter();
   const { category } = router.query;
   const suffix = category?.toString().substring(category?.lastIndexOf("-") + 1);
@@ -25,12 +35,16 @@ const Category = () => {
     (state) => state.category.restaurants
   );
 
-  const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
+  const [categoryData, setCategoryData] = useState<CategoryData | null>(
+    categoryInfo
+  );
   const [restaurantsData, setCategoriesRestaurantsData] = useState<
-    RestaurantData[]
-  >([]);
+    RestaurantData[] | null
+  >(restaurants);
 
-  const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(true);
+  const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(
+    categoryInfo ? false : true
+  );
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -42,67 +56,20 @@ const Category = () => {
 
       if (suffix) {
         try {
-          const { data, error } = await supabase
-            .from("categories")
-            .select("*")
-            .eq("id", atob(suffix!))
-            .single();
-
+          const { data, error } = await getCategoriesData(suffix);
           if (error) throw error;
 
-          dispatch(setCategoryState({ id: atob(suffix!), data: data }));
-          setCategoryData(data);
+          if (data) {
+            dispatch(
+              setCategoryState({ id: atob(suffix!), data: data.category })
+            );
+            setCategoryData(data.category);
 
-          const { data: categoryDatas, error: categoriesError } = await supabase
-            .from("categories")
-            .select("id, name, description, restaurant_id, image")
-            .neq("restaurant_id", 0)
-            .order("id", { ascending: false })
-            .contains("tags", [data.name.toLowerCase()]);
-
-          if (categoriesError) throw categoriesError;
-
-          const restaurant = await Promise.all(
-            categoryDatas.map(async (category) => {
-              const { data: restaurantData, error: restaurantError } =
-                await supabase
-                  .from("restaurants")
-                  .select("id, name, address")
-                  .eq("id", category.restaurant_id)
-                  .eq("is_public", true)
-                  .single();
-
-              if (restaurantError)
-                console.error(
-                  "Error fetching restaurant details:",
-                  restaurantError
-                );
-
-              if (restaurantData) {
-                return {
-                  ...restaurantData,
-                  category: category,
-                  rating: 0,
-                  reviews: 0,
-                };
-              } else {
-                return {
-                  id: 0,
-                  name: "",
-                  address: "",
-                  category: category,
-                  rating: 0,
-                  reviews: 0,
-                };
-              }
-            })
-          );
-
-          dispatch(
-            setRestaurantsState({ id: atob(suffix!), data: restaurant })
-          );
-
-          setCategoriesRestaurantsData(restaurant);
+            dispatch(
+              setRestaurantsState({ id: atob(suffix!), data: data.restaurant })
+            );
+            setCategoriesRestaurantsData(data.restaurant);
+          }
         } catch (error) {
           console.error("Error fetching category data:", error);
         } finally {
@@ -111,25 +78,27 @@ const Category = () => {
       }
     };
 
-    if (categoriesState.length > 0) {
-      if (categoriesState.some((item: any) => item.id == atob(suffix!))) {
-        setCategoryData(
-          categoriesState.filter((item: any) => item.id === atob(suffix!))[0]
-            .data
-        );
-        setCategoriesRestaurantsData(
-          categoryRestaurantsState.filter(
-            (item: any) => item.id === atob(suffix!)
-          )[0].data
-        );
-        setIsRestaurantsLoading(false);
-      } else {
+    if (!categoryInfo) {
+      if (categoriesState.length > 0) {
+        if (categoriesState.some((item: any) => item.id == atob(suffix!))) {
+          setCategoryData(
+            categoriesState.filter((item: any) => item.id === atob(suffix!))[0]
+              .data
+          );
+          setCategoriesRestaurantsData(
+            categoryRestaurantsState.filter(
+              (item: any) => item.id === atob(suffix!)
+            )[0]?.data
+          );
+          setIsRestaurantsLoading(false);
+        } else {
+          fetchCategoryData();
+        }
+      } else if (categoriesState.length == 0) {
         fetchCategoryData();
       }
-    } else if (categoriesState.length == 0) {
-      fetchCategoryData();
     }
-  }, [dispatch, suffix]);
+  }, [dispatch, suffix, categoryInfo]);
 
   return (
     <>
@@ -144,10 +113,14 @@ const Category = () => {
                   !isPageReset ? "animated-fade-y" : ""
                 }`}
               />
-              <Restaurant
-                isRestaurantsLoading={isRestaurantsLoading}
-                restaurantsData={restaurantsData}
-              />
+              {restaurantsData ? (
+                <Restaurant
+                  isRestaurantsLoading={isRestaurantsLoading}
+                  restaurantsData={restaurantsData}
+                />
+              ) : (
+                ""
+              )}
             </div>
           </section>
         </RootLayout>
@@ -170,5 +143,60 @@ const Category = () => {
     </>
   );
 };
+
+interface FetchCategoryDataResult {
+  categoryInfo: CategoryData | null;
+  restaurants: RestaurantData[] | null;
+}
+
+export async function getServerSideProps(context: any) {
+  const { params, req } = context;
+  const { category } = params;
+  const suffix = category?.toString().substring(category?.lastIndexOf("-") + 1);
+
+  if (req.url != "/category/" + category) {
+    return {
+      props: {
+        categoryInfo: null,
+        restaurants: [],
+      },
+    };
+  }
+
+  const fetchCategoryData = async (): Promise<
+    FetchCategoryDataResult | undefined
+  > => {
+    if (suffix) {
+      try {
+        const { data, error } = await getCategoriesData(suffix);
+        if (error) throw error;
+
+        if (data) {
+          return { categoryInfo: category, restaurants: data?.restaurant };
+        }
+
+        return { categoryInfo: null, restaurants: [] };
+      } catch (error) {
+        console.error("Error fetching category data:", error);
+        return { categoryInfo: null, restaurants: [] };
+      }
+    }
+  };
+
+  const {
+    categoryInfo,
+    restaurants,
+  }: {
+    categoryInfo: CategoryData | null;
+    restaurants: RestaurantData[] | null;
+  } = (await fetchCategoryData())!;
+
+  return {
+    props: {
+      categoryInfo,
+      restaurants,
+    },
+  };
+}
 
 export default withScrollRestoration(Category);
