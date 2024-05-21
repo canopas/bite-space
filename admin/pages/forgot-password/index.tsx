@@ -62,6 +62,14 @@ const ForgotPasswordPage = () => {
         .setNotBefore(iat)
         .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET));
 
+      const { data: _, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: process.env.NEXT_PUBLIC_SUPABASE_USER!,
+          password: process.env.NEXT_PUBLIC_SUPABASE_USER_PWD!,
+        });
+
+      if (authError) throw authError;
+
       const { error } = await supabase.from("admins").upsert({
         id: user.id,
         email: user.email,
@@ -73,7 +81,7 @@ const ForgotPasswordPage = () => {
 
       await sendEmail({
         to: email,
-        subject: "Bite Space - Reset Password Link",
+        subject: "Reset Password Link",
         message: render(
           ForgotPasswordEmail(
             process.env.NEXT_PUBLIC_ADMIN_BASE_URL + "/reset-password/" + token
