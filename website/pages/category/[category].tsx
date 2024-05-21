@@ -158,7 +158,7 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         categoryInfo: null,
-        restaurants: [],
+        restaurants: null,
       },
     };
   }
@@ -175,10 +175,10 @@ export async function getServerSideProps(context: any) {
           return { categoryInfo: category, restaurants: data?.restaurant };
         }
 
-        return { categoryInfo: null, restaurants: [] };
+        return { categoryInfo: null, restaurants: null };
       } catch (error) {
         console.error("Error fetching category data:", error);
-        return { categoryInfo: null, restaurants: [] };
+        return { categoryInfo: null, restaurants: null };
       }
     }
   };
