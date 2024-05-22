@@ -45,6 +45,8 @@ const RestaurantMenu = ({
     ?.toString()
     .substring(restaurant?.lastIndexOf("-") + 1);
 
+  console.log(1);
+
   const screenHeight = useAppSelector((state) => state.app.screenHeight);
 
   const dispatch = useAppDispatch();
@@ -75,12 +77,19 @@ const RestaurantMenu = ({
     categories
   );
 
+  console.log(2);
+
   // restaurant menus
   const [isDishesLoading, setIsDishesLoading] = useState(menus ? false : true);
   const [menusData, setMenuData] = useState<any[] | null>(menus);
 
+  console.log(3);
+
   useEffect(() => {
+    console.log(4);
+
     dispatch(setScreenHeightState(window.innerHeight));
+    console.log(5);
 
     const fetchRestaurantData = async () => {
       if (suffix) {
@@ -130,13 +139,19 @@ const RestaurantMenu = ({
       }
     };
 
+    console.log(6);
+
     if (!restaurantInfo) {
+      console.log(7);
       if (restaurantsState.length == 0) {
+        console.log(8);
         fetchRestaurantData();
         fetchCategoriesData();
         fetchDishes();
       } else {
+        console.log(9);
         if (restaurantsState.some((item: any) => item.id == suffix!)) {
+          console.log(10);
           setRestaurantData(
             restaurantsState.filter((item: any) => item.id === suffix!)[0].data
           );
@@ -153,6 +168,7 @@ const RestaurantMenu = ({
           );
           setIsDishesLoading(false);
         } else {
+          console.log(11);
           restaurantData();
           fetchCategoriesData();
           fetchDishes();
