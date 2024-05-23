@@ -15,7 +15,7 @@ const MenusPage = () => {
   const [menusCount, setMenusCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const fetchMenus = async (page: number) => {
     try {
@@ -23,7 +23,7 @@ const MenusPage = () => {
       const { data, error } = await supabase
         .from("menus")
         .select("id, restaurant_id, name")
-        .order('id', { ascending: false })
+        .order("id", { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("restaurant_id", user.split("/")[2])
         .neq("restaurant_id", 0);
