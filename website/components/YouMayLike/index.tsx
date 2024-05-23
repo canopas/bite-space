@@ -83,7 +83,7 @@ const YouMayLike = ({ restaurants }: { restaurants: any }) => {
                     loop={true}
                     autoplay={true}
                     effect="fade"
-                    className="sm:h-[25rem]"
+                    className="sm:h-[25rem] h-[19rem]"
                   >
                     {item.images.map((data: any, index: any) => (
                       <SwiperSlide key={"restaurant-image-swiper-" + index}>
