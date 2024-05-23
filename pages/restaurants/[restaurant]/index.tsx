@@ -292,16 +292,16 @@ const RestaurantMenu = ({
                   </div>
                 </div>
               </div>
-              {categoriesData ? (
-                <div className="container">
-                  <p className="my-6 text-3xl font-bold">Categories</p>
-                  {isCategoriesLoading ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
-                      <div className="h-48 lg:h-52 xl:h-72 bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                      <div className="bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                      <div className="hidden lg:block bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                    </div>
-                  ) : (
+              <div className="container">
+                {isCategoriesLoading ? (
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
+                    <div className="h-48 lg:h-52 xl:h-72 bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                    <div className="bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                    <div className="hidden lg:block bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
+                  </div>
+                ) : categoriesData && categoriesData.length > 0 ? (
+                  <>
+                    <p className="my-6 text-3xl font-bold">Categories</p>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
                       {categoriesData.map((item: any, index: any) => (
                         <Link
@@ -338,44 +338,44 @@ const RestaurantMenu = ({
                         </Link>
                       ))}
                     </div>
-                  )}
-                </div>
-              ) : (
-                ""
-              )}
-              {menusData ? (
-                <div className="container">
-                  {menusData.map((item: any, index: any) =>
-                    item.dishes.length > 0 ? (
-                      <div
-                        key={"desktop-menu-" + index}
-                        id={"desktop-menu-" + item.id}
-                      >
-                        <InView triggerOnce>
-                          {({ inView, ref, entry }) => (
-                            <div
-                              ref={ref}
-                              className={`mt-20 flex w-full flex-col gap-5 ${
-                                inView
-                                  ? !isPageReset
-                                    ? "animated-fade-y"
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="container">
+                {isDishesLoading ? (
+                  <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <MenuDishSkeleton
+                        key={"menu-dish-skeleton-" + index}
+                        classes="h-[30rem]"
+                      />
+                    ))}
+                  </div>
+                ) : menusData && menusData.length > 0 ? (
+                  <>
+                    {menusData.map((item: any, index: any) =>
+                      item.dishes.length > 0 ? (
+                        <div
+                          key={"desktop-menu-" + index}
+                          id={"desktop-menu-" + item.id}
+                        >
+                          <InView triggerOnce>
+                            {({ inView, ref, entry }) => (
+                              <div
+                                ref={ref}
+                                className={`mt-20 flex w-full flex-col gap-5 ${
+                                  inView
+                                    ? !isPageReset
+                                      ? "animated-fade-y"
+                                      : ""
                                     : ""
-                                  : ""
-                              }`}
-                            >
-                              <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
-                                {item.name}
-                              </p>
-                              {isDishesLoading ? (
-                                <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                  {Array.from({ length: 4 }).map((_, index) => (
-                                    <MenuDishSkeleton
-                                      key={"menu-dish-skeleton-" + index}
-                                      classes="h-[30rem]"
-                                    />
-                                  ))}
-                                </div>
-                              ) : (
+                                }`}
+                              >
+                                <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
+                                  {item.name}
+                                </p>
                                 <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                   {item.dishes.map((data: any) => (
                                     <div
@@ -437,26 +437,26 @@ const RestaurantMenu = ({
                                     </div>
                                   ))}
                                 </div>
-                              )}
-                            </div>
-                          )}
-                        </InView>
-                      </div>
-                    ) : (
-                      ""
-                    )
-                  )}
-                </div>
-              ) : (
-                ""
-              )}
+                              </div>
+                            )}
+                          </InView>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    )}
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </section>
           <section className="sm:hidden">
-            <div className="scrollbar-hidden mb-20 animated-fade">
+            <div className="scrollbar-hidden animated-fade">
               <div
                 ref={resizableRestaurantDivRef}
-                className={`relative capitalize mb-16 ${
+                className={`relative capitalize ${
                   !isPageReset ? "smooth-resize" : ""
                 }`}
                 style={{
@@ -531,13 +531,15 @@ const RestaurantMenu = ({
                   </div>
                 </div>
               </div>
-              <div className="scrollbar-hidden mx-3 mb-24">
-                <p className="my-6 text-center text-3xl font-bold">
-                  Categories
-                </p>
-                {isCategoriesLoading ? (
+              {isCategoriesLoading ? (
+                <div className="scrollbar-hidden mx-3 mb-20">
                   <div className="h-52 w-full bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                ) : categoriesData ? (
+                </div>
+              ) : categoriesData && categoriesData.length > 0 ? (
+                <div className="scrollbar-hidden mx-3 mt-16">
+                  <p className="my-6 text-center text-3xl font-bold">
+                    Categories
+                  </p>
                   <div className="flex flex-col gap-5 h-full w-full">
                     {categoriesData.map((item: any, index: any) => (
                       <Link
@@ -572,12 +574,17 @@ const RestaurantMenu = ({
                       </Link>
                     ))}
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
-              {menusData ? (
-                <div className="scrollbar-hidden mx-3">
+                </div>
+              ) : (
+                ""
+              )}
+              {isDishesLoading ? (
+                <div className="mb-20 px-3 grid grid-cols-2 gap-3 h-full w-full">
+                  <div className="h-48 w-full bg-gray-200 dark:bg-gray-900 animate-pulse rounded-xl"></div>
+                  <div className="h-48 w-full bg-gray-200 dark:bg-gray-900 animate-pulse rounded-xl"></div>
+                </div>
+              ) : menusData && menusData.length > 0 ? (
+                <div className="scrollbar-hidden mx-3 mt-16 mb-20">
                   <div className="text-center mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
                     <p className="text-3xl font-bold mb-3">Menus</p>
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
