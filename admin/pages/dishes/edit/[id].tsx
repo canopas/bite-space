@@ -34,7 +34,7 @@ const EditDishPage = () => {
   const [isVideoChecked, setIsVideoChecked] = useState<boolean>(false);
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string>("");
   const [menuId, setMenuOption] = useState<number>(0);
   const [categoryId, setCategoryOption] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -72,7 +72,6 @@ const EditDishPage = () => {
 
       const mySchema = z.object({
         name: z.string().min(3),
-        description: z.string().min(3),
         menu_id: z.number().positive({ message: "Select menu from list" }),
         tags: z.array(z.string().min(2)).min(1),
         price: z.number().positive(),
@@ -220,7 +219,6 @@ const EditDishPage = () => {
 
       const response = mySchema.safeParse({
         name: name,
-        description: description,
         menu_id: menuId,
         tags: tags,
         price: price,
@@ -409,9 +407,6 @@ const EditDishPage = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 defaultValue={description}
               ></textarea>
-            </div>
-            <div className="mt-1 text-xs text-meta-1">
-              {errors.find((error) => error.for === "description")?.message}
             </div>
           </div>
           <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">

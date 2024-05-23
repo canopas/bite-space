@@ -104,12 +104,18 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
                   ) : (
                     <SwiperComponent images={data.images}></SwiperComponent>
                   )}
-                  <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-3 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-10 text-white">
-                    <div className="flex h-full items-end justify-between gap-5 border-b border-white/10 pb-2 text-xl font-bold">
+                  <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-2 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-5 text-white">
+                    <div className="flex h-full items-end justify-between gap-5 text-xl font-bold">
                       <p className="min-w-2/5">{data.name}</p>
                       <p className="text-lg text-white/70">₹{data.price}</p>
                     </div>
-                    <p className="text-sm">{data.description}</p>
+                    {data.description && data.description != "" ? (
+                      <p className="border-t border-white/10 text-sm pt-2">
+                        {data.description}
+                      </p>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               ))}
