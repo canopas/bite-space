@@ -49,7 +49,7 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
           if (error) throw error;
 
           if (data) {
-            setMenuName(data.name);
+            setMenuName(data.name as string);
             setMenuData(data.dishes);
           }
         } catch (error) {
@@ -68,6 +68,11 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
             .filter((item: any) => item.id === suffix!)[0]
             .data.some((item: any) => item.id == atob(menuSuffix!))
         ) {
+          setMenuName(
+            menuDishesState
+              .filter((item: any) => item.id === suffix!)[0]
+              .data.filter((item: any) => item.id == atob(menuSuffix!))[0].name
+          );
           setMenuData(
             menuDishesState
               .filter((item: any) => item.id === suffix!)[0]
