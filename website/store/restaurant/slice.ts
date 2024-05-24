@@ -73,7 +73,7 @@ export const getDishesData = async (suffix: any) => {
     if (error) return { data: null, error };
 
     const dishes = await Promise.all(
-      menusData.map(async (menu) => {
+      menusData.map(async (menu: any) => {
         const { data: dishData, error: dishError } = await supabase
           .from("dishes")
           .select(

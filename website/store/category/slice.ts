@@ -58,20 +58,20 @@ export const getItemCardData = async () => {
   if (menuError) return { data: null, error: menuError };
 
   // Extract menu IDs
-  const menuIds = menusData.map((menu) => menu.id);
+  const menuIds = menusData.map((menu: any) => menu.id);
 
   // Fetch dishes associated with the obtained menu IDs
   const { data: dishesData, error: dishesError } = await supabase
     .from("dishes")
     .select("*, menus(id, restaurants(id, name, address))")
     .in("menu_id", menuIds)
-    .order("id", { ascending: true })
+    .order("id", { ascending: false })
     .limit(9);
 
   if (dishesError) return { data: null, error: dishesError };
 
   const restaurant = await Promise.all(
-    dishesData.map(async (dish) => {
+    dishesData.map(async (dish: any) => {
       return {
         ...dish,
         image: dish.images ? dish.images[0] : "",
@@ -89,7 +89,7 @@ export const getYouMayLikeData = async () => {
     .select("*")
     .eq("is_public", true)
     .order("id", { ascending: true })
-    .limit(4);
+    .limit(6);
 
   if (error) return { data: null, error };
 
@@ -116,7 +116,7 @@ export const getCategoriesData = async (suffix: any) => {
     if (categoriesError) return { data: null, error: categoriesError };
 
     const restaurant = await Promise.all(
-      categoryDatas.map(async (category) => {
+      categoryDatas.map(async (category: any) => {
         const { data: restaurantData, error: restaurantError } = await supabase
           .from("restaurants")
           .select("id, name, address")
