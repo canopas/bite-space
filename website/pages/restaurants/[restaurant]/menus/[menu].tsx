@@ -68,6 +68,11 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
             .filter((item: any) => item.id === suffix!)[0]
             .data.some((item: any) => item.id == atob(menuSuffix!))
         ) {
+          setMenuName(
+            menuDishesState
+              .filter((item: any) => item.id === suffix!)[0]
+              .data.filter((item: any) => item.id == atob(menuSuffix!))[0].name
+          );
           setMenuData(
             menuDishesState
               .filter((item: any) => item.id === suffix!)[0]
