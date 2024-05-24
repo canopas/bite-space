@@ -49,7 +49,7 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
           if (error) throw error;
 
           if (data) {
-            setMenuName(data.name as string);
+            setMenuName(data.name);
             setMenuData(data.dishes);
           }
         } catch (error) {
