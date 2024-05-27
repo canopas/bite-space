@@ -1,12 +1,9 @@
 "use client";
 
-import Image from "next/image";
-
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
-import { useEffect, useState } from "react";
 
 const banners = [
   {
@@ -72,26 +69,10 @@ const banners = [
 ];
 
 const Hero = () => {
-    const [screenHeight, setScreenHeight] = useState<number>(0);
-  
-  useEffect(() => {
-    setScreenHeight(window.innerHeight);
-
-    window.addEventListener("resize", () =>
-      setScreenHeight(window.innerHeight)
-    );
-    return () =>
-      window.removeEventListener("resize", () =>
-        setScreenHeight(window.innerHeight)
-      );
-  }, []);
-
   return (
     <>
       <div className="relative z-10 overflow-hidden">
-        <div
-          style={{ height: screenHeight != 0 ? screenHeight + "px" : "100vh" }}
-        >
+        <div className="h-screen">
           <Swiper
             modules={[Autoplay]}
             slidesPerView={1}
@@ -114,10 +95,7 @@ const Hero = () => {
         </div>
       </div>
       <div className="w-full">
-        <div
-          className="absolute top-0 z-10 w-full bg-black bg-opacity-60"
-          style={{ height: screenHeight != 0 ? screenHeight + "px" : "100vh" }}
-        >
+        <div className="h-screen absolute top-0 z-10 w-full bg-black bg-opacity-60">
           <div className="flex h-full select-none flex-col capitalize text-white gap-5">
             <div className="flex flex-col xs:flex-row h-1/2 items-center justify-end xs:items-end xs:justify-center font-extrabold text-3xl md:text-5xl xl:text-7xl">
               Elevate your{" "}

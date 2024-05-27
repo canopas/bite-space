@@ -1,0 +1,52 @@
+import Reels from "@/components/Reel";
+import { useEffect } from "react";
+
+const BottomSheet = ({
+  isOpen,
+  onClose,
+  name,
+  items,
+}: {
+  isOpen: boolean;
+  onClose: any;
+  name: string;
+  items: any;
+}) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen]);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[100] flex items-end ${
+        isOpen ? "block" : "hidden"
+      }`}
+    >
+      <div className="fixed inset-0" onClick={onClose}></div>
+      <header className="select-none header left-0 top-0 z-40 w-full items-center absolute p-3 flex gap-2 text-white">
+        <button
+          onClick={onClose}
+          className="flex gap-2 items-center bg-primary bg-opacity-50 dark:bg-opacity-30 border-b border-primary dark:border-opacity-50 px-3 py-1 text-sm font-semibold rounded-lg"
+        >
+          <span>{"<"}</span>
+          Back
+        </button>
+        <span>|</span>
+        <p className="font-bold text-sm">{name} dishes</p>
+      </header>
+      <div className="h-full w-full bg-white dark:bg-black">
+        <Reels dishesData={items} isDishesLoading={false} />
+      </div>
+    </div>
+  );
+};
+
+export default BottomSheet;

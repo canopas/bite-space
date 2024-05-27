@@ -50,14 +50,35 @@ export const getRestaurantData = async (suffix: any) => {
 
 export const getCategoriesData = async (suffix: any) => {
   if (suffix) {
-    const { data, error } = await supabase
+    const { data: categoriesData, error } = await supabase
       .from("categories")
       .select("*")
       .eq("restaurant_id", atob(suffix!))
       .neq("restaurant_id", 0)
       .order("id", { ascending: false });
 
-    return { data, error };
+    if (error) return { data: null, error };
+
+    const dishes = await Promise.all(
+      categoriesData.map(async (category: any) => {
+        const { data: dishData, error: dishError } = await supabase
+          .from("dishes")
+          .select(
+            "id, name, description, price, images, video, video_thumbnail"
+          )
+          .eq("category_id", category.id)
+          .order("id", { ascending: true });
+
+        if (dishError) return { data: null, dishError };
+
+        return {
+          ...category,
+          dishes: dishData,
+        };
+      })
+    );
+
+    return { data: dishes, error: null };
   }
   return { data: null, error: null };
 };

@@ -29,6 +29,7 @@ import {
 } from "@/store/restaurant/slice";
 import withScrollRestoration from "@/components/withScrollRestoration";
 import { setScreenHeightState } from "@/store/slice";
+import BottomSheet from "@/components/BottomSheet";
 
 const RestaurantMenu = ({
   restaurantInfo,
@@ -203,6 +204,18 @@ const RestaurantMenu = ({
       window.removeEventListener("scroll", handleScrollUp);
     };
   }, [scrolled]);
+
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [currentItemsName, setCurrentItemsName] = useState("");
+  const [currentItems, setCurrentItems] = useState([]);
+
+  const openBottomSheet = (name: string, items: any) => {
+    setCurrentItemsName(name);
+    setCurrentItems(items);
+    setIsBottomSheetOpen(true);
+  };
+
+  const closeBottomSheet = () => setIsBottomSheetOpen(false);
 
   return (
     <>
@@ -542,17 +555,9 @@ const RestaurantMenu = ({
                   </p>
                   <div className="flex flex-col gap-5 h-full w-full">
                     {categoriesData.map((item: any, index: any) => (
-                      <Link
+                      <div
                         key={"cat-dish-key-" + index}
-                        href={
-                          restaurant +
-                          "/categories/" +
-                          encodeURIComponent(
-                            item.name.toLowerCase().replace(/\s+/g, "-")
-                          ) +
-                          "-" +
-                          btoa(item.id.toString())
-                        }
+                        onClick={() => openBottomSheet(item.name, item.dishes)}
                         className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
                       >
                         <div className="capitalize text-center">
@@ -571,7 +576,7 @@ const RestaurantMenu = ({
                             loading="lazy"
                           />
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -595,16 +600,10 @@ const RestaurantMenu = ({
                   <div className="grid grid-cols-2 gap-3 h-full w-full">
                     {menusData.map((item: any, index: any) =>
                       item.dishes.length > 0 ? (
-                        <Link
+                        <div
                           key={"dish-key-" + index}
-                          href={
-                            restaurant +
-                            "/menus/" +
-                            encodeURIComponent(
-                              item.name.toLowerCase().replace(/\s+/g, "-")
-                            ) +
-                            "-" +
-                            btoa(item.id.toString())
+                          onClick={() =>
+                            openBottomSheet(item.name, item.dishes)
                           }
                           className="relative h-48 cursor-pointer"
                         >
@@ -646,7 +645,7 @@ const RestaurantMenu = ({
                               <p className="font-extrabold">{item.name}</p>
                             </div>
                           </div>
-                        </Link>
+                        </div>
                       ) : (
                         ""
                       )
@@ -666,6 +665,12 @@ const RestaurantMenu = ({
       ) : (
         <NotFound />
       )}
+      <BottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={closeBottomSheet}
+        name={currentItemsName}
+        items={currentItems}
+      />
     </>
   );
 };

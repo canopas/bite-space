@@ -3,33 +3,13 @@
 import RootLayout from "@/components/Layout/root";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const About = () => {
-  const [screenHeight, setScreenHeight] = useState<number>(0);
-
-  useEffect(() => {
-    setScreenHeight(window.innerHeight);
-
-    window.addEventListener("resize", () =>
-      setScreenHeight(window.innerHeight)
-    );
-    return () =>
-      window.removeEventListener("resize", () =>
-        setScreenHeight(window.innerHeight)
-      );
-  }, []);
-
   return (
     <>
       <RootLayout manageHeaderColor={true}>
         <div className="select-none">
-          <div
-            className="flex w-full"
-            style={{
-              height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-            }}
-          >
+          <div className="h-screen flex w-full">
             <Image
               className="object-cover w-1/2 h-full"
               src="/images/about/burger.webp"
@@ -47,12 +27,7 @@ const About = () => {
               loading="lazy"
             />
           </div>
-          <div
-            className="absolute top-0 bg-black w-full bg-opacity-60 py-[10rem]"
-            style={{
-              height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-            }}
-          >
+          <div className="h-screen absolute top-0 bg-black w-full bg-opacity-60 py-[10rem]">
             <div className="container h-full items-center justify-center text-white flex flex-col">
               <div className="text-3xl sm:text-5xl md:text-7xl font-extrabold border-b border-primary pb-2 sm:pb-3 md:pb-5">
                 Cook<span className="text-primary">.</span> Share

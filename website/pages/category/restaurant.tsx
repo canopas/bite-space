@@ -1,10 +1,12 @@
 "use client";
 
+import BottomSheet from "@/components/BottomSheet";
 import NoDataFound from "@/components/NoDataFound";
 import { useAppSelector } from "@/store/store";
 import { RestaurantData } from "@/types/category-by-id";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const Restaurant = ({
   isRestaurantsLoading,
@@ -14,6 +16,17 @@ const Restaurant = ({
   restaurantsData: RestaurantData[];
 }) => {
   const isPageReset = useAppSelector((state) => state.app.isPageReset);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [currentItemsName, setCurrentItemsName] = useState("");
+  const [currentItems, setCurrentItems] = useState([]);
+
+  const openBottomSheet = (name: string, items: any) => {
+    setCurrentItemsName(name);
+    setCurrentItems(items);
+    setIsBottomSheetOpen(true);
+  };
+
+  const closeBottomSheet = () => setIsBottomSheetOpen(false);
 
   return (
     <>
@@ -27,6 +40,7 @@ const Restaurant = ({
                 key={"explore-restaurant-" + index}
               >
                 <Link
+                  className="hidden sm:block"
                   href={
                     "/restaurants/" +
                     encodeURIComponent(
@@ -50,6 +64,18 @@ const Restaurant = ({
                     width={100}
                   />
                 </Link>
+                <div
+                  onClick={() => openBottomSheet(item.name, item.dishes)}
+                  className="sm:hidden"
+                >
+                  <Image
+                    src={item.category.image as string}
+                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
+                    alt="item-image"
+                    height={100}
+                    width={100}
+                  />
+                </div>
                 <Link
                   href={
                     "/restaurants/" +
@@ -103,6 +129,12 @@ const Restaurant = ({
       ) : (
         <NoDataFound text="😕 Oops, No restaurants available at the moment!" />
       )}
+      <BottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={closeBottomSheet}
+        name={currentItemsName}
+        items={currentItems}
+      />
     </>
   );
 };

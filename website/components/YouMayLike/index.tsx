@@ -54,7 +54,7 @@ const YouMayLike = ({ restaurants }: { restaurants: any }) => {
           <SectionTitle
             title="You May Like This"
             paragraph="From trending dishes to hidden gems, this personalized recommendation feature ensures that your next food adventure is always exciting and tailored to your unique taste buds."
-            customClass="mb-12 xl:mb-28 mt-20"
+            customClass="mb-12 xl:mb-28"
           />
 
           {restaurantsData ? (
