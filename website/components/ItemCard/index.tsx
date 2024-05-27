@@ -60,7 +60,7 @@ const ItemCard = ({ items }: { items: any }) => {
               modules={[Navigation, Autoplay]}
               slidesPerView={3}
               loop={true}
-              autoplay={false}
+              autoplay={true}
               navigation
               className="food-category-swiper !hidden h-[40rem] lg:!block"
             >
@@ -119,7 +119,7 @@ const ItemCard = ({ items }: { items: any }) => {
               modules={[Navigation, Autoplay]}
               slidesPerView={2}
               loop={true}
-              autoplay={false}
+              autoplay={true}
               navigation
               className="food-category-swiper !hidden h-[36rem] md:!block lg:!hidden"
             >
@@ -176,7 +176,7 @@ const ItemCard = ({ items }: { items: any }) => {
               modules={[Navigation, Autoplay]}
               slidesPerView={1}
               loop={true}
-              autoplay={false}
+              autoplay={true}
               navigation
               className="food-category-swiper md:!hidden h-[36rem]"
             >

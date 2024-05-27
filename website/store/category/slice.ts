@@ -135,7 +135,7 @@ export const getCategoriesData = async (suffix: any) => {
           .eq("category_id", category.id)
           .order("id", { ascending: true });
 
-        if (dishError) return { data: null, dishError };
+        if (dishError) return { data: null, error: dishError };
 
         if (restaurantData) {
           return {

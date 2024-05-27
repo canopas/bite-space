@@ -61,7 +61,7 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
         }
       };
     }
-  }, [carouselRef, numDivsToRender, dishesData?.length]);
+  }, [carouselRef, numDivsToRender, dishesData?.length, screenHeight, dispatch]);
 
   return (
     <section className="select-none">
