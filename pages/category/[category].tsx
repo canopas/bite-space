@@ -22,7 +22,7 @@ const Category = ({
   restaurants,
 }: {
   categoryInfo: CategoryData;
-  restaurants: RestaurantData[];
+  restaurants: any;
 }) => {
   const router = useRouter();
   const { category } = router.query;
@@ -38,9 +38,9 @@ const Category = ({
   const [categoryData, setCategoryData] = useState<CategoryData | null>(
     categoryInfo
   );
-  const [restaurantsData, setCategoriesRestaurantsData] = useState<
-    RestaurantData[] | null
-  >(restaurants);
+  const [restaurantsData, setCategoriesRestaurantsData] = useState<any | null>(
+    restaurants
+  );
 
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(
     categoryInfo ? false : true
@@ -146,7 +146,7 @@ const Category = ({
 
 interface FetchCategoryDataResult {
   categoryInfo: CategoryData | null;
-  restaurants: RestaurantData[] | null;
+  restaurants: any | null;
 }
 
 export async function getServerSideProps(context: any) {

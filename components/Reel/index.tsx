@@ -1,19 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-
-import { Autoplay, EffectFade } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-import "swiper/css";
-import "swiper/css/effect-fade";
 import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import NoDataFound from "../NoDataFound";
 import SwiperComponent from "./swiper";
-import "swiper/react";
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setScreenHeightState } from "@/store/slice";
+
+import "swiper/css";
+import "swiper/css/effect-fade";
 
 interface ReelProps {
   dishesData: any;
@@ -21,12 +17,17 @@ interface ReelProps {
 }
 
 const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
+  const dispatch = useAppDispatch();
   const screenHeight = useAppSelector((state) => state.app.screenHeight);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const [numDivsToRender, setNumDivsToRender] = useState(2); // Initial number of dish to render
 
   useEffect(() => {
+    if (screenHeight == 0) {
+      dispatch(setScreenHeightState(window.innerHeight));
+    }
+
     const observerOptions = {
       root: null, // The viewport as the root
       rootMargin: "0px",
@@ -60,7 +61,7 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
         }
       };
     }
-  }, [carouselRef, numDivsToRender, dishesData?.length]);
+  }, [carouselRef, numDivsToRender, dishesData?.length, screenHeight, dispatch]);
 
   return (
     <section className="select-none">

@@ -18,9 +18,9 @@
 .food-category-swiper .swiper-button-prev {
   height: 2.75rem;
   width: 2.75rem;
-  right: 8rem;
+  right: 5rem;
   left: auto;
-  top: 25rem;
+  top: 38rem;
   background: var(--swiper-button-bg-color);
   color: var(--swiper-button-color);
   border-radius: 50%;
@@ -35,8 +35,8 @@
 .food-category-swiper .swiper-button-next {
   height: 2.75rem;
   width: 2.75rem;
-  right: 4rem;
-  top: 25rem;
+  right: 1rem;
+  top: 38rem;
   background: var(--swiper-button-bg-color);
   color: var(--swiper-button-color);
   border-radius: 50%;
@@ -48,11 +48,13 @@
   font-size: 20px;
 }
 
+/* for sm devices */
 @media (max-width: 575px) {
   .food-category-swiper .swiper-button-prev {
     height: 2rem;
     width: 2rem;
     right: 6rem;
+    top: 34rem;
   }
 
   .food-category-swiper .swiper-button-prev:after {
@@ -63,6 +65,7 @@
     height: 2rem;
     width: 2rem;
     right: 3rem;
+    top: 34rem;
   }
 
   .food-category-swiper .swiper-button-next:after {
@@ -70,12 +73,13 @@
   }
 }
 
+/* for md devices */
 @media (min-width: 575px) and (max-width: 1024px) {
   .food-category-swiper .swiper-button-prev {
     height: 2.5rem;
     width: 2.5rem;
     right: 4.5rem;
-    top: 23rem;
+    top: 34rem;
   }
 
   .food-category-swiper .swiper-button-prev:after {
@@ -86,7 +90,7 @@
     height: 2.5rem;
     width: 2.5rem;
     right: 1rem;
-    top: 23rem;
+    top: 34rem;
   }
 
   .food-category-swiper .swiper-button-next:after {

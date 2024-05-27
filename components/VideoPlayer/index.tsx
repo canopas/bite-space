@@ -14,8 +14,8 @@ const VideoPlayer = ({ src, poster, classes }: VideoPlayerProps) => {
   };
 
   return (
-    <div className="h-full w-full">
-      {!loaded && (
+    <>
+      {!loaded ? (
         <Image
           src={poster}
           alt="Video Thumbnail"
@@ -23,22 +23,28 @@ const VideoPlayer = ({ src, poster, classes }: VideoPlayerProps) => {
           width={100}
           className={classes}
         />
+      ) : (
+        <video
+          src={src}
+          loop
+          autoPlay
+          muted
+          playsInline
+          webkit-playsinline="true"
+          className={classes}
+        >
+          Your browser does not support the video tag.
+        </video>
       )}
       <video
         src={src}
-        loop
-        autoPlay
         muted
-        playsInline
-        webkit-playsinline="true"
-        className={`${classes} transition duration-500 ${
-          loaded ? "opacity-100" : "opacity-0"
-        }`}
+        className="hidden"
         onLoadedData={handleVideoLoaded}
       >
         Your browser does not support the video tag.
       </video>
-    </div>
+    </>
   );
 };
 
