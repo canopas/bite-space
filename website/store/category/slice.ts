@@ -127,10 +127,21 @@ export const getCategoriesData = async (suffix: any) => {
         if (restaurantError)
           console.error("Error fetching restaurant details:", restaurantError);
 
+        const { data: dishData, error: dishError } = await supabase
+          .from("dishes")
+          .select(
+            "id, name, description, price, images, video, video_thumbnail"
+          )
+          .eq("category_id", category.id)
+          .order("id", { ascending: true });
+
+        if (dishError) return { data: null, dishError };
+
         if (restaurantData) {
           return {
             ...restaurantData,
             category: category,
+            dishes: dishData,
             rating: 0,
             reviews: 0,
           };
@@ -140,6 +151,7 @@ export const getCategoriesData = async (suffix: any) => {
             name: "",
             address: "",
             category: category,
+            dishes: [],
             rating: 0,
             reviews: 0,
           };

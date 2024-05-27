@@ -68,7 +68,7 @@ const Header = ({ manageColor }: { manageColor: boolean }) => {
       <header
         className={`header left-0 top-0 z-40 flex w-full items-center ${
           sticky
-            ? "!fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-xl !transition dark:!bg-black dark:!bg-opacity-20"
+            ? "!fixed !z-[100] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-xl !transition dark:!bg-black dark:!bg-opacity-20"
             : "absolute"
         }`}
       >

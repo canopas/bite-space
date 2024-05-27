@@ -12,4 +12,5 @@ export type RestaurantData = {
   rating: number;
   reviews: number;
   category: CategoryData;
+  dishes: [];
 };
