@@ -39,7 +39,6 @@ export const getFoodCategories = async () => {
   const { data, error } = await supabase
     .from("categories")
     .select("*")
-    .eq("restaurant_id", 0)
     .order("id", { ascending: true });
 
   if (error) return { data: null, error };
@@ -106,21 +105,20 @@ export const getCategoriesData = async (suffix: any) => {
 
     if (error) return { data: null, error };
 
-    const { data: categoryDatas, error: categoriesError } = await supabase
-      .from("categories")
-      .select("id, name, description, restaurant_id, image")
-      .neq("restaurant_id", 0)
+    const { data: menuDatas, error: menuError } = await supabase
+      .from("menus")
+      .select("id, restaurant_id, name, description, image")
       .order("id", { ascending: false })
       .contains("tags", [data.name.toLowerCase()]);
 
-    if (categoriesError) return { data: null, error: categoriesError };
+    if (menuError) return { data: null, error: menuError };
 
     const restaurant = await Promise.all(
-      categoryDatas.map(async (category: any) => {
+      menuDatas.map(async (menu: any) => {
         const { data: restaurantData, error: restaurantError } = await supabase
           .from("restaurants")
           .select("id, name, address")
-          .eq("id", category.restaurant_id)
+          .eq("id", menu.restaurant_id)
           .eq("is_public", true)
           .single();
 
@@ -132,7 +130,7 @@ export const getCategoriesData = async (suffix: any) => {
           .select(
             "id, name, description, price, images, video, video_thumbnail"
           )
-          .eq("category_id", category.id)
+          .eq("menu_id", menu.id)
           .order("id", { ascending: true });
 
         if (dishError) return { data: null, error: dishError };
@@ -140,7 +138,7 @@ export const getCategoriesData = async (suffix: any) => {
         if (restaurantData) {
           return {
             ...restaurantData,
-            category: category,
+            menu: menu,
             dishes: dishData,
             rating: 0,
             reviews: 0,
@@ -150,7 +148,7 @@ export const getCategoriesData = async (suffix: any) => {
             id: 0,
             name: "",
             address: "",
-            category: category,
+            menu: menu,
             dishes: [],
             rating: 0,
             reviews: 0,
@@ -159,7 +157,7 @@ export const getCategoriesData = async (suffix: any) => {
       })
     );
 
-    return { data: { category: data, restaurant }, error: null };
+    return { data: { menu: data, restaurant }, error: null };
   }
 
   return { data: null, error: null };

@@ -48,46 +48,11 @@ export const getRestaurantData = async (suffix: any) => {
   return { data: null, error: null };
 };
 
-export const getCategoriesData = async (suffix: any) => {
-  if (suffix) {
-    const { data: categoriesData, error } = await supabase
-      .from("categories")
-      .select("*")
-      .eq("restaurant_id", atob(suffix!))
-      .neq("restaurant_id", 0)
-      .order("id", { ascending: false });
-
-    if (error) return { data: null, error };
-
-    const dishes = await Promise.all(
-      categoriesData.map(async (category: any) => {
-        const { data: dishData, error: dishError } = await supabase
-          .from("dishes")
-          .select(
-            "id, name, description, price, images, video, video_thumbnail"
-          )
-          .eq("category_id", category.id)
-          .order("id", { ascending: true });
-
-        if (dishError) return { data: null, dishError };
-
-        return {
-          ...category,
-          dishes: dishData,
-        };
-      })
-    );
-
-    return { data: dishes, error: null };
-  }
-  return { data: null, error: null };
-};
-
 export const getDishesData = async (suffix: any) => {
   if (suffix) {
     const { data: menusData, error } = await supabase
       .from("menus")
-      .select("id, name")
+      .select("id, name, description, image")
       .eq("restaurant_id", atob(suffix!))
       .order("id", { ascending: true });
 
@@ -112,7 +77,47 @@ export const getDishesData = async (suffix: any) => {
       })
     );
 
-    return { data: dishes, error: null };
+    const { data: menusSectionData, error: menusSectionError } = await supabase
+      .from("menus_sections")
+      .select("*")
+      .eq("restaurant_id", atob(suffix!))
+      .order("id", { ascending: true });
+
+    if (error) return { data: null, error: menusSectionError };
+
+    const menusWithSections: any = [];
+    const menusWithoutSections: any = [];
+
+    // Create a map of menu ids for quick lookup
+    const menuMap = new Map();
+    dishes.forEach((menu) => menuMap.set(menu.id, menu));
+
+    // Iterate over the menus_sections array and construct the result
+    menusSectionData?.forEach((section) => {
+      const sectionMenus = section.menu_ids
+        .map((menuId: number) => menuMap.get(menuId))
+        .filter(Boolean);
+      menusWithSections.push({
+        id: section.id,
+        name: section.name,
+        menus: sectionMenus,
+      });
+    });
+
+    // Find menus that do not belong to any section
+    const sectionMenuIds = new Set(
+      menusSectionData?.flatMap((section) => section.menu_ids)
+    );
+    dishes.forEach((menu) => {
+      if (!sectionMenuIds.has(menu.id)) {
+        menusWithoutSections.push(menu);
+      }
+    });
+
+    return {
+      data: { menus: menusWithoutSections, menuSections: menusWithSections },
+      error: null,
+    };
   }
   return { data: null, error: null };
 };

@@ -30,17 +30,16 @@ const DishesPage = () => {
       const { data, error: menuError } = await supabase
         .from("menus")
         .select("id")
-        .eq("restaurant_id", user.split("/")[2])
-        .neq("restaurant_id", 0);
+        .eq("restaurant_id", user.split("/")[2]);
 
       if (menuError) throw menuError;
 
-      const arrayOfIds = data?.map((obj) => obj.id);
+      const arrayOfIds = data?.map((obj: any) => obj.id);
 
       const { data: dishes, error } = await supabase
         .from("dishes")
         .select(
-          `id, name, images, video, video_thumbnail, price, menus(*), categories(name)`
+          `id, name, images, video, video_thumbnail, price, menus(*)`
         )
         .order('id', { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
@@ -69,12 +68,11 @@ const DishesPage = () => {
         const { data: menus, error } = await supabase
           .from("menus")
           .select(`id, dishes(id)`)
-          .eq("restaurant_id", user.split("/")[2])
-          .neq("restaurant_id", 0);
+          .eq("restaurant_id", user.split("/")[2]);
 
         if (error) throw error;
 
-        menus.map((menu) => {
+        menus.map((menu: any) => {
           count = count + menu.dishes.length;
           setDishesCount(count);
         });
@@ -177,7 +175,6 @@ const DishesPage = () => {
               <tr className="flex py-5">
                 <th className="w-full">Id</th>
                 <th className="w-full">Menu</th>
-                <th className="w-full">Category</th>
                 <th className="w-full">Name</th>
                 <th className="w-full">Price</th>
                 <th className="w-full">Actions</th>
@@ -200,11 +197,6 @@ const DishesPage = () => {
                       <td className="flex w-full items-center justify-center">
                         <p className="text-sm text-black dark:text-white">
                           {dish.menus ? dish.menus.name : "-"}
-                        </p>
-                      </td>
-                      <td className="flex w-full items-center justify-center">
-                        <p className="text-sm text-black dark:text-white">
-                          {dish.categories ? dish.categories.name : "-"}
                         </p>
                       </td>
                       <td className="flex w-full items-center justify-center">

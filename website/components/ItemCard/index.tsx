@@ -19,7 +19,6 @@ import VideoPlayer from "../VideoPlayer";
 
 const ItemCard = ({ items }: { items: any }) => {
   const dispatch = useAppDispatch();
-  const isPageReset = useAppSelector((state) => state.app.isPageReset);
   const itemsState = useAppSelector((state) => state.home.foodItems);
 
   const [itemsData, setMostBrowsedItemData] = useState<any | null>(items);
