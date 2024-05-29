@@ -11,6 +11,6 @@ export type RestaurantData = {
   address: string;
   rating: number;
   reviews: number;
-  category: CategoryData;
+  menu: CategoryData;
   dishes: [];
 };

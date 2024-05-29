@@ -29,14 +29,12 @@ const EditDishPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [menus, setMenusData] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
   const [isImagesChecked, setIsImagesChecked] = useState<boolean>(true);
   const [isVideoChecked, setIsVideoChecked] = useState<boolean>(false);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState<string>("");
   const [menuId, setMenuOption] = useState<number>(0);
-  const [categoryId, setCategoryOption] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [price, setPrice] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);
@@ -241,7 +239,6 @@ const EditDishPage = () => {
 
       const { error } = await supabase.from("dishes").upsert({
         id: id,
-        category_id: categoryId == 0 ? null : categoryId,
         menu_id: menuId,
         name: name,
         price: price,
@@ -275,15 +272,6 @@ const EditDishPage = () => {
         if (menuError) throw menuError;
 
         setMenusData(menus);
-
-        const { data: categories, error: categoryError } = await supabase
-          .from("categories")
-          .select("id, name")
-          .eq("restaurant_id", user.split("/")[2]);
-
-        if (categoryError) throw categoryError;
-
-        setCategories(categories);
       } catch (error) {
         console.error("Error while fetching option: ", error);
       }
@@ -294,7 +282,7 @@ const EditDishPage = () => {
         const { data, error } = await supabase
           .from("dishes")
           .select(
-            "id, category_id, menu_id, name, description, price, tags, images, video, video_thumbnail"
+            "id, menu_id, name, description, price, tags, images, video, video_thumbnail"
           )
           .eq("id", id)
           .single();
@@ -304,7 +292,6 @@ const EditDishPage = () => {
         setName(data.name);
         setDescription(data.description);
         setMenuOption(data.menu_id);
-        setCategoryOption(data.category_id);
         setPrice(data.price);
         setTags(data.tags);
 
@@ -460,56 +447,6 @@ const EditDishPage = () => {
               </div>
               <div className="mt-1 text-xs text-meta-1">
                 {errors.find((error) => error.for === "menu_id")?.message}
-              </div>
-            </div>
-
-            <div className="w-full xl:w-1/2">
-              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                Category
-              </label>
-              <div className="relative z-20 bg-white dark:bg-form-input">
-                <select
-                  value={categoryId ?? 0}
-                  onChange={(e) => {
-                    setCategoryOption(parseInt(e.target.value));
-                  }}
-                  className={`relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
-                    categoryId ? "text-black dark:text-white" : ""
-                  }`}
-                >
-                  <option value="" className="hidden">
-                    Select Category
-                  </option>
-
-                  {categories.map((category, key) => (
-                    <option
-                      key={key}
-                      value={category.id}
-                      className="text-body dark:text-bodydark"
-                    >
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-
-                <span className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g opacity="0.8">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                        fill="#637381"
-                      ></path>
-                    </g>
-                  </svg>
-                </span>
               </div>
             </div>
           </div>

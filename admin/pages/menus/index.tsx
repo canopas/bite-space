@@ -1,17 +1,19 @@
 "use client";
 
 import supabase from "@/utils/supabase";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu } from "@/types/menu";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getCookiesValue } from "@/utils/jwt-auth";
+import { getFilenameFromURL } from "@/utils/image";
 
 const MenusPage = () => {
   const [restaurantId, setRestaurantId] = useState<number>(0);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
 
-  const [menusData, setMenusData] = useState([] as Menu[]);
+  const [menusData, setMenusData] = useState([] as any[]);
   const [menusCount, setMenusCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,11 +24,10 @@ const MenusPage = () => {
       const user = await getCookiesValue("login-info");
       const { data, error } = await supabase
         .from("menus")
-        .select("id, restaurant_id, name")
+        .select("*")
         .order("id", { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
-        .eq("restaurant_id", user.split("/")[2])
-        .neq("restaurant_id", 0);
+        .eq("restaurant_id", user.split("/")[2]);
 
       if (error) throw error;
 
@@ -47,9 +48,8 @@ const MenusPage = () => {
       const user = await getCookiesValue("login-info");
       const { data, error } = await supabase
         .from("menus")
-        .select()
-        .eq("restaurant_id", user.split("/")[2])
-        .neq("restaurant_id", 0);
+        .select("id")
+        .eq("restaurant_id", user.split("/")[2]);
 
       if (error) throw error;
 
@@ -71,8 +71,43 @@ const MenusPage = () => {
     fetchMenus(currentPage);
   }, [currentPage]);
 
-  const deleteRecord = async (id: number) => {
+  const deleteRecord = async (id: number, key: number) => {
     try {
+      const { data: dishes, error: dishesError } = await supabase
+        .from("dishes")
+        .select("images, video")
+        .eq("menu_id", id);
+
+      if (dishesError) throw dishesError;
+
+      for (var i = 0; i < dishes.length; i++) {
+        if (dishes[i].images) {
+          for (var j = 0; j < dishes[i].images.length; j++) {
+            const { error } = await supabase.storage
+              .from("dishes")
+              .remove([getFilenameFromURL(dishes[i].images[j])]);
+
+            if (error) throw error;
+          }
+        }
+
+        if (dishes[i].video) {
+          const { error } = await supabase.storage
+            .from("dishes")
+            .remove([getFilenameFromURL(dishes[i].video)]);
+
+          if (error) throw error;
+        }
+      }
+
+      await supabase.from("dishes").delete().eq("menu_id", id).throwOnError();
+
+      const { data, error } = await supabase.storage
+        .from("menus")
+        .remove([getFilenameFromURL(menusData[key].image)]);
+
+      if (error) throw error;
+
       await supabase.from("menus").delete().eq("id", id).throwOnError();
       setMenusData(menusData.filter((x) => x.id != id));
       fetchCountMenus();
@@ -131,7 +166,7 @@ const MenusPage = () => {
           <table className="w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark min-w-125">
             <thead className="w-full">
               <tr className="flex py-5">
-                <th className="w-1/4">Id</th>
+                <th className="w-full">Id</th>
                 <th className="w-full">Name</th>
                 <th className="w-full">Actions</th>
               </tr>
@@ -143,15 +178,26 @@ const MenusPage = () => {
                   className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
                   key={key}
                 >
-                  <td className="flex w-1/4 items-center justify-center">
+                  <td className="flex w-full items-center justify-center">
                     <p className="text-sm text-black dark:text-white">
                       {menu.id}
                     </p>
                   </td>
-                  <td className="flex w-full items-center justify-center">
-                    <p className="text-sm text-black dark:text-white">
-                      {menu.name}
-                    </p>
+                  <td className="flex w-full items-center">
+                    <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
+                      <div className="h-25 w-25 rounded-md">
+                        <Image
+                          src={menu.image}
+                          width={200}
+                          height={200}
+                          alt="menu-image"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <p className="text-sm text-black dark:text-white text-center">
+                        {menu.name}
+                      </p>
+                    </div>
                   </td>
                   <td className="flex w-full items-center justify-center gap-5">
                     <Link
@@ -181,7 +227,7 @@ const MenusPage = () => {
                       className="text-red"
                       onClick={() =>
                         confirm("Are you sure you want to delete this dish?")
-                          ? deleteRecord(menu.id)
+                          ? deleteRecord(menu.id, key)
                           : ""
                       }
                     >

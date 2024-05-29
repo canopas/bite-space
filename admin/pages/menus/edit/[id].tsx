@@ -1,9 +1,17 @@
 "use client";
 
+import Image from "next/image";
 import supabase from "@/utils/supabase";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/router";
+import SingleImgPreview from "@/components/ImagePreview/SingleImage";
+import {
+  changeFileExtensionToWebpExtension,
+  convertToWebP,
+  getFilenameFromURL,
+} from "@/utils/image";
+import { TagsInput } from "react-tag-input-component";
 
 const EditMenuPage = () => {
   const router = useRouter();
@@ -11,28 +19,46 @@ const EditMenuPage = () => {
 
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [restaurantId, setRestaurantId] = useState<number>(0);
-  const [name, setName] = useState<string>("");
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+
+  const [imageData, setImageData] = useState<File | null>(null);
+  const [image, setImage] = useState("");
+  const [previewFileData, setPreviewFileData] = useState(
+    {} as {
+      previewType: string;
+      previewUrl: string;
+      previewName: string;
+      isDragging: boolean;
+    }
+  );
 
   useEffect(() => {
-    const fetchMenuData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("menus")
-          .select("id, restaurant_id, name")
-          .eq("id", id)
-          .single();
+    const fetchMenu = async () => {
+      const { data, error } = await supabase
+        .from("menus")
+        .select("id, name, image, description, tags")
+        .eq("id", id)
+        .single();
 
-        if (error) throw error;
+      if (error) throw error;
 
-        setRestaurantId(data.restaurant_id);
-        setName(data.name);
-      } catch (error) {
-        console.error("Error while fetching menu: ", error);
-      }
+      setPreviewFileData({
+        previewType: "image",
+        previewUrl: data.image,
+        previewName: "",
+        isDragging: false,
+      });
+
+      setName(data.name);
+      setDescription(data.description);
+      setImage(data.image);
+      setTags(data.tags);
     };
 
-    fetchMenuData();
+    fetchMenu();
   }, [id]);
 
   const handleEditMenu = async (e: any) => {
@@ -42,36 +68,79 @@ const EditMenuPage = () => {
     try {
       const mySchema = z.object({
         name: z.string().min(3),
+        description: z.string().min(3),
+        image: z.string().min(10, { message: "Image is required" }),
+        tags: z.array(z.string().min(2)).min(1),
       });
 
-      const response = mySchema.safeParse({ name: name });
+      let image_url = image;
+
+      if (imageData) {
+        const webpBlob = await convertToWebP(imageData);
+
+        const currentDate = new Date();
+        const { data: imgData, error: imgErr } = await supabase.storage
+          .from("menus")
+          .upload(
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(imageData.name),
+            webpBlob
+          );
+
+        if (imgErr) throw imgErr;
+
+        const { error } = await supabase.storage
+          .from("menus")
+          .remove([getFilenameFromURL(image)]);
+
+        if (error) throw error;
+
+        image_url =
+          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
+          "/menus/" +
+          imgData.path;
+      }
+
+      const response = mySchema.safeParse({
+        name: name,
+        description: description,
+        image: image_url,
+        tags: tags,
+      });
 
       if (!response.success) {
+        let errArr: any[] = [];
         const { errors: err } = response.error;
-        const errArr = err.map((error) => ({
-          for: error.path[0],
-          message: error.message,
-        }));
+        for (var i = 0; i < err.length; i++) {
+          errArr.push({ for: err[i].path[0], message: err[i].message });
+        }
         setErrors(errArr);
-        throw err;
+        return;
       }
 
       setErrors([]);
 
-      let { error } = await supabase.from("menus").upsert({
+      const { error } = await supabase.from("menus").upsert({
         id: id,
-        restaurant_id: restaurantId,
         name: name,
+        description: description,
+        image: image_url,
+        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;
 
       router.push("/menus");
     } catch (error) {
-      console.error("Error while updating menu: ", error);
+      console.error("Error while adding menu: ", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFileUploading = (file: any) => {
+    setImageData(file);
   };
 
   return (
@@ -93,26 +162,121 @@ const EditMenuPage = () => {
               Name <span className="text-meta-1">*</span>
             </label>
             <input
-              value={name}
-              name="name"
               type="text"
               placeholder="Name"
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               onChange={(e) => setName(e.target.value)}
               autoComplete="off"
-              required
+              value={name}
             />
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "name")?.message}
             </div>
           </div>
+          <div className="mb-5.5">
+            <label
+              className="mb-3 block text-sm font-medium text-black dark:text-white"
+              htmlFor="Username"
+            >
+              Description <span className="text-meta-1">*</span>
+            </label>
+            <div className="relative">
+              <textarea
+                className="w-full rounded border border-stroke  px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                rows={5}
+                placeholder="Description"
+                onChange={(e) => setDescription(e.target.value)}
+                defaultValue={description}
+              ></textarea>
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "description")?.message}
+            </div>
+          </div>
+          <div>
+            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              Tags <span className="text-meta-1">*</span>
+            </label>
+            <TagsInput
+              value={tags ?? [""]}
+              onChange={setTags}
+              name="tags"
+              placeHolder="Write Your Tags Here"
+            />
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "tags")?.message}
+            </div>
+          </div>
+          <div>
+            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              Image <span className="text-meta-1">*</span>
+            </label>
+            <SingleImgPreview
+              uploadedFile={[previewFileData, setPreviewFileData]}
+              callback={handleFileUploading}
+            >
+              {!previewFileData || !previewFileData.previewUrl ? (
+                <div className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray p-10 dark:bg-meta-4 sm:py-7.5">
+                  <div className="flex flex-col items-center justify-center space-y-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
+                          fill="#3C50E0"
+                        />
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
+                          fill="#3C50E0"
+                        />
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
+                          fill="#3C50E0"
+                        />
+                      </svg>
+                    </span>
+                    <p>
+                      <span className="text-primary">Click to upload</span>
+                      image for menu
+                    </p>
+                    <p className="mt-1.5">PNG, JPG, JPEG or GIF</p>
+                    <p>(max, 800 X 800px)</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  <Image
+                    className="h-56 w-72 rounded-2xl object-contain"
+                    src={previewFileData.previewUrl as string}
+                    height={224}
+                    width={300}
+                    alt="image"
+                  />
+                </div>
+              )}
+            </SingleImgPreview>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "image")?.message}
+            </div>
+          </div>
           <div className="text-end">
             <button
               type="submit"
-              className="h-10 w-30 rounded-md bg-primary  font-medium text-white disabled:cursor-wait disabled:opacity-30"
+              className="h-10 w-30 rounded-md bg-primary font-medium text-white disabled:cursor-wait disabled:opacity-30"
               disabled={isLoading}
             >
-              {isLoading ? "Updating..." : "Update"}
+              {isLoading ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

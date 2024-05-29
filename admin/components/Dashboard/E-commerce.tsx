@@ -21,8 +21,7 @@ const ECommerce = () => {
 
           const { data, error: categoriesError } = await supabase
             .from("categories")
-            .select("id")
-            .eq("restaurant_id", 0);
+            .select("id");
 
           if (categoriesError) throw categoriesError;
 
@@ -31,8 +30,7 @@ const ECommerce = () => {
           const { data, error: menusError } = await supabase
             .from("menus")
             .select("id")
-            .eq("restaurant_id", user.split("/")[2])
-            .neq("restaurant_id", 0);
+            .eq("restaurant_id", user.split("/")[2]);
 
           if (menusError) throw menusError;
 
@@ -42,12 +40,11 @@ const ECommerce = () => {
           const { data: menus, error: dishesError } = await supabase
             .from("menus")
             .select(`id, dishes(id)`)
-            .eq("restaurant_id", user.split("/")[2])
-            .neq("restaurant_id", 0);
+            .eq("restaurant_id", user.split("/")[2]);
 
           if (dishesError) throw dishesError;
 
-          menus.map((menu) => {
+          menus.map((menu: any) => {
             count = count + menu.dishes.length;
           });
 

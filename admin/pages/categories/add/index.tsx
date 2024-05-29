@@ -7,7 +7,6 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import { getCookiesValue } from "@/utils/jwt-auth";
-import { TagsInput } from "react-tag-input-component";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
@@ -15,14 +14,12 @@ import {
 
 const AddCategoryPage = () => {
   const router = useRouter();
-  const [restaurantId, setRestaurantId] = useState<number>(0);
 
   const [errors, setErrors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [name, setName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [previewFileData, setPreviewFileData] = useState(
     {} as {
@@ -33,20 +30,11 @@ const AddCategoryPage = () => {
     }
   );
 
-  useEffect(() => {
-    const setCookiesInfo = async () => {
-      const user = await getCookiesValue("login-info");
-      if (user.split("/")[2] != 0) setRestaurantId(user.split("/")[2]);
-    };
-
-    setCookiesInfo();
-  }, []);
-
   const handleAddCategory = async (e: any) => {
     e.preventDefault();
 
     const user = await getCookiesValue("login-info");
-    if (restaurantId == 0 && user.split("/")[1] != "super-admin") return;
+    if (user.split("/")[1] != "super-admin") return;
 
     setIsLoading(true);
 
@@ -55,7 +43,6 @@ const AddCategoryPage = () => {
         name: z.string().min(3),
         description: z.string().min(3),
         image: z.string().min(10, { message: "Image is required" }),
-        tags: z.array(z.string().min(2)).min(1),
       });
 
       let image_url: string = "";
@@ -85,7 +72,6 @@ const AddCategoryPage = () => {
         name: name,
         description: description,
         image: image_url,
-        tags: tags,
       });
 
       if (!response.success) {
@@ -101,11 +87,9 @@ const AddCategoryPage = () => {
       setErrors([]);
 
       const { error } = await supabase.from("categories").insert({
-        restaurant_id: restaurantId,
         name: name,
         description: description,
         image: image_url,
-        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;
@@ -171,20 +155,6 @@ const AddCategoryPage = () => {
             </div>
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "description")?.message}
-            </div>
-          </div>
-          <div>
-            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-              Tags <span className="text-meta-1">*</span>
-            </label>
-            <TagsInput
-              value={tags}
-              onChange={setTags}
-              name="tags"
-              placeHolder="Write Your Tags Here"
-            />
-            <div className="mt-1 text-xs text-meta-1">
-              {errors.find((error) => error.for === "tags")?.message}
             </div>
           </div>
           <div>

@@ -1,9 +1,7 @@
 "use client";
 
-import supabase from "@/utils/supabase";
-
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,7 +10,6 @@ import "swiper/css/effect-fade";
 
 import { InView } from "react-intersection-observer";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 import RootLayout from "@/components/Layout/root";
 import NotFound from "@/components/PageNotFound";
@@ -20,10 +17,8 @@ import VideoPlayer from "@/components/VideoPlayer";
 import MenuDishSkeleton from "@/components/SkeletonPlaceholders/MenuDish";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import {
-  getCategoriesData,
   getDishesData,
   getRestaurantData,
-  setCategoryState,
   setMenusState,
   setRestaurantsState,
 } from "@/store/restaurant/slice";
@@ -33,11 +28,9 @@ import BottomSheet from "@/components/BottomSheet";
 
 const RestaurantMenu = ({
   restaurantInfo,
-  categories,
   menus,
 }: {
   restaurantInfo: any;
-  categories: any;
   menus: any;
 }) => {
   const router = useRouter();
@@ -53,9 +46,6 @@ const RestaurantMenu = ({
   const restaurantsState = useAppSelector(
     (state) => state.restaurant.restaurants
   );
-  const restaurantCategoriesState = useAppSelector(
-    (state) => state.restaurant.categories
-  );
   const restaurantMenusState = useAppSelector(
     (state) => state.restaurant.menus
   );
@@ -68,18 +58,14 @@ const RestaurantMenu = ({
     restaurantInfo
   );
 
-  // restaurant categories
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(
-    categories ? false : true
-  );
-  const [categoriesData, setCategoriesData] = useState<any[] | null>(
-    categories
-  );
-
   // restaurant menus
   const [isDishesLoading, setIsDishesLoading] = useState(menus ? false : true);
-  const [menusData, setMenuData] = useState<any[] | null>(menus);
+  const [menusData, setMenuData] = useState<{
+    menus: any[];
+    menuSections: any[];
+  } | null>(menus);
 
+  console.log("Menu data:", menusData);
   useEffect(() => {
     dispatch(setScreenHeightState(window.innerHeight));
 
@@ -99,30 +85,14 @@ const RestaurantMenu = ({
       }
     };
 
-    const fetchCategoriesData = async () => {
-      if (suffix) {
-        try {
-          const { data, error } = await getCategoriesData(suffix);
-          if (error) throw error;
-
-          dispatch(setCategoryState({ id: suffix!, data: data }));
-          setCategoriesData(data);
-        } catch (error) {
-          console.error("Error fetching categpries data:", error);
-        } finally {
-          setIsCategoriesLoading(false);
-        }
-      }
-    };
-
     const fetchDishes = async () => {
       if (suffix) {
         try {
-          const { data: dishes, error } = await getDishesData(suffix);
+          const { data: data, error } = await getDishesData(suffix);
           if (error) throw error;
 
-          dispatch(setMenusState({ id: suffix!, data: dishes }));
-          setMenuData(dishes);
+          dispatch(setMenusState({ id: suffix!, data: data }));
+          setMenuData(data);
         } catch (error) {
           console.error("Error fetching dishes data:", error);
         } finally {
@@ -134,20 +104,13 @@ const RestaurantMenu = ({
     if (!restaurantInfo) {
       if (restaurantsState.length == 0) {
         fetchRestaurantData();
-        fetchCategoriesData();
         fetchDishes();
       } else {
         if (restaurantsState.some((item: any) => item.id == suffix!)) {
           setRestaurantData(
             restaurantsState.filter((item: any) => item.id === suffix!)[0].data
           );
-          setIsCategoriesLoading(false);
-          setCategoriesData(
-            restaurantCategoriesState.filter(
-              (item: any) => item.id === suffix!
-            )[0].data
-          );
-          setIsCategoriesLoading(false);
+          setIsRestaurantLoading(false);
           setMenuData(
             restaurantMenusState.filter((item: any) => item.id === suffix!)[0]
               .data
@@ -155,7 +118,6 @@ const RestaurantMenu = ({
           setIsDishesLoading(false);
         } else {
           fetchRestaurantData();
-          fetchCategoriesData();
           fetchDishes();
         }
       }
@@ -170,40 +132,6 @@ const RestaurantMenu = ({
         dispatch(setScreenHeightState(window.innerHeight))
       );
   }, [suffix, dispatch]);
-
-  const resizableRestaurantDivRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const resizableRestaurantDiv = resizableRestaurantDivRef.current;
-      if (!resizableRestaurantDiv || scrolled) return;
-
-      if (window.scrollY > 0) {
-        resizableRestaurantDiv.style.height = "60vh";
-        setScrolled(true);
-      }
-    };
-
-    const handleScrollUp = () => {
-      const resizableRestaurantDiv = resizableRestaurantDivRef.current;
-      if (!resizableRestaurantDiv || !scrolled) return;
-
-      if (window.scrollY === 0) {
-        resizableRestaurantDiv.classList.add("smooth-resize");
-        resizableRestaurantDiv.style.height = "100vh";
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("scroll", handleScrollUp);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("scroll", handleScrollUp);
-    };
-  }, [scrolled]);
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [currentItemsName, setCurrentItemsName] = useState("");
@@ -306,57 +234,6 @@ const RestaurantMenu = ({
                 </div>
               </div>
               <div className="container">
-                {isCategoriesLoading ? (
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
-                    <div className="h-48 lg:h-52 xl:h-72 bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                    <div className="bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                    <div className="hidden lg:block bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                  </div>
-                ) : categoriesData && categoriesData.length > 0 ? (
-                  <>
-                    <p className="my-6 text-3xl font-bold">Categories</p>
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 h-full w-full">
-                      {categoriesData.map((item: any, index: any) => (
-                        <Link
-                          key={"dish-key-" + index}
-                          href={
-                            restaurant +
-                            "/categories/" +
-                            encodeURIComponent(
-                              item.name.toLowerCase().replace(/\s+/g, "-")
-                            ) +
-                            "-" +
-                            btoa(item.id.toString())
-                          }
-                          className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
-                        >
-                          <div className="h-full capitalize text-center">
-                            <p className="mb-2 font-bold text-lg">
-                              {item.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {item.description}
-                            </p>
-                          </div>
-                          <div className="px-5">
-                            <Image
-                              src={item.image}
-                              height={100}
-                              width={100}
-                              className="h-48 lg:h-52 xl:h-72 w-full object-cover"
-                              alt="item-image"
-                              loading="lazy"
-                            />
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="container">
                 {isDishesLoading ? (
                   <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {Array.from({ length: 4 }).map((_, index) => (
@@ -366,101 +243,230 @@ const RestaurantMenu = ({
                       />
                     ))}
                   </div>
-                ) : menusData && menusData.length > 0 ? (
+                ) : (
                   <>
-                    {menusData.map((item: any, index: any) =>
-                      item.dishes.length > 0 ? (
-                        <div
-                          key={"desktop-menu-" + index}
-                          id={"desktop-menu-" + item.id}
-                        >
-                          <InView triggerOnce>
-                            {({ inView, ref, entry }) => (
-                              <div
-                                ref={ref}
-                                className={`mt-20 flex w-full flex-col gap-5 ${
-                                  inView
-                                    ? !isPageReset
-                                      ? "animated-fade-y"
-                                      : ""
-                                    : ""
-                                }`}
-                              >
-                                <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
+                    {menusData?.menus && menusData.menus.length > 0 ? (
+                      <>
+                        <div className="flex flex-col items-center mb-5 pb-2 gap-3">
+                          <p className="w-fit text-5xl font-bold pb-2 border-b-2 border-primary">
+                            Menus
+                          </p>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm">
+                            Explore the artistry of cuisine with our
+                            thoughtfully curated menu.
+                          </p>
+                        </div>
+                        {menusData.menus.map((item: any, index: any) =>
+                          item.dishes.length > 0 ? (
+                            <div
+                              key={"desktop-menu-" + index}
+                              id={"desktop-menu-" + item.id}
+                            >
+                              <InView triggerOnce>
+                                {({ inView, ref, entry }) => (
+                                  <div
+                                    ref={ref}
+                                    className={`mt-20 flex w-full flex-col gap-5 ${
+                                      inView
+                                        ? !isPageReset
+                                          ? "animated-fade-y"
+                                          : ""
+                                        : ""
+                                    }`}
+                                  >
+                                    <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
+                                      {item.name}
+                                    </p>
+                                    <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                      {item.dishes.map((data: any) => (
+                                        <div
+                                          key={"desktop-dish-" + data.id}
+                                          id={"desktop-dish-" + data.id}
+                                          className={`relative w-full h-[30rem] ${
+                                            !isPageReset
+                                              ? "animated-fade-y"
+                                              : ""
+                                          }`}
+                                        >
+                                          {data.video ? (
+                                            <VideoPlayer
+                                              src={data.video}
+                                              poster={data.video_thumbnail}
+                                              classes={
+                                                "h-full w-full rounded-xl object-cover"
+                                              }
+                                            />
+                                          ) : (
+                                            <Swiper
+                                              modules={[Autoplay, EffectFade]}
+                                              slidesPerView={1}
+                                              loop={true}
+                                              autoplay={true}
+                                              effect="fade"
+                                              className="h-full w-full rounded-xl"
+                                            >
+                                              {data.images.map((data: any) => (
+                                                <div
+                                                  key={"desktop-image-" + data}
+                                                  id={"image-" + data}
+                                                >
+                                                  <SwiperSlide>
+                                                    <Image
+                                                      src={data}
+                                                      fill
+                                                      alt="menu-dish-image"
+                                                      className="h-full w-full object-cover"
+                                                    />
+                                                  </SwiperSlide>
+                                                </div>
+                                              ))}
+                                            </Swiper>
+                                          )}
+                                          <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                            <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
+                                              <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                                <p className="min-w-2/5 text-white">
+                                                  {data.name}
+                                                </p>
+                                                <p className="text-lg">
+                                                  ₹{data.price}
+                                                </p>
+                                              </div>
+                                              <p className="text-xs">
+                                                {data.description}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </InView>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        )}
+                      </>
+                    ) : (
+                      ""
+                    )}
+                    {menusData?.menuSections &&
+                    menusData.menuSections.length > 0 ? (
+                      <>
+                        {menusData.menuSections.map((item: any, index: any) =>
+                          item.menus.length > 0 ? (
+                            <div
+                              key={"desktop-menu-section-" + index}
+                              id={"desktop-menu-" + item.id}
+                              className="flex flex-col gap-16"
+                            >
+                              <div className="mt-20 text-center flex justify-center">
+                                <p className="w-fit text-5xl font-extrabold border-b-2 border-primary pb-2">
                                   {item.name}
                                 </p>
-                                <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                  {item.dishes.map((data: any) => (
+                              </div>
+                              {item.menus.map((item: any, index: any) => (
+                                <InView
+                                  triggerOnce
+                                  key={"desktop-menu-secion-dishes-" + index}
+                                >
+                                  {({ inView, ref, entry }) => (
                                     <div
-                                      key={"desktop-dish-" + data.id}
-                                      id={"desktop-dish-" + data.id}
-                                      className={`relative w-full h-[30rem] ${
-                                        !isPageReset ? "animated-fade-y" : ""
+                                      ref={ref}
+                                      className={`flex w-full flex-col gap-5 ${
+                                        inView
+                                          ? !isPageReset
+                                            ? "animated-fade-y"
+                                            : ""
+                                          : ""
                                       }`}
                                     >
-                                      {data.video ? (
-                                        <VideoPlayer
-                                          src={data.video}
-                                          poster={data.video_thumbnail}
-                                          classes={
-                                            "h-full w-full rounded-xl object-cover"
-                                          }
-                                        />
-                                      ) : (
-                                        <Swiper
-                                          modules={[Autoplay, EffectFade]}
-                                          slidesPerView={1}
-                                          loop={true}
-                                          autoplay={true}
-                                          effect="fade"
-                                          className="h-full w-full rounded-xl"
-                                        >
-                                          {data.images.map((data: any) => (
-                                            <div
-                                              key={"desktop-image-" + data}
-                                              id={"image-" + data}
-                                            >
-                                              <SwiperSlide>
-                                                <Image
-                                                  src={data}
-                                                  fill
-                                                  alt="menu-dish-image"
-                                                  className="h-full w-full object-cover"
-                                                />
-                                              </SwiperSlide>
+                                      <p className="border-b border-black border-opacity-10 pb-2 text-3xl font-bold dark:border-white dark:border-opacity-30">
+                                        {item.name}
+                                      </p>
+                                      <div className="grid h-full w-full grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                        {item.dishes.map((data: any) => (
+                                          <div
+                                            key={"desktop-dish-" + data.id}
+                                            id={"desktop-dish-" + data.id}
+                                            className={`relative w-full h-[30rem] ${
+                                              !isPageReset
+                                                ? "animated-fade-y"
+                                                : ""
+                                            }`}
+                                          >
+                                            {data.video ? (
+                                              <VideoPlayer
+                                                src={data.video}
+                                                poster={data.video_thumbnail}
+                                                classes={
+                                                  "h-full w-full rounded-xl object-cover"
+                                                }
+                                              />
+                                            ) : (
+                                              <Swiper
+                                                modules={[Autoplay, EffectFade]}
+                                                slidesPerView={1}
+                                                loop={true}
+                                                autoplay={true}
+                                                effect="fade"
+                                                className="h-full w-full rounded-xl"
+                                              >
+                                                {data.images.map(
+                                                  (data: any) => (
+                                                    <div
+                                                      key={
+                                                        "desktop-image-" + data
+                                                      }
+                                                      id={"image-" + data}
+                                                    >
+                                                      <SwiperSlide>
+                                                        <Image
+                                                          src={data}
+                                                          fill
+                                                          alt="menu-dish-image"
+                                                          className="h-full w-full object-cover"
+                                                        />
+                                                      </SwiperSlide>
+                                                    </div>
+                                                  )
+                                                )}
+                                              </Swiper>
+                                            )}
+                                            <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                              <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
+                                                <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                                  <p className="min-w-2/5 text-white">
+                                                    {data.name}
+                                                  </p>
+                                                  <p className="text-lg">
+                                                    ₹{data.price}
+                                                  </p>
+                                                </div>
+                                                <p className="text-xs">
+                                                  {data.description}
+                                                </p>
+                                              </div>
                                             </div>
-                                          ))}
-                                        </Swiper>
-                                      )}
-                                      <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                                        <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
-                                          <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
-                                            <p className="min-w-2/5 text-white">
-                                              {data.name}
-                                            </p>
-                                            <p className="text-lg">
-                                              ₹{data.price}
-                                            </p>
                                           </div>
-                                          <p className="text-xs">
-                                            {data.description}
-                                          </p>
-                                        </div>
+                                        ))}
                                       </div>
                                     </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </InView>
-                        </div>
-                      ) : (
-                        ""
-                      )
+                                  )}
+                                </InView>
+                              ))}
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        )}
+                      </>
+                    ) : (
+                      ""
                     )}
                   </>
-                ) : (
-                  ""
                 )}
               </div>
             </div>
@@ -468,10 +474,7 @@ const RestaurantMenu = ({
           <section className="sm:hidden">
             <div className="scrollbar-hidden animated-fade">
               <div
-                ref={resizableRestaurantDivRef}
-                className={`relative capitalize ${
-                  !isPageReset ? "smooth-resize" : ""
-                }`}
+                className="relative capitalize"
                 style={{
                   height: screenHeight != 0 ? screenHeight + "px" : "100vh",
                 }}
@@ -544,116 +547,112 @@ const RestaurantMenu = ({
                   </div>
                 </div>
               </div>
-              {isCategoriesLoading ? (
-                <div className="scrollbar-hidden mx-3 mb-20">
-                  <div className="h-52 w-full bg-gray-200 dark:bg-gray-900 animate-pulse"></div>
-                </div>
-              ) : categoriesData && categoriesData.length > 0 ? (
-                <div className="scrollbar-hidden mx-3 mt-16">
-                  <p className="my-6 text-center text-3xl font-bold">
-                    Categories
-                  </p>
-                  <div className="flex flex-col gap-5 h-full w-full">
-                    {categoriesData.map((item: any, index: any) => (
-                      <div
-                        key={"cat-dish-key-" + index}
-                        onClick={() => openBottomSheet(item.name, item.dishes)}
-                        className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
-                      >
-                        <div className="capitalize text-center">
-                          <p className="mb-2 font-bold text-lg">{item.name}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {item.description}
-                          </p>
-                        </div>
-                        <div className="px-5">
-                          <Image
-                            src={item.image}
-                            height={100}
-                            width={100}
-                            className="h-52 w-full object-cover"
-                            alt="item-image"
-                            loading="lazy"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
               {isDishesLoading ? (
                 <div className="mb-20 px-3 grid grid-cols-2 gap-3 h-full w-full">
                   <div className="h-48 w-full bg-gray-200 dark:bg-gray-900 animate-pulse rounded-xl"></div>
                   <div className="h-48 w-full bg-gray-200 dark:bg-gray-900 animate-pulse rounded-xl"></div>
                 </div>
-              ) : menusData && menusData.length > 0 ? (
-                <div className="scrollbar-hidden mx-3 mt-16 mb-20">
-                  <div className="text-center mb-5 border-b dark:border-white dark:border-opacity-30 border-black border-opacity-10 pb-2">
-                    <p className="text-3xl font-bold mb-3">Menus</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      Explore the artistry of cuisine with our thoughtfully
-                      curated menu.
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 h-full w-full">
-                    {menusData.map((item: any, index: any) =>
-                      item.dishes.length > 0 ? (
-                        <div
-                          key={"dish-key-" + index}
-                          onClick={() =>
-                            openBottomSheet(item.name, item.dishes)
-                          }
-                          className="relative h-48 cursor-pointer"
-                        >
-                          {item.dishes[0].video ? (
-                            <VideoPlayer
-                              src={item.dishes[0].video}
-                              poster={item.dishes[0].video_thumbnail}
-                              classes={"h-full w-full object-cover rounded-xl"}
-                            />
-                          ) : (
-                            <Swiper
-                              modules={[Autoplay, EffectFade]}
-                              slidesPerView={1}
-                              loop={true}
-                              autoplay={true}
-                              effect="fade"
-                              className="h-full rounded-xl"
-                            >
-                              {item.dishes[0].images?.map(
-                                (data: any, index: any) => (
-                                  <SwiperSlide
-                                    key={"menus-dish-swiper-image-" + index}
-                                  >
-                                    <Image
-                                      src={data}
-                                      height={100}
-                                      width={100}
-                                      className="h-full w-full object-cover"
-                                      alt="item-image"
-                                      loading="lazy"
-                                    />
-                                  </SwiperSlide>
-                                )
-                              )}
-                            </Swiper>
-                          )}
-                          <div className="absolute top-0 z-[1] h-full w-full bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-xl">
-                            <div className="absolute bottom-2 w-full z-[1] px-3 text-white">
-                              <p className="font-extrabold">{item.name}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    )}
-                  </div>
-                </div>
               ) : (
-                ""
+                <>
+                  {menusData?.menus && menusData.menus.length > 0 ? (
+                    <div className="scrollbar-hidden mx-3 my-16">
+                      <div className="flex flex-col items-center mb-5 pb-2">
+                        <p className="border-b-2 border-primary w-fit text-3xl font-bold mb-3 px-2 pb-2">
+                          Menus
+                        </p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                          Explore the artistry of cuisine with our thoughtfully
+                          curated menu.
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-3 h-full w-full">
+                        {menusData.menus.map((item: any, index: any) =>
+                          item.dishes.length > 0 ? (
+                            <div
+                              key={"menu-key-" + index}
+                              onClick={() =>
+                                openBottomSheet(item.name, item.dishes)
+                              }
+                              className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
+                            >
+                              <div className="capitalize text-center">
+                                <p className="mb-2 font-bold text-lg">
+                                  {item.name}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {item.description}
+                                </p>
+                              </div>
+                              <Image
+                                src={item.image}
+                                height={100}
+                                width={100}
+                                className="px-5 h-52 w-full object-cover"
+                                alt="item-image"
+                                loading="lazy"
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {menusData?.menuSections &&
+                  menusData.menuSections.length > 0 ? (
+                    <div className="scrollbar-hidden mx-3 mt-12 mb-20">
+                      <div className="flex flex-col gap-10 h-full w-full">
+                        {menusData.menuSections.map((item: any, index: any) =>
+                          item.menus.length > 0 ? (
+                            <div
+                              key={"dish-menu-section-key-" + index}
+                              className="flex flex-col gap-4"
+                            >
+                              <div className="mb-5 text-center flex justify-center">
+                                <p className="w-fit text-3xl font-extrabold border-b-2 border-primary px-2 pb-2">
+                                  {item.name}
+                                </p>
+                              </div>
+                              {item.menus.map((menu: any, index: any) => (
+                                <div
+                                  key={"dish-menu-key-" + index}
+                                  onClick={() =>
+                                    openBottomSheet(menu.name, menu.dishes)
+                                  }
+                                  className="relative h-full cursor-pointer border border-gray-300 dark:border-gray-700 px-2 py-7 flex flex-col gap-5"
+                                >
+                                  <div className="capitalize text-center">
+                                    <p className="mb-2 font-bold text-lg">
+                                      {menu.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {menu.description}
+                                    </p>
+                                  </div>
+                                  <Image
+                                    src={menu.image}
+                                    height={100}
+                                    width={100}
+                                    className="px-5 h-52 w-full object-cover"
+                                    alt="item-image"
+                                    loading="lazy"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
               )}
             </div>
           </section>
@@ -686,7 +685,6 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         restaurantInfo: null,
-        categories: null,
         menus: null,
       },
     };
@@ -708,22 +706,6 @@ export async function getServerSideProps(context: any) {
 
   const restaurantInfo = await fetchRestaurantData();
 
-  const fetchCategoriesData = async () => {
-    if (suffix) {
-      try {
-        const { data, error } = await getCategoriesData(suffix);
-        if (error) throw error;
-
-        return data;
-      } catch (error) {
-        console.error("Error fetching categpries data:", error);
-        return null;
-      }
-    }
-  };
-
-  const categories = await fetchCategoriesData();
-
   const fetchDishes = async () => {
     if (suffix) {
       try {
@@ -743,7 +725,6 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       restaurantInfo,
-      categories,
       menus,
     },
   };
