@@ -11,7 +11,6 @@ import {
   convertToWebP,
   getFilenameFromURL,
 } from "@/utils/image";
-import { TagsInput } from "react-tag-input-component";
 
 const EditCategoryPage = () => {
   const router = useRouter();
@@ -22,7 +21,6 @@ const EditCategoryPage = () => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
 
   const [imageData, setImageData] = useState<File | null>(null);
   const [image, setImage] = useState("");
@@ -39,7 +37,7 @@ const EditCategoryPage = () => {
     const fetchCategory = async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, image, description, tags")
+        .select("id, name, image, description")
         .eq("id", id)
         .single();
 
@@ -55,7 +53,6 @@ const EditCategoryPage = () => {
       setName(data.name);
       setDescription(data.description);
       setImage(data.image);
-      setTags(data.tags);
     };
 
     fetchCategory();
@@ -70,7 +67,6 @@ const EditCategoryPage = () => {
         name: z.string().min(3),
         description: z.string().min(3),
         image: z.string().min(10, { message: "Image is required" }),
-        tags: z.array(z.string().min(2)).min(1),
       });
 
       let image_url = image;
@@ -106,7 +102,6 @@ const EditCategoryPage = () => {
         name: name,
         description: description,
         image: image_url,
-        tags: tags,
       });
 
       if (!response.success) {
@@ -126,7 +121,6 @@ const EditCategoryPage = () => {
         name: name,
         description: description,
         image: image_url,
-        tags: tags.map((tag) => tag.toLowerCase()),
       });
 
       if (error) throw error;
@@ -194,20 +188,6 @@ const EditCategoryPage = () => {
             </div>
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "description")?.message}
-            </div>
-          </div>
-          <div>
-            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-              Tags <span className="text-meta-1">*</span>
-            </label>
-            <TagsInput
-              value={tags ?? [""]}
-              onChange={setTags}
-              name="tags"
-              placeHolder="Write Your Tags Here"
-            />
-            <div className="mt-1 text-xs text-meta-1">
-              {errors.find((error) => error.for === "tags")?.message}
             </div>
           </div>
           <div>

@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@react-email/render": "^0.0.14",
-    "@supabase/ssr": "latest",
-    "@supabase/supabase-js": "latest",
+    "@supabase/ssr": "^0.3.0",
+    "@supabase/supabase-js": "^2.43.4",
     "aws-sdk": "^2.1583.0",
     "crypto-js": "^4.2.0",
     "jose": "^5.2.3",

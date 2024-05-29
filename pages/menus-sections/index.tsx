@@ -8,16 +8,16 @@ import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getFilenameFromURL } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
-const CategoriesPage = () => {
+const MenusSectionsPage = () => {
   const [role, setRole] = useState<string>("");
   const [restaurantId, setRestaurantId] = useState<number>(0);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
 
-  const [categoriesData, setCategoriesData] = useState<any[]>([]);
-  const [categoriesCount, setCategoriesCount] = useState(0);
+  const [menusSectionsData, setMenusSectionsData] = useState<any[]>([]);
+  const [menusSectionsCount, setMenusSectionsCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   useEffect(() => {
     const setCookiesInfo = async () => {
@@ -31,62 +31,62 @@ const CategoriesPage = () => {
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
-    fetchCategories(page);
+    fetchMenusSections(page);
   };
 
-  const fetchCategories = async (page: number) => {
+  const fetchMenusSections = async (page: number) => {
     try {
       const user = await getCookiesValue("login-info");
-      if (user.split("/")[1] != "super-admin") return;
 
-      const { data: categoryData, error } = await supabase
-        .from("categories")
-        .select("id, name, image")
+      const { data: menusSectionsData, error } = await supabase
+        .from("menus_sections")
+        .select("id, name")
         .order("id", { ascending: false })
-        .range((page - 1) * pageSize, pageSize * page - 1);
+        .range((page - 1) * pageSize, pageSize * page - 1)
+        .eq("restaurant_id", user.split("/")[2]);
       if (error) throw error;
 
-      setCategoriesData(categoryData);
+      setMenusSectionsData(menusSectionsData);
       setIsDataLoading(false);
     } catch (error) {
-      console.error("Error while fetch categories: ", error);
+      console.error("Error while fetch menus sections: ", error);
     }
   };
 
   useEffect(() => {
-    const fetchCountCategories = async () => {
+    const fetchCountMenusSections = async () => {
       try {
         const user = await getCookiesValue("login-info");
-        if (user.split("/")[1] != "super-admin") return;
 
-        const { data, error } = await supabase.from("categories").select("id");
+        const { data, error } = await supabase
+          .from("menus_sections")
+          .select("id")
+          .eq("restaurant_id", user.split("/")[2]);
 
         if (error) throw error;
 
-        setCategoriesCount(data.length);
+        setMenusSectionsCount(data.length);
       } catch (error) {
-        console.error("Error while fetch count for categories: ", error);
+        console.error("Error while fetch count for menus sections: ", error);
       }
     };
 
-    fetchCountCategories();
-    fetchCategories(currentPage);
+    fetchCountMenusSections();
+    fetchMenusSections(currentPage);
   }, [currentPage]);
 
   const deleteRecord = async (id: number, key: number) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("categories")
-        .remove([getFilenameFromURL(categoriesData[key].image)]);
-
-      if (error) throw error;
-
-      await supabase.from("categories").delete().eq("id", id).throwOnError();
-      setCategoriesData((prevCategories) =>
-        prevCategories.filter((x) => x.id != id)
+      await supabase
+        .from("menus_sections")
+        .delete()
+        .eq("id", id)
+        .throwOnError();
+      setMenusSectionsData((prevMenusSections) =>
+        prevMenusSections.filter((x) => x.id != id)
       );
     } catch (error) {
-      console.error("Error while delete category: ", error);
+      console.error("Error while delete menus sections: ", error);
     }
   };
 
@@ -94,11 +94,11 @@ const CategoriesPage = () => {
     <section>
       <div className="mb-6 flex gap-3">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Categories
+          Menus Sections
         </h2>
-        {restaurantId > 0 || role == "super-admin" ? (
+        {restaurantId > 0 && role != "super-admin" ? (
           <Link
-            href="categories/add"
+            href="menus-sections/add"
             className="h-8 w-8 rounded-md bg-primary text-center text-2xl font-medium text-white shadow-default hover:bg-opacity-90"
           >
             +
@@ -126,7 +126,7 @@ const CategoriesPage = () => {
           </div>
           <div className="w-full">
             <h5 className="mb-3 font-semibold text-[#B45454]">
-              You can not add categories.
+              You can not add menus section.
             </h5>
             <ul>
               <li className="leading-relaxed text-[#CD5D5D]">
@@ -147,35 +147,24 @@ const CategoriesPage = () => {
             </thead>
 
             <tbody>
-              {categoriesData.map((category, key) => (
+              {menusSectionsData.map((menusSection, key) => (
                 <tr
                   className="flex border-t border-stroke py-4.5 dark:border-strokedark sm:grid-cols-8 "
                   key={key}
                 >
                   <td className="flex w-full items-center justify-center">
                     <p className="text-sm text-black dark:text-white">
-                      {category.id}
+                      {menusSection.id}
                     </p>
                   </td>
-                  <td className="flex w-full items-center">
-                    <div className="flex flex-col gap-4 pl-5 sm:flex-row sm:items-center">
-                      <div className="h-25 w-25 rounded-md">
-                        <Image
-                          src={category.image}
-                          width={200}
-                          height={200}
-                          alt="Category"
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <p className="text-sm text-black dark:text-white text-center">
-                        {category.name}
-                      </p>
-                    </div>
+                  <td className="flex w-full items-center justify-center">
+                    <p className="text-sm text-black dark:text-white text-center">
+                      {menusSection.name}
+                    </p>
                   </td>
                   <td className="flex w-full items-center justify-center gap-5">
                     <Link
-                      href={`categories/edit/${category.id}`}
+                      href={`menus-sections/edit/${menusSection.id}`}
                       className="text-green-600"
                     >
                       <svg
@@ -201,9 +190,9 @@ const CategoriesPage = () => {
                       className="text-red"
                       onClick={() =>
                         confirm(
-                          "Are you sure you want to delete this category?"
+                          "Are you sure you want to delete this mneus section?"
                         )
-                          ? deleteRecord(category.id, key)
+                          ? deleteRecord(menusSection.id, key)
                           : ""
                       }
                     >
@@ -244,14 +233,14 @@ const CategoriesPage = () => {
         <div className="mt-8 flex items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
         </div>
-      ) : !isDataLoading && categoriesCount == 0 ? (
+      ) : !isDataLoading && menusSectionsCount == 0 && restaurantId > 0 ? (
         <div className="mt-5 text-center">No data found</div>
       ) : (
         ""
       )}
       <PaginationPage
         currentPage={currentPage}
-        totalProducts={categoriesCount}
+        totalProducts={menusSectionsCount}
         perPage={pageSize}
         onPageChange={onPageChange}
       />
@@ -259,4 +248,4 @@ const CategoriesPage = () => {
   );
 };
 
-export default CategoriesPage;
+export default MenusSectionsPage;
