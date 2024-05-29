@@ -48,16 +48,16 @@ const Restaurant = ({
                     ) +
                     "-" +
                     btoa(item.id.toString()) +
-                    "/categories/" +
+                    "/menus/" +
                     encodeURIComponent(
-                      item.category.name.toLowerCase().replace(/\s+/g, "-")
+                      item.menu.name.toLowerCase().replace(/\s+/g, "-")
                     ) +
                     "-" +
-                    btoa(item.category.id.toString())
+                    btoa(item.menu.id.toString())
                   }
                 >
                   <Image
-                    src={item.category.image as string}
+                    src={item.menu.image as string}
                     className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
                     alt="item-image"
                     height={100}
@@ -69,7 +69,7 @@ const Restaurant = ({
                   className="sm:hidden"
                 >
                   <Image
-                    src={item.category.image as string}
+                    src={item.menu.image as string}
                     className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
                     alt="item-image"
                     height={100}

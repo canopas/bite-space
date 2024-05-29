@@ -1,7 +1,5 @@
 "use client";
 
-import supabase from "@/utils/supabase";
-
 import SectionTitle from "@/components/Common/SectionTitle";
 import { useEffect, useState } from "react";
 import { CategoryData, RestaurantData } from "@/types/category-by-id";
@@ -60,10 +58,8 @@ const Category = ({
           if (error) throw error;
 
           if (data) {
-            dispatch(
-              setCategoryState({ id: atob(suffix!), data: data.category })
-            );
-            setCategoryData(data.category);
+            dispatch(setCategoryState({ id: atob(suffix!), data: data.menu }));
+            setCategoryData(data.menu);
 
             dispatch(
               setRestaurantsState({ id: atob(suffix!), data: data.restaurant })
@@ -172,7 +168,7 @@ export async function getServerSideProps(context: any) {
         if (error) throw error;
 
         if (data) {
-          return { categoryInfo: category, restaurants: data?.restaurant };
+          return { categoryInfo: data.menu, restaurants: data?.restaurant };
         }
 
         return { categoryInfo: null, restaurants: null };
