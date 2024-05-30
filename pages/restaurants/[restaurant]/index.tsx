@@ -324,7 +324,7 @@ const RestaurantMenu = ({
                                           )}
                                           <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
                                             <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
-                                              <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                              <div className="flex items-center justify-between gap-5 text-xl font-bold">
                                                 <p className="min-w-2/5 text-white">
                                                   {data.name}
                                                 </p>
@@ -332,9 +332,14 @@ const RestaurantMenu = ({
                                                   ₹{data.price}
                                                 </p>
                                               </div>
-                                              <p className="text-xs">
-                                                {data.description}
-                                              </p>
+                                              {data.description &&
+                                              data.description != "" ? (
+                                                <p className="border-t border-gray-300 border-opacity-30 text-xs pt-2">
+                                                  {data.description}
+                                                </p>
+                                              ) : (
+                                                ""
+                                              )}
                                             </div>
                                           </div>
                                         </div>
@@ -437,7 +442,7 @@ const RestaurantMenu = ({
                                             )}
                                             <div className="absolute top-0 z-[1] h-full w-full rounded-xl bg-gradient-to-t from-black/80 via-transparent to-transparent">
                                               <div className="w-full absolute bottom-0 flex flex-col gap-2 px-4 pb-4 text-gray-200 dark:text-gray-300">
-                                                <div className="flex items-center justify-between gap-5 border-b border-gray-300 border-opacity-30 pb-1 text-xl font-bold">
+                                                <div className="flex items-center justify-between gap-5 text-xl font-bold">
                                                   <p className="min-w-2/5 text-white">
                                                     {data.name}
                                                   </p>
@@ -445,9 +450,14 @@ const RestaurantMenu = ({
                                                     ₹{data.price}
                                                   </p>
                                                 </div>
-                                                <p className="text-xs">
-                                                  {data.description}
-                                                </p>
+                                                {data.description &&
+                                                data.description != "" ? (
+                                                  <p className="border-t border-gray-300 border-opacity-30 text-xs pt-2">
+                                                    {data.description}
+                                                  </p>
+                                                ) : (
+                                                  ""
+                                                )}
                                               </div>
                                             </div>
                                           </div>

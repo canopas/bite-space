@@ -35,65 +35,64 @@ const Restaurant = ({
           <p className="text-2xl font-bold">Restaurants to explore</p>
           <div className="grid grid-cols-1 gap-x-4 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
             {restaurantsData.map((item, index) => (
-              <div
-                className="h-full w-full relative"
-                key={"explore-restaurant-" + index}
-              >
-                <Link
-                  className="hidden sm:block"
-                  href={
-                    "/restaurants/" +
-                    encodeURIComponent(
-                      item.name.toLowerCase().replace(/\s+/g, "-")
-                    ) +
-                    "-" +
-                    btoa(item.id.toString()) +
-                    "/menus/" +
-                    encodeURIComponent(
-                      item.menu.name.toLowerCase().replace(/\s+/g, "-")
-                    ) +
-                    "-" +
-                    btoa(item.menu.id.toString())
-                  }
-                >
-                  <Image
-                    src={item.menu.image as string}
-                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
-                    alt="item-image"
-                    height={100}
-                    width={100}
-                  />
-                </Link>
-                <div
-                  onClick={() => openBottomSheet(item.name, item.dishes)}
-                  className="sm:hidden"
-                >
-                  <Image
-                    src={item.menu.image as string}
-                    className="h-60 w-full border-b border-black object-cover pb-2 dark:border-white/40 sm:h-[30rem]"
-                    alt="item-image"
-                    height={100}
-                    width={100}
-                  />
+              <div key={"explore-restaurant-" + index}>
+                <div className="relative h-60 sm:h-[30rem]">
+                  <Link
+                    className="hidden sm:block"
+                    href={
+                      "/restaurants/" +
+                      encodeURIComponent(
+                        item.name.toLowerCase().replace(/\s+/g, "-")
+                      ) +
+                      "-" +
+                      btoa(item.id.toString()) +
+                      "/menus/" +
+                      encodeURIComponent(
+                        item.menu.name.toLowerCase().replace(/\s+/g, "-")
+                      ) +
+                      "-" +
+                      btoa(item.menu.id.toString())
+                    }
+                  >
+                    <Image
+                      src={item.menu.image as string}
+                      className="h-60 w-full border-b border-black object-cover dark:border-white/40 sm:h-[30rem]"
+                      alt="item-image"
+                      height={100}
+                      width={100}
+                    />
+                  </Link>
+                  <div
+                    onClick={() => openBottomSheet(item.name, item.dishes)}
+                    className="sm:hidden cursor-pointer"
+                  >
+                    <Image
+                      src={item.menu.image as string}
+                      className="h-60 w-full object-cover sm:h-[30rem]"
+                      alt="item-image"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                  <Link
+                    href={
+                      "/restaurants/" +
+                      encodeURIComponent(
+                        item.name.toLowerCase().replace(/\s+/g, "-")
+                      ) +
+                      "-" +
+                      btoa(item.id.toString())
+                    }
+                    className={`w-full absolute bottom-0 ${
+                      !isPageReset ? "animated-fade-y" : ""
+                    }`}
+                  >
+                    <p className="w-full bg-black bg-opacity-50 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
+                      {item.name}
+                    </p>
+                  </Link>
                 </div>
-                <Link
-                  href={
-                    "/restaurants/" +
-                    encodeURIComponent(
-                      item.name.toLowerCase().replace(/\s+/g, "-")
-                    ) +
-                    "-" +
-                    btoa(item.id.toString())
-                  }
-                  className={`w-full absolute bottom-[4.75rem] xs:bottom-14 md:bottom-[5.25rem] group cursor-pointer ${
-                    !isPageReset ? "animated-fade-y" : ""
-                  }`}
-                >
-                  <p className="w-full bg-black bg-opacity-40 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
-                    {item.name}
-                  </p>
-                </Link>
-                <div>
+                <div className="mt-3 border-t border-black dark:border-white/40">
                   <p className="mt-3 text-sm sm:text-base">{item.address}</p>
                   <div className="mt-4 flex w-full flex-col gap-2">
                     <div className="flex items-center justify-between font-extrabold">
