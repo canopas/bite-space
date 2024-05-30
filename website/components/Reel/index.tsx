@@ -61,7 +61,13 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
         }
       };
     }
-  }, [carouselRef, numDivsToRender, dishesData?.length, screenHeight, dispatch]);
+  }, [
+    carouselRef,
+    numDivsToRender,
+    dishesData?.length,
+    screenHeight,
+    dispatch,
+  ]);
 
   return (
     <section className="select-none">
@@ -111,7 +117,7 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
                       <p className="text-lg text-white/70">₹{data.price}</p>
                     </div>
                     {data.description && data.description != "" ? (
-                      <p className="border-t border-white/10 text-sm pt-2">
+                      <p className="border-t border-gray-300 border-opacity-30 text-sm pt-2">
                         {data.description}
                       </p>
                     ) : (
