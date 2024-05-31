@@ -116,13 +116,15 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
                       <p className="min-w-2/5">{data.name}</p>
                       <p className="text-lg text-white/70">₹{data.price}</p>
                     </div>
-                    {data.description && data.description != "" ? (
-                      <p className="border-t border-gray-300 border-opacity-30 text-sm pt-2">
-                        {data.description}
-                      </p>
-                    ) : (
-                      ""
-                    )}
+                    <p
+                      className={`text-sm pt-2 ${
+                        data.description && data.description != ""
+                          ? "border-t border-gray-300 border-opacity-30"
+                          : ""
+                      }`}
+                    >
+                      {data.description}
+                    </p>
                   </div>
                 </div>
               ))}

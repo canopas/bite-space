@@ -13,16 +13,23 @@ const BottomSheet = ({
   items: any;
 }) => {
   useEffect(() => {
+    const handlePopState = () => {
+      onClose();
+    };
+
     if (isOpen) {
+      window.history.pushState({ bottomSheetOpen: true }, "");
       document.body.classList.add("overflow-hidden");
+      window.addEventListener("popstate", handlePopState);
     } else {
       document.body.classList.remove("overflow-hidden");
     }
 
     return () => {
+      window.removeEventListener("popstate", handlePopState);
       document.body.classList.remove("overflow-hidden");
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   return (
     <div
