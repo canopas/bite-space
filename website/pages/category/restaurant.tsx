@@ -2,11 +2,18 @@
 
 import BottomSheet from "@/components/BottomSheet";
 import NoDataFound from "@/components/NoDataFound";
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { RestaurantData } from "@/types/category-by-id";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/pagination";
+
+import { Autoplay, Pagination } from "swiper/modules";
+import { setScreenHeightState } from "@/store/slice";
 
 const Restaurant = ({
   isRestaurantsLoading,
@@ -28,90 +35,114 @@ const Restaurant = ({
 
   const closeBottomSheet = () => setIsBottomSheetOpen(false);
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setScreenHeightState(window.innerHeight));
+
+    window.addEventListener("resize", () => {
+      dispatch(setScreenHeightState(window.innerHeight));
+    });
+
+    return () =>
+      window.removeEventListener("resize", () =>
+        dispatch(setScreenHeightState(window.innerHeight))
+      );
+  }, [dispatch]);
+
   return (
     <>
       {restaurantsData && restaurantsData.length > 0 ? (
         <div className="mt-12 flex flex-col gap-5">
           <p className="text-2xl font-bold">Restaurants to explore</p>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+          <div className="h-full flex flex-col gap-12 sm:gap-20">
             {restaurantsData.map((item, index) => (
               <div key={"explore-restaurant-" + index}>
-                <div className="relative h-60 sm:h-[30rem]">
-                  <Link
-                    className="hidden sm:block"
-                    href={
-                      "/restaurants/" +
-                      encodeURIComponent(
-                        item.name.toLowerCase().replace(/\s+/g, "-")
-                      ) +
-                      "-" +
-                      btoa(item.id.toString()) +
-                      "/menus/" +
-                      encodeURIComponent(
-                        item.menu.name.toLowerCase().replace(/\s+/g, "-")
-                      ) +
-                      "-" +
-                      btoa(item.menu.id.toString())
-                    }
-                  >
-                    <Image
-                      src={item.menu.image as string}
-                      className="h-60 w-full border-b border-black object-cover dark:border-white/40 sm:h-[30rem]"
-                      alt="item-image"
-                      height={100}
-                      width={100}
-                    />
-                  </Link>
-                  <div
-                    onClick={() => openBottomSheet(item.name, item.dishes)}
-                    className="sm:hidden cursor-pointer"
-                  >
-                    <Image
-                      src={item.menu.image as string}
-                      className="h-60 w-full object-cover sm:h-[30rem]"
-                      alt="item-image"
-                      height={100}
-                      width={100}
-                    />
-                  </div>
-                  <Link
-                    href={
-                      "/restaurants/" +
-                      encodeURIComponent(
-                        item.name.toLowerCase().replace(/\s+/g, "-")
-                      ) +
-                      "-" +
-                      btoa(item.id.toString())
-                    }
-                    className={`w-full absolute bottom-0 ${
-                      !isPageReset ? "animated-fade-y" : ""
-                    }`}
-                  >
-                    <p className="w-full bg-black bg-opacity-50 py-2 pl-5 text-xl font-extrabold capitalize text-white dark:border-white sm:text-2xl">
-                      {item.name}
-                    </p>
-                  </Link>
-                </div>
-                <div className="mt-3 border-t border-black dark:border-white/40">
-                  <p className="mt-3 text-sm sm:text-base">{item.address}</p>
-                  <div className="mt-4 flex w-full flex-col gap-2">
-                    <div className="flex items-center justify-between font-extrabold">
-                      {item.reviews > 0 ? (
-                        <p>
-                          {item.reviews}{" "}
-                          <span className="text-sm font-normal"> Reviews</span>
-                        </p>
-                      ) : (
-                        ""
-                      )}
-                      {item.rating > 0 ? (
-                        <p className="px-4 sm:py-2">⭐ {item.rating}</p>
-                      ) : (
-                        ""
-                      )}
+                <Swiper
+                  slidesPerView={"auto"}
+                  spaceBetween={10}
+                  autoplay={true}
+                  modules={[Autoplay]}
+                  className="h-full w-full mb-2 sm:mb-6"
+                >
+                  {item.menu.map((data, index) => (
+                    <div key={"explore-restaurant-menu-" + index}>
+                      <SwiperSlide
+                        className={`!h-full ${
+                          item.menu.length > 1 ? "!w-60 sm:!w-96" : "!w-full"
+                        }`}
+                      >
+                        <Link
+                          className="hidden sm:block"
+                          href={
+                            "/restaurants/" +
+                            encodeURIComponent(
+                              item.name.toLowerCase().replace(/\s+/g, "-")
+                            ) +
+                            "-" +
+                            btoa(item.id.toString()) +
+                            "/menus/" +
+                            encodeURIComponent(
+                              data.name.toLowerCase().replace(/\s+/g, "-")
+                            ) +
+                            "-" +
+                            btoa(data.id.toString())
+                          }
+                        >
+                          <Image
+                            src={data.image}
+                            className={`h-96 object-cover rounded-2xl ${
+                              item.menu.length > 1 ? "w-96" : "w-full"
+                            }`}
+                            alt="item-image"
+                            height={100}
+                            width={100}
+                          />
+                        </Link>
+                        <div
+                          onClick={() =>
+                            openBottomSheet(item.name, data.dishes)
+                          }
+                          className="sm:hidden cursor-pointer"
+                        >
+                          <Image
+                            src={data.image as string}
+                            className={`h-60 object-cover rounded-2xl ${
+                              item.menu.length > 1 ? "w-60" : "w-full"
+                            }`}
+                            alt="item-image"
+                            height={100}
+                            width={100}
+                          />
+                        </div>
+                        <div
+                          className={`w-full absolute bottom-0 ${
+                            !isPageReset ? "animated-fade-y" : ""
+                          }`}
+                        >
+                          <p className="w-full bg-black bg-opacity-50 py-2 pl-5 font-extrabold capitalize text-white dark:border-white sm:text-2xl">
+                            {data.name}
+                          </p>
+                        </div>
+                      </SwiperSlide>
                     </div>
-                  </div>
-                </div>
+                  ))}
+                </Swiper>
+                <Link
+                  href={
+                    "/restaurants/" +
+                    encodeURIComponent(
+                      item.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.id.toString())
+                  }
+                >
+                  <p className="w-full text-xl sm:text-2xl font-bold border-b dark:border-white/40 my-2 pb-1">
+                    {item.name}
+                  </p>
+                  <p className="text-xs sm:text-base">{item.address}</p>
+                </Link>
               </div>
             ))}
           </div>

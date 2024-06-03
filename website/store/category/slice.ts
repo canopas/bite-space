@@ -113,7 +113,7 @@ export const getCategoriesData = async (suffix: any) => {
 
     if (menuError) return { data: null, error: menuError };
 
-    const restaurant = await Promise.all(
+    const restaurants = await Promise.all(
       menuDatas.map(async (menu: any) => {
         const { data: restaurantData, error: restaurantError } = await supabase
           .from("restaurants")
@@ -157,8 +157,43 @@ export const getCategoriesData = async (suffix: any) => {
       })
     );
 
+    const restaurant = mergeById(restaurants);
+
     return { data: { menu: data, restaurant }, error: null };
   }
 
   return { data: null, error: null };
 };
+
+interface MergedRestaurant {
+  address: string;
+  id: number;
+  menu: any[];
+  name: string;
+}
+
+function mergeById(array: any[]): MergedRestaurant[] {
+  const mergedData: { [key: number]: MergedRestaurant } = {};
+
+  array.forEach((item) => {
+    if (!mergedData[item.id]) {
+      mergedData[item.id] = {
+        address: item.address,
+        id: item.id,
+        name: item.name,
+        menu: [{ ...item.menu, dishes: [...item.dishes] }],
+      };
+    } else {
+      const existingMenus = mergedData[item.id].menu;
+      const existingMenu = existingMenus.find((m) => m.id === item.menu.id);
+
+      if (existingMenu) {
+        existingMenu.dishes = [...existingMenu.dishes, ...item.dishes];
+      } else {
+        existingMenus.push({ ...item.menu, dishes: [...item.dishes] });
+      }
+    }
+  });
+
+  return Object.values(mergedData);
+}
