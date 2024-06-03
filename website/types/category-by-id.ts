@@ -3,6 +3,7 @@ export type CategoryData = {
   name: string;
   description: string;
   image: string;
+  dishes: [];
 };
 
 export type RestaurantData = {
@@ -11,6 +12,5 @@ export type RestaurantData = {
   address: string;
   rating: number;
   reviews: number;
-  menu: CategoryData;
-  dishes: [];
+  menu: CategoryData[];
 };

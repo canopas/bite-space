@@ -136,7 +136,7 @@ const RestaurantMenu = ({
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [currentItemsName, setCurrentItemsName] = useState("");
   const [currentItems, setCurrentItems] = useState([]);
-
+  
   const openBottomSheet = (name: string, items: any) => {
     setCurrentItemsName(name);
     setCurrentItems(items);
@@ -144,7 +144,7 @@ const RestaurantMenu = ({
   };
 
   const closeBottomSheet = () => setIsBottomSheetOpen(false);
-
+    
   return (
     <>
       {restaurantData ? (
@@ -483,12 +483,7 @@ const RestaurantMenu = ({
           </section>
           <section className="sm:hidden">
             <div className="scrollbar-hidden animated-fade">
-              <div
-                className="relative capitalize"
-                style={{
-                  height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-                }}
-              >
+              <div className="relative capitalize h-screen">
                 <div className="h-full w-full">
                   {restaurantData.images ? (
                     <Image

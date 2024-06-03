@@ -9,6 +9,7 @@ import "swiper/css/effect-fade";
 import { useEffect, useRef, useState } from "react";
 import useAutoplayVisibility from "./hook";
 import { useAppSelector } from "@/store/store";
+import LoadImage from "./LoadImage";
 
 type SwiperCore = any;
 
@@ -60,13 +61,14 @@ const SwiperComponent = ({ images }: { images: any }) => {
                 }}
               >
                 <div className="flex h-full w-full items-center bg-black bg-opacity-20 backdrop-blur-sm">
-                  <Image
+                  {/* <Image
                     src={imageUrl}
                     height={100}
                     width={100}
                     alt="menu-dish-image"
                     className="w-full"
-                  />
+                  /> */}
+                  <LoadImage src={imageUrl} alt="menu-dish-image" />
                 </div>
               </div>
             </SwiperSlide>
