@@ -105,7 +105,7 @@ const Category = ({
               <SectionTitle
                 title={categoryData.name}
                 paragraph={categoryData.description}
-                customClass={`mx-auto mb-16 mt-20 ${
+                customClass={`mx-auto mb-10 sm:mb-16 mt-20 ${
                   !isPageReset ? "animated-fade-y" : ""
                 }`}
               />

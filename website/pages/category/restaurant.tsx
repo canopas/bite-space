@@ -53,9 +53,9 @@ const Restaurant = ({
   return (
     <>
       {restaurantsData && restaurantsData.length > 0 ? (
-        <div className="mt-12 flex flex-col gap-5">
-          <p className="text-2xl font-bold">Restaurants to explore</p>
-          <div className="h-full flex flex-col gap-12 sm:gap-20">
+        <div className="flex flex-col gap-5">
+          <p className="text-3xl font-bold sm:mb-5">Restaurants to explore</p>
+          <div className="h-full flex flex-col gap-12 sm:gap-24">
             {restaurantsData.map((item, index) => (
               <div key={"explore-restaurant-" + index}>
                 <Swiper
@@ -91,9 +91,7 @@ const Restaurant = ({
                         >
                           <Image
                             src={data.image}
-                            className={`h-96 object-cover rounded-2xl ${
-                              item.menu.length > 1 ? "w-96" : "w-full"
-                            }`}
+                            className="h-96 w-96 object-cover rounded-2xl"
                             alt="item-image"
                             height={100}
                             width={100}
@@ -120,7 +118,7 @@ const Restaurant = ({
                             !isPageReset ? "animated-fade-y" : ""
                           }`}
                         >
-                          <p className="w-full bg-black bg-opacity-50 py-2 pl-5 font-extrabold capitalize text-white dark:border-white sm:text-2xl">
+                          <p className="w-full rounded-b-2xl bg-black bg-opacity-50 py-2 pl-5 font-extrabold capitalize text-white dark:border-white sm:text-xl">
                             {data.name}
                           </p>
                         </div>
