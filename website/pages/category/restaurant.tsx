@@ -22,7 +22,6 @@ const Restaurant = ({
   isRestaurantsLoading: boolean;
   restaurantsData: RestaurantData[];
 }) => {
-  const isPageReset = useAppSelector((state) => state.app.isPageReset);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [currentItemsName, setCurrentItemsName] = useState("");
   const [currentItems, setCurrentItems] = useState([]);
@@ -50,20 +49,42 @@ const Restaurant = ({
       );
   }, [dispatch]);
 
-  return (
+    return (
     <>
       {restaurantsData && restaurantsData.length > 0 ? (
         <div className="flex flex-col gap-5">
-          <p className="text-3xl font-bold sm:mb-5">Restaurants to explore</p>
           <div className="h-full flex flex-col gap-12 sm:gap-24">
             {restaurantsData.map((item, index) => (
               <div key={"explore-restaurant-" + index}>
+                <Link
+                  href={
+                    "/restaurants/" +
+                    encodeURIComponent(
+                      item.name.toLowerCase().replace(/\s+/g, "-")
+                    ) +
+                    "-" +
+                    btoa(item.id.toString())
+                  }
+                >
+                  <p className="w-full text-xl sm:text-2xl font-bold border-b dark:border-white/40 my-2 pb-1">
+                    {item.name}
+                  </p>
+                  <p className="text-xs sm:text-base flex flex-wrap gap-1">
+                    <span className="hidden sm:block w-fit">
+                      {item.address + ", "}
+                    </span>
+                    <span>{item.local_area + ", "}</span>
+                    <span>{item.city + ", "}</span>
+                    <span>{item.state + ", "}</span>
+                    <span>{item.postal_code}</span>
+                  </p>
+                </Link>
                 <Swiper
                   slidesPerView={"auto"}
-                  spaceBetween={10}
+                  spaceBetween={20}
                   autoplay={true}
                   modules={[Autoplay]}
-                  className="h-full w-full mb-2 sm:mb-6"
+                  className="h-full w-full mt-6"
                 >
                   {item.menu.map((data, index) => (
                     <div key={"explore-restaurant-menu-" + index}>
@@ -113,34 +134,13 @@ const Restaurant = ({
                             width={100}
                           />
                         </div>
-                        <div
-                          className={`w-full absolute bottom-0 ${
-                            !isPageReset ? "animated-fade-y" : ""
-                          }`}
-                        >
-                          <p className="w-full rounded-b-2xl bg-black bg-opacity-50 py-2 pl-5 font-extrabold capitalize text-white dark:border-white sm:text-xl">
-                            {data.name}
-                          </p>
-                        </div>
+                        <p className="mt-1 w-full font-extrabold capitalize sm:text-xl text-center">
+                          {data.name}
+                        </p>
                       </SwiperSlide>
                     </div>
                   ))}
                 </Swiper>
-                <Link
-                  href={
-                    "/restaurants/" +
-                    encodeURIComponent(
-                      item.name.toLowerCase().replace(/\s+/g, "-")
-                    ) +
-                    "-" +
-                    btoa(item.id.toString())
-                  }
-                >
-                  <p className="w-full text-xl sm:text-2xl font-bold border-b dark:border-white/40 my-2 pb-1">
-                    {item.name}
-                  </p>
-                  <p className="text-xs sm:text-base">{item.address}</p>
-                </Link>
               </div>
             ))}
           </div>

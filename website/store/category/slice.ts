@@ -117,7 +117,7 @@ export const getCategoriesData = async (suffix: any) => {
       menuDatas.map(async (menu: any) => {
         const { data: restaurantData, error: restaurantError } = await supabase
           .from("restaurants")
-          .select("id, name, address")
+          .select("id, name, address, local_area, city, state, postal_code, country")
           .eq("id", menu.restaurant_id)
           .eq("is_public", true)
           .single();
@@ -178,9 +178,7 @@ function mergeById(array: any[]): MergedRestaurant[] {
   array.forEach((item) => {
     if (!mergedData[item.id]) {
       mergedData[item.id] = {
-        address: item.address,
-        id: item.id,
-        name: item.name,
+        ...item,
         menu: [{ ...item.menu, dishes: [...item.dishes] }],
       };
     } else {

@@ -9,7 +9,6 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import SectionTitle from "../Common/SectionTitle";
-import supabase from "@/utils/supabase";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -104,7 +103,15 @@ const YouMayLike = ({ restaurants }: { restaurants: any }) => {
                         {item.name}
                       </p>
                       <p className="text-sm text-gray-200 sm:text-base">
-                        {item.address}
+                        {item.address +
+                          ", " +
+                          item.local_area +
+                          ", " +
+                          item.city +
+                          ", " +
+                          item.state +
+                          ", " +
+                          item.postal_code}
                       </p>
                     </div>
                   </div>
