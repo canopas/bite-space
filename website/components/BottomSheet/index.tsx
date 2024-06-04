@@ -50,7 +50,7 @@ const BottomSheet = ({
         <p className="font-bold text-sm">{name} dishes</p>
       </header>
       <div className="h-full w-full bg-white dark:bg-black">
-        <Reels dishesData={items} isDishesLoading={false} />
+        <Reels dishesData={items} />
       </div>
     </div>
   );

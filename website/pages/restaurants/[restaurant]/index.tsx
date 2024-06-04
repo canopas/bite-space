@@ -65,7 +65,6 @@ const RestaurantMenu = ({
     menuSections: any[];
   } | null>(menus);
 
-  console.log("Menu data:", menusData);
   useEffect(() => {
     dispatch(setScreenHeightState(window.innerHeight));
 
@@ -136,7 +135,7 @@ const RestaurantMenu = ({
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [currentItemsName, setCurrentItemsName] = useState("");
   const [currentItems, setCurrentItems] = useState([]);
-  
+
   const openBottomSheet = (name: string, items: any) => {
     setCurrentItemsName(name);
     setCurrentItems(items);
@@ -144,7 +143,7 @@ const RestaurantMenu = ({
   };
 
   const closeBottomSheet = () => setIsBottomSheetOpen(false);
-    
+
   return (
     <>
       {restaurantData ? (
@@ -196,7 +195,17 @@ const RestaurantMenu = ({
                           >
                             <path d="M12 2C7.745 2 4.27 5.475 4.27 9.73c0 4.539 4.539 9.056 6.971 11.486L12 22l.759-.761c2.433-2.453 6.972-6.97 6.972-11.509C19.73 5.475 16.256 2 12 2zm0 10.986c-1.93 0-3.5-1.569-3.5-3.5 0-1.93 1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.931-1.57 3.5-3.5 3.5z"></path>
                           </svg>
-                          <p>{restaurantData.address}</p>
+                          <p>
+                            {restaurantData.address +
+                              ", " +
+                              restaurantData.local_area +
+                              ", " +
+                              restaurantData.city +
+                              ", " +
+                              restaurantData.state +
+                              ", " +
+                              restaurantData.postal_code}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <svg
@@ -515,7 +524,17 @@ const RestaurantMenu = ({
                           >
                             <path d="M12 2C7.745 2 4.27 5.475 4.27 9.73c0 4.539 4.539 9.056 6.971 11.486L12 22l.759-.761c2.433-2.453 6.972-6.97 6.972-11.509C19.73 5.475 16.256 2 12 2zm0 10.986c-1.93 0-3.5-1.569-3.5-3.5 0-1.93 1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.931-1.57 3.5-3.5 3.5z"></path>
                           </svg>
-                          <p>{restaurantData.address}</p>
+                          <p>
+                            {restaurantData.address +
+                              ", " +
+                              restaurantData.local_area +
+                              ", " +
+                              restaurantData.city +
+                              ", " +
+                              restaurantData.state +
+                              ", " +
+                              restaurantData.postal_code}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <svg

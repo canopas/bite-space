@@ -216,7 +216,6 @@ const RestaurantCategory = ({
               </header>
               <Reels
                 dishesData={dishesData}
-                isDishesLoading={isDishesLoading}
               />
             </NoHeaderFooterLayout>
           </div>
