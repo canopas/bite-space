@@ -13,15 +13,27 @@ import "swiper/css/effect-fade";
 
 interface ReelProps {
   dishesData: any;
-  isDishesLoading: boolean;
 }
 
-const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
+const Reels = ({ dishesData }: ReelProps) => {
   const dispatch = useAppDispatch();
   const screenHeight = useAppSelector((state) => state.app.screenHeight);
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [numDivsToRender, setNumDivsToRender] = useState(2); // Initial number of dish to render
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (carouselRef.current) {
+      carouselRef.current.scrollTop = 0;
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [dishesData]);
 
   useEffect(() => {
     if (screenHeight == 0) {
@@ -71,19 +83,16 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
 
   return (
     <section className="select-none">
-      {isDishesLoading ? (
-        <div className="reelsContainer scrollbar-hidden w-full">
-          <MenuDishSkeleton classes="reel" />
-        </div>
-      ) : dishesData.length > 0 ? (
-        <div
-          ref={carouselRef}
-          className="reelsContainer scrollbar-hidden w-full"
-          style={{
-            height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-          }}
-        >
-          {dishesData.slice(0, numDivsToRender).map((data: any, index: any) => (
+      {isLoading ? <MenuDishSkeleton classes="reel" /> : ""}
+      <div
+        ref={carouselRef}
+        className="reelsContainer scrollbar-hidden w-full"
+        style={{
+          height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+        }}
+      >
+        {dishesData.length > 0 ? (
+          dishesData.slice(0, numDivsToRender).map((data: any, index: any) => (
             <div
               key={"menu-dish-key-" + index}
               id={`menu-dish-${index}`}
@@ -94,43 +103,49 @@ const Reels = ({ dishesData, isDishesLoading }: ReelProps) => {
                 height: screenHeight != 0 ? screenHeight + "px" : "100vh",
               }}
             >
-              {data.video ? (
-                <VideoPlayer
-                  src={data.video}
-                  poster={data.video_thumbnail}
-                  classes={"h-full w-full object-cover"}
-                />
-              ) : (
-                <SwiperComponent images={data.images}></SwiperComponent>
-              )}
-              <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-2 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-5 text-white">
-                <div className="flex h-full items-end justify-between gap-5 text-xl font-bold">
-                  <p className="min-w-2/5">{data.name}</p>
-                  <p className="text-lg text-white/70">₹{data.price}</p>
+              {!isLoading ? (
+                <div className="animated-fade">
+                  {data.video ? (
+                    <VideoPlayer
+                      src={data.video}
+                      poster={data.video_thumbnail}
+                      classes={"h-full w-full object-cover"}
+                    />
+                  ) : (
+                    <SwiperComponent images={data.images}></SwiperComponent>
+                  )}
+                  <div className="absolute bottom-0 z-[1] flex h-full w-full flex-col gap-2 bg-gradient-to-t from-black/80 via-transparent to-black/60 p-5 pb-5 text-white">
+                    <div className="flex h-full items-end justify-between gap-5 text-xl font-bold">
+                      <p className="min-w-2/5">{data.name}</p>
+                      <p className="text-lg text-white/70">₹{data.price}</p>
+                    </div>
+                    <p
+                      className={`text-sm pt-2 ${
+                        data.description && data.description != ""
+                          ? "border-t border-gray-300 border-opacity-30"
+                          : ""
+                      }`}
+                    >
+                      {data.description}
+                    </p>
+                  </div>
                 </div>
-                <p
-                  className={`text-sm pt-2 ${
-                    data.description && data.description != ""
-                      ? "border-t border-gray-300 border-opacity-30"
-                      : ""
-                  }`}
-                >
-                  {data.description}
-                </p>
-              </div>
+              ) : (
+                ""
+              )}
             </div>
-          ))}
-        </div>
-      ) : (
-        <div
-          className="flex items-center justify-center"
-          style={{
-            height: screenHeight != 0 ? screenHeight + "px" : "100vh",
-          }}
-        >
-          <NoDataFound text="😕 Oops, No dishes available at the moment!" />
-        </div>
-      )}
+          ))
+        ) : (
+          <div
+            className="flex items-center justify-center"
+            style={{
+              height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+            }}
+          >
+            <NoDataFound text="😕 Oops, No dishes available at the moment!" />
+          </div>
+        )}
+      </div>
     </section>
   );
 };

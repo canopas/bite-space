@@ -232,7 +232,7 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
                 <span>|</span>
                 <p className="font-bold text-sm">{menuName} dishes</p>
               </header>
-              <Reels dishesData={menusData} isDishesLoading={isDishesLoading} />
+              <Reels dishesData={menusData} />
             </NoHeaderFooterLayout>
           </div>
         </>
