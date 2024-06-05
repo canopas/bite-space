@@ -1,7 +1,8 @@
-const MenuDishSkeleton = ({ classes }: any) => {
+const MenuDishSkeleton = ({ classes, style }: any) => {
   return (
     <div
       className={`${classes} relative animate-pulse w-full bg-gray-200 dark:bg-black rounded-xl`}
+      style={style}
     >
       <div className="absolute flex h-full w-full flex-col gap-3 p-5 pb-10">
         <div className="flex flex-col justify-end h-full gap-5">

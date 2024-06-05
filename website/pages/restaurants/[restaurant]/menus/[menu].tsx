@@ -230,7 +230,7 @@ const RestaurantMenu = ({ name, menus }: { name: string; menus: any }) => {
                   Back
                 </button>
                 <span>|</span>
-                <p className="font-bold text-sm">{menuName} dishes</p>
+                <p className="font-bold text-sm">{menuName}</p>
               </header>
               <Reels dishesData={menusData} />
             </NoHeaderFooterLayout>

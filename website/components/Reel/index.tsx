@@ -83,7 +83,16 @@ const Reels = ({ dishesData }: ReelProps) => {
 
   return (
     <section className="select-none">
-      {isLoading ? <MenuDishSkeleton classes="reel" /> : ""}
+      {isLoading ? (
+        <MenuDishSkeleton
+          classes="reel"
+          style={{
+            height: screenHeight != 0 ? screenHeight + "px" : "100vh",
+          }}
+        />
+      ) : (
+        ""
+      )}
       <div
         ref={carouselRef}
         className="reelsContainer scrollbar-hidden w-full"
@@ -106,11 +115,18 @@ const Reels = ({ dishesData }: ReelProps) => {
               {!isLoading ? (
                 <div className="animated-fade">
                   {data.video ? (
-                    <VideoPlayer
-                      src={data.video}
-                      poster={data.video_thumbnail}
-                      classes={"h-full w-full object-cover"}
-                    />
+                    <div
+                      style={{
+                        height:
+                          screenHeight != 0 ? screenHeight + "px" : "100vh",
+                      }}
+                    >
+                      <VideoPlayer
+                        src={data.video}
+                        poster={data.video_thumbnail}
+                        classes={"h-full w-full object-cover"}
+                      />
+                    </div>
                   ) : (
                     <SwiperComponent images={data.images}></SwiperComponent>
                   )}
