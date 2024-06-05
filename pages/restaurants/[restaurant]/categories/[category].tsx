@@ -212,7 +212,7 @@ const RestaurantCategory = ({
                   Back
                 </button>
                 <span>|</span>
-                <p className="font-bold text-sm">{categoryData.name} dishes</p>
+                <p className="font-bold text-sm">{categoryData.name}</p>
               </header>
               <Reels
                 dishesData={dishesData}
