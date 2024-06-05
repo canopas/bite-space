@@ -2,7 +2,7 @@
 
 import BottomSheet from "@/components/BottomSheet";
 import NoDataFound from "@/components/NoDataFound";
-import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useAppDispatch } from "@/store/store";
 import { RestaurantData } from "@/types/category-by-id";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +12,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import { Autoplay, Pagination } from "swiper/modules";
 import { setScreenHeightState } from "@/store/slice";
 
 const Restaurant = ({
@@ -49,7 +48,7 @@ const Restaurant = ({
       );
   }, [dispatch]);
 
-    return (
+  return (
     <>
       {restaurantsData && restaurantsData.length > 0 ? (
         <div className="flex flex-col gap-5">
@@ -82,8 +81,6 @@ const Restaurant = ({
                 <Swiper
                   slidesPerView={"auto"}
                   spaceBetween={20}
-                  autoplay={true}
-                  modules={[Autoplay]}
                   className="h-full w-full mt-6"
                 >
                   {item.menu.map((data, index) => (
@@ -134,7 +131,7 @@ const Restaurant = ({
                             width={100}
                           />
                         </div>
-                        <p className="mt-1 w-full font-extrabold capitalize sm:text-xl text-center">
+                        <p className="mt-1 w-full sm:w-96 font-extrabold capitalize sm:text-xl text-center">
                           {data.name}
                         </p>
                       </SwiperSlide>

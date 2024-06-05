@@ -23,7 +23,7 @@ const AdminsPage = () => {
       const { data, error } = await supabase
         .from("admins_roles_restaurants")
         .select("*, admins(id, name, email), roles(name)")
-        .order('id', { ascending: false })
+        .order("id", { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("restaurant_id", user.split("/")[2])
         .neq("admin_id", user.split("/")[0]);
@@ -71,13 +71,12 @@ const AdminsPage = () => {
     fetchAdmins(currentPage);
   }, [currentPage]);
 
-  const deleteRecord = async (id: number, relativeId: number) => {
+  const deleteRecord = async (id: number) => {
     try {
-      await supabase.from("admins").delete().eq("id", id).throwOnError();
       await supabase
         .from("admins_roles_restaurants")
         .delete()
-        .eq("id", relativeId)
+        .eq("id", id)
         .throwOnError();
       setAdminsData(adminsData.filter((x) => x.id != id));
       fetchCountAdmins();
@@ -188,7 +187,7 @@ const AdminsPage = () => {
                       className="text-red"
                       onClick={() =>
                         confirm("Are you sure you want to delete this admin?")
-                          ? deleteRecord(admin.admins.id, admin.id)
+                          ? deleteRecord(admin.id)
                           : ""
                       }
                     >

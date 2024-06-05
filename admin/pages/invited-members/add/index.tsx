@@ -96,7 +96,7 @@ const InvitedMemberPage = () => {
 
       await sendEmail({
         to: email,
-        subject: "Bite Space - Invitation To Join Space",
+        subject: "Invitation To Join Space",
         message: render(
           InviteMemberEmail({
             invited_by: data.admins.name,
