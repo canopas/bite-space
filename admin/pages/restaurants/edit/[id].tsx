@@ -10,7 +10,8 @@ import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
-  getFilenameFromURL,
+  deleteFileFroms3,
+  uploadFileTos3,
 } from "@/utils/image";
 
 const EditRestaurantPage = () => {
@@ -65,21 +66,13 @@ const EditRestaurantPage = () => {
           } else {
             const webpBlob = await convertToWebP(imagesData[i]);
 
-            const { data: imgData, error: imgErr } = await supabase.storage
-              .from("restaurants")
-              .upload(
-                currentDate.getTime() +
-                  "-" +
-                  changeFileExtensionToWebpExtension(imagesData[i].name),
-                webpBlob
-              );
-
-            if (imgErr) throw imgErr;
-
-            const image_url =
-              process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/restaurants/" +
-              imgData.path;
+            const image_url = await uploadFileTos3(
+              "restaurants",
+              webpBlob,
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(imagesData[i].name)
+            );
 
             new_images.push(image_url);
           }
@@ -92,11 +85,7 @@ const EditRestaurantPage = () => {
         );
 
         for (var i = 0; i < removeImages.length; i++) {
-          const { error } = await supabase.storage
-            .from("restaurants")
-            .remove([getFilenameFromURL(removeImages[i])]);
-
-          if (error) throw error;
+          await deleteFileFroms3(removeImages[i]);
         }
       }
 

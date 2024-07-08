@@ -1,3 +1,22 @@
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  ObjectCannedACL,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const s3 = new S3Client({
+  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY as string,
+  },
+});
+
+const bucketUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/`;
+
 const getFilenameFromURL = (url: string) => {
   const path = new URL(url).pathname;
   return path.substring(path.lastIndexOf("/") + 1);
@@ -32,11 +51,56 @@ const convertToWebP = (file: File): Promise<Blob> => {
 };
 
 const changeFileExtensionToWebpExtension = (name: string) => {
-  return name.replace(/\.[^.]+$/, "") + ".webp";
+  return name.replace(/\s+/g, "-").replace(/\.[^.]+$/, "") + ".webp";
+};
+
+const uploadFileTos3 = async (bucket: string, file: any, fileName: string) => {
+  let uploadParams = {
+    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+    Body: file,
+    ContentType: file.type,
+    Key: bucket + "/" + fileName,
+    ACL: "public-read" as ObjectCannedACL,
+  };
+
+  try {
+    const command = new PutObjectCommand(uploadParams);
+    await s3.send(command);
+
+    const getObj = new GetObjectCommand({
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+      Key: bucket + "/" + fileName,
+    });
+
+    const src = await getSignedUrl(s3, getObj);
+
+    const url = src.substring(0, src.indexOf("?"));
+
+    return url;
+  } catch (error) {
+    console.error("Error while uploading file to s3: ", error);
+  }
+
+  return "";
+};
+
+const deleteFileFroms3 = async (fileUrl: string) => {
+  try {
+    const deleteObj = new DeleteObjectCommand({
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+      Key: fileUrl.replace(bucketUrl, ""),
+    });
+
+    await s3.send(deleteObj);
+  } catch (error) {
+    console.error("Error while deleting the file from s3: ", error);
+  }
 };
 
 export {
   getFilenameFromURL,
   convertToWebP,
   changeFileExtensionToWebpExtension,
+  uploadFileTos3,
+  deleteFileFroms3,
 };

@@ -12,6 +12,7 @@ import { getCookiesValue } from "@/utils/jwt-auth";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
+  uploadFileTos3,
 } from "@/utils/image";
 
 const AddDishPage = () => {
@@ -93,56 +94,40 @@ const AddDishPage = () => {
           : z.null(),
       });
 
-      const currentDate = new Date();
-
       if (isImagesChecked && imagesData) {
         for (var i = 0; i < imagesData.length; i++) {
+          const currentDate = new Date();
+
           const webpBlob = await convertToWebP(imagesData[i]);
 
-          const { data: imgData, error: imgErr } = await supabase.storage
-            .from("dishes")
-            .upload(
-              currentDate.getTime() +
-                "-" +
-                changeFileExtensionToWebpExtension(imagesData[i].name),
-              webpBlob
-            );
-
-          if (imgErr) throw imgErr;
-
-          const image_url =
-            process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/dishes/" +
-            imgData.path;
+          const image_url = await uploadFileTos3(
+            "dishes",
+            webpBlob,
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(imagesData[i].name)
+          );
 
           images.push(image_url);
         }
       } else if (videoData) {
         const currentDate = new Date();
-        const { data: imgData, error: imgErr } = await supabase.storage
-          .from("dishes")
-          .upload(
-            currentDate.getTime() + "-" + thumbnailData.name,
-            thumbnailData
-          );
 
-        if (imgErr) throw imgErr;
+        const webpBlob = await convertToWebP(thumbnailData);
 
-        thumbnail =
-          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/dishes/" +
-          imgData.path;
+        thumbnail = await uploadFileTos3(
+          "dishes",
+          webpBlob,
+          currentDate.getTime() +
+            "-" +
+            changeFileExtensionToWebpExtension(thumbnailData.name)
+        );
 
-        const { data: videoStore, error: videoErr } = await supabase.storage
-          .from("dishes")
-          .upload(currentDate.getTime() + "-" + videoData.name, videoData);
-
-        if (videoErr) throw videoErr;
-
-        video =
-          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/dishes/" +
-          videoStore.path;
+        video = await uploadFileTos3(
+          "dishes",
+          videoData,
+          currentDate.getTime() + "-" + videoData.name
+        );
       }
 
       const response = mySchema.safeParse({

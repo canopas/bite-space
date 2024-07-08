@@ -11,7 +11,8 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
-  getFilenameFromURL,
+  deleteFileFroms3,
+  uploadFileTos3,
 } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
@@ -104,21 +105,14 @@ const EditDishPage = () => {
             const webpBlob = await convertToWebP(imagesData[i]);
 
             const currentDate = new Date();
-            const { data: imgData, error: imgErr } = await supabase.storage
-              .from("dishes")
-              .upload(
-                currentDate.getTime() +
-                  "-" +
-                  changeFileExtensionToWebpExtension(imagesData[i].name),
-                webpBlob
-              );
 
-            if (imgErr) throw imgErr;
-
-            const image_url =
-              process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/dishes/" +
-              imgData.path;
+            const image_url = await uploadFileTos3(
+              "dishes",
+              webpBlob,
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(imagesData[i].name)
+            );
 
             new_images.push(image_url);
           }
@@ -130,87 +124,50 @@ const EditDishPage = () => {
           );
 
           for (var i = 0; i < removeImages.length; i++) {
-            const { error } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(removeImages[i])]);
-
-            if (error) throw error;
+            await deleteFileFroms3(removeImages[i]);
           }
         }
 
         if (video) {
           if (thumbnail) {
-            const { error: thumbnailErr } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(thumbnail)]);
-
-            if (thumbnailErr) throw thumbnailErr;
+            await deleteFileFroms3(thumbnail);
           }
 
-          const { error: videoErr } = await supabase.storage
-            .from("dishes")
-            .remove([getFilenameFromURL(video)]);
-
-          if (videoErr) throw videoErr;
+          await deleteFileFroms3(video);
         }
       } else {
         const currentDate = new Date();
         if (videoData) {
-          const { data: videoStore, error: videoErr } = await supabase.storage
-            .from("dishes")
-            .upload(currentDate.getTime() + "-" + videoData.name, videoData);
-
-          if (videoErr) throw videoErr;
-
-          new_video =
-            process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/dishes/" +
-            videoStore.path;
+          new_video = await uploadFileTos3(
+            "dishes",
+            videoData,
+            currentDate.getTime() + "-" + videoData.name
+          );
 
           if (video) {
-            const { error: videoErr } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(video)]);
-
-            if (videoErr) throw videoErr;
+            await deleteFileFroms3(video);
           }
         }
 
         if (thumbnailData) {
           const webpBlob = await convertToWebP(thumbnailData);
 
-          const { data: imgData, error: imgErr } = await supabase.storage
-            .from("dishes")
-            .upload(
-              currentDate.getTime() +
-                "-" +
-                changeFileExtensionToWebpExtension(thumbnailData.name),
-              webpBlob
-            );
-
-          if (imgErr) throw imgErr;
-
-          new_video_thumbnail =
-            process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/dishes/" +
-            imgData.path;
+          new_video_thumbnail = await uploadFileTos3(
+            "dishes",
+            webpBlob,
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(thumbnailData.name)
+          );
 
           if (thumbnail) {
-            const { error: thumbnailErr } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(thumbnail)]);
-
-            if (thumbnailErr) throw thumbnailErr;
+            await deleteFileFroms3(thumbnail);
           }
         }
 
         if (images) {
           for (var i = 0; i < images.length; i++) {
-            const { error } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(images[i])]);
-
-            if (error) throw error;
+            await deleteFileFroms3(images[i]);
           }
         }
       }

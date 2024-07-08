@@ -11,6 +11,7 @@ import { TagsInput } from "react-tag-input-component";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
+  uploadFileTos3,
 } from "@/utils/image";
 
 const AddMenuPage = () => {
@@ -64,21 +65,14 @@ const AddMenuPage = () => {
         const webpBlob = await convertToWebP(image);
 
         const currentDate = new Date();
-        const { data: imgData, error: imgErr } = await supabase.storage
-          .from("menus")
-          .upload(
-            currentDate.getTime() +
-              "-" +
-              changeFileExtensionToWebpExtension(image.name),
-            webpBlob
-          );
 
-        if (imgErr) throw imgErr;
-
-        image_url =
-          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/menus/" +
-          imgData.path;
+        image_url = await uploadFileTos3(
+          "menus",
+          webpBlob,
+          currentDate.getTime() +
+            "-" +
+            changeFileExtensionToWebpExtension(image.name)
+        );
       }
 
       const response = mySchema.safeParse({

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
-import { getFilenameFromURL } from "@/utils/image";
+import { deleteFileFroms3 } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 import VideoPlayer from "@/components/VideoPlayer";
 
@@ -38,10 +38,8 @@ const DishesPage = () => {
 
       const { data: dishes, error } = await supabase
         .from("dishes")
-        .select(
-          `id, name, images, video, video_thumbnail, price, menus(*)`
-        )
-        .order('id', { ascending: false })
+        .select(`id, name, images, video, video_thumbnail, price, menus(*)`)
+        .order("id", { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .in("menu_id", arrayOfIds);
 
@@ -90,7 +88,7 @@ const DishesPage = () => {
     try {
       const { data: dish, error } = await supabase
         .from("dishes")
-        .select("images, video")
+        .select("images, video_thumbnail, video")
         .eq("id", id)
         .single();
 
@@ -100,20 +98,13 @@ const DishesPage = () => {
 
       if (dish.images) {
         for (var i = 0; i < dish.images.length; i++) {
-          const { error } = await supabase.storage
-            .from("dishes")
-            .remove([getFilenameFromURL(dish.images[i])]);
-
-          if (error) throw error;
+          await deleteFileFroms3(dish.images[i]);
         }
       }
 
       if (dish.video) {
-        const { error } = await supabase.storage
-          .from("dishes")
-          .remove([getFilenameFromURL(dish.video)]);
-
-        if (error) throw error;
+        await deleteFileFroms3(dish.video_thumbnail);
+        await deleteFileFroms3(dish.video);
       }
 
       await supabase.from("dishes").delete().eq("id", id).throwOnError();

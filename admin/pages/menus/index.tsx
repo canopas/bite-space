@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Menu } from "@/types/menu";
 import PaginationPage from "@/components/pagination/PaginatedPage";
 import { getCookiesValue } from "@/utils/jwt-auth";
-import { getFilenameFromURL } from "@/utils/image";
+import { deleteFileFroms3 } from "@/utils/image";
 
 const MenusPage = () => {
   const [restaurantId, setRestaurantId] = useState<number>(0);
@@ -83,30 +83,18 @@ const MenusPage = () => {
       for (var i = 0; i < dishes.length; i++) {
         if (dishes[i].images) {
           for (var j = 0; j < dishes[i].images.length; j++) {
-            const { error } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(dishes[i].images[j])]);
-
-            if (error) throw error;
+            await deleteFileFroms3(dishes[i].images[j]);
           }
         }
 
         if (dishes[i].video) {
-          const { error } = await supabase.storage
-            .from("dishes")
-            .remove([getFilenameFromURL(dishes[i].video)]);
-
-          if (error) throw error;
+          await deleteFileFroms3(dishes[i].video);
         }
       }
 
       await supabase.from("dishes").delete().eq("menu_id", id).throwOnError();
 
-      const { data, error } = await supabase.storage
-        .from("menus")
-        .remove([getFilenameFromURL(menusData[key].image)]);
-
-      if (error) throw error;
+      await deleteFileFroms3(menusData[key].image);
 
       await supabase.from("menus").delete().eq("id", id).throwOnError();
       setMenusData(menusData.filter((x) => x.id != id));
