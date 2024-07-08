@@ -22,6 +22,11 @@ const AddRestaurantPage = () => {
   const [name, setName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
+  const [localArea, setLocalArea] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [state, setState] = useState<string>("");
+  const [postalCode, setPostalCode] = useState<number>(0);
+  const [country, setCountry] = useState<string>("India");
   const [phone, setPhone] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [isPublic, setIsPublic] = useState<boolean>(true);
@@ -44,6 +49,11 @@ const AddRestaurantPage = () => {
         name: z.string().min(3),
         description: z.string().min(5),
         address: z.string().min(10),
+        local_area: z.string().min(3),
+        city: z.string().min(3),
+        state: z.string().min(3),
+        postal_code: z.number().positive().min(5),
+        country: z.string().min(3),
         images: z
           .array(z.string().min(10))
           .min(1, { message: "Images is required" }),
@@ -75,6 +85,11 @@ const AddRestaurantPage = () => {
         name: name,
         description: description,
         address: address,
+        local_area: localArea,
+        city: city,
+        state: state,
+        postal_code: postalCode,
+        country: country,
         images: images,
         phone: parseInt(phone),
         tags: tags,
@@ -98,6 +113,11 @@ const AddRestaurantPage = () => {
           name: name,
           description: description,
           address: address,
+          local_area: localArea,
+          city: city,
+          state: state,
+          postal_code: postalCode,
+          country: country,
           images: images,
           phone: parseInt(phone),
           tags: tags.map((tag) => tag.toLowerCase()),
@@ -211,6 +231,99 @@ const AddRestaurantPage = () => {
             </div>
             <div className="mt-1 text-xs text-meta-1">
               {errors.find((error) => error.for === "address")?.message}
+            </div>
+          </div>
+          <div className="flex flex-col gap-5.5 sm:flex-row">
+            <div className="w-full sm:w-1/2">
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Local Area <span className="text-meta-1">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  type="text"
+                  placeholder="Katargam"
+                  required
+                  autoComplete="off"
+                  onChange={(e) => setLocalArea(e.target.value)}
+                />
+              </div>
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "localArea")?.message}
+              </div>
+            </div>
+
+            <div className="w-full sm:w-1/2">
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                City <span className="text-meta-1">*</span>
+              </label>
+              <input
+                className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                type="text"
+                placeholder="Surat"
+                required
+                autoComplete="off"
+                onChange={(e) => setCity(e.target.value as any)}
+              />
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "city")?.message}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-5.5 sm:flex-row">
+            <div className="w-full sm:w-1/2">
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                State <span className="text-meta-1">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  type="text"
+                  placeholder="Gujarat"
+                  required
+                  autoComplete="off"
+                  onChange={(e) => setState(e.target.value)}
+                />
+              </div>
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "state")?.message}
+              </div>
+            </div>
+
+            <div className="w-full sm:w-1/2">
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Postal Code <span className="text-meta-1">*</span>
+              </label>
+              <input
+                className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                type="number"
+                placeholder="395004"
+                required
+                autoComplete="off"
+                onChange={(e) => setPostalCode(parseInt(e.target.value))}
+              />
+              <div className="mt-1 text-xs text-meta-1">
+                {errors.find((error) => error.for === "postalCode")?.message}
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              Country <span className="text-meta-1">*</span>
+            </label>
+            <div className="relative">
+              <input
+                className="w-full rounded border border-stroke px-5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                type="text"
+                placeholder="India"
+                defaultValue="India"
+                required
+                autoComplete="off"
+                onChange={(e) => setCountry(e.target.value)}
+              />
+            </div>
+            <div className="mt-1 text-xs text-meta-1">
+              {errors.find((error) => error.for === "country")?.message}
             </div>
           </div>
           <div>
