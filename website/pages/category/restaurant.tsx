@@ -78,14 +78,10 @@ const Restaurant = ({
                     <span>{item.postal_code}</span>
                   </p>
                 </Link>
-                <Swiper
-                  slidesPerView={"auto"}
-                  spaceBetween={20}
-                  className="h-full w-full mt-6"
-                >
+                <div className="flex gap-5 h-full overflow-scroll scrollbar-hidden mt-6">
                   {item.menu.map((data, index) => (
                     <div key={"explore-restaurant-menu-" + index}>
-                      <SwiperSlide
+                      <div
                         className={`!h-full ${
                           item.menu.length > 1 ? "!w-60 sm:!w-96" : "!w-full"
                         }`}
@@ -134,10 +130,10 @@ const Restaurant = ({
                         <p className="mt-1 w-full sm:w-96 font-extrabold capitalize sm:text-xl text-center">
                           {data.name}
                         </p>
-                      </SwiperSlide>
+                      </div>
                     </div>
                   ))}
-                </Swiper>
+                </div>
               </div>
             ))}
           </div>

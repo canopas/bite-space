@@ -7,7 +7,8 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
-  getFilenameFromURL,
+  deleteFileFroms3,
+  uploadFileTos3,
 } from "@/utils/image";
 import { z } from "zod";
 import CryptoJS from "crypto-js";
@@ -89,29 +90,18 @@ const Profile = () => {
         const webpBlob = await convertToWebP(imageData);
 
         const currentDate = new Date();
-        const { data: imgData, error: imgErr } = await supabase.storage
-          .from("admins")
-          .upload(
-            currentDate.getTime() +
-              "-" +
-              changeFileExtensionToWebpExtension(imageData.name),
-            webpBlob
-          );
 
-        if (imgErr) throw imgErr;
+        image_url = await uploadFileTos3(
+          "admins",
+          webpBlob,
+          currentDate.getTime() +
+            "-" +
+            changeFileExtensionToWebpExtension(imageData.name)
+        );
 
         if (image) {
-          const { error } = await supabase.storage
-            .from("admins")
-            .remove([getFilenameFromURL(image)]);
-
-          if (error) throw error;
+          await deleteFileFroms3(image);
         }
-
-        image_url =
-          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/admins/" +
-          imgData.path;
       }
 
       setImage(image_url);

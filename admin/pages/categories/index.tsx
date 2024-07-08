@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
-import { getFilenameFromURL } from "@/utils/image";
+import { deleteFileFroms3 } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const CategoriesPage = () => {
@@ -75,11 +75,7 @@ const CategoriesPage = () => {
 
   const deleteRecord = async (id: number, key: number) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("categories")
-        .remove([getFilenameFromURL(categoriesData[key].image)]);
-
-      if (error) throw error;
+      await deleteFileFroms3(categoriesData[key].image);
 
       await supabase.from("categories").delete().eq("id", id).throwOnError();
       setCategoriesData((prevCategories) =>
