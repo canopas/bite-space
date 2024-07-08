@@ -11,6 +11,7 @@ import { getCookiesValue, setSessionForUser } from "@/utils/jwt-auth";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
+  uploadFileTos3,
 } from "@/utils/image";
 
 const AddRestaurantPage = () => {
@@ -53,25 +54,18 @@ const AddRestaurantPage = () => {
       });
 
       if (imagesData) {
-        const currentDate = new Date();
         for (var i = 0; i < imagesData.length; i++) {
+          const currentDate = new Date();
+
           const webpBlob = await convertToWebP(imagesData[i]);
 
-          const { data: imgData, error: imgErr } = await supabase.storage
-            .from("restaurants")
-            .upload(
-              currentDate.getTime() +
-                "-" +
-                changeFileExtensionToWebpExtension(imagesData[i].name),
-              webpBlob
-            );
-
-          if (imgErr) throw imgErr;
-
-          const image_url =
-            process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-            "/restaurants/" +
-            imgData.path;
+          const image_url = await uploadFileTos3(
+            "restaurants",
+            webpBlob,
+            currentDate.getTime() +
+              "-" +
+              changeFileExtensionToWebpExtension(imagesData[i].name)
+          );
 
           images.push(image_url);
         }

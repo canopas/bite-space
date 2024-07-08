@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import supabase from "@/utils/supabase";
 import PaginationPage from "@/components/pagination/PaginatedPage";
-import { getFilenameFromURL } from "@/utils/image";
+import { deleteFileFroms3 } from "@/utils/image";
 import { getCookiesValue } from "@/utils/jwt-auth";
 
 const RestaurantsPage = () => {
@@ -26,7 +26,7 @@ const RestaurantsPage = () => {
       const { data: restaurantData, error } = await supabase
         .from("admins_roles_restaurants")
         .select("*, restaurants(id, name, description, address, phone, images)")
-        .order('id', { ascending: false })
+        .order("id", { ascending: false })
         .range((page - 1) * pageSize, pageSize * page - 1)
         .eq("admin_id", user.split("/")[0]);
 
@@ -74,11 +74,7 @@ const RestaurantsPage = () => {
 
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
-          const { error } = await supabase.storage
-            .from("restaurants")
-            .remove([getFilenameFromURL(restaurant.images[i])]);
-
-          if (error) throw error;
+          await deleteFileFroms3(restaurant.images[i]);
         }
       }
 

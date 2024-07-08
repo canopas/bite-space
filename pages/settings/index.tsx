@@ -5,7 +5,8 @@ import supabase from "@/utils/supabase";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
-  getFilenameFromURL,
+  deleteFileFroms3,
+  uploadFileTos3,
 } from "@/utils/image";
 import { useEffect, useState } from "react";
 import MultipleFileUpload from "@/components/ImagePreview/MultipleImage";
@@ -152,29 +153,22 @@ const Settings = () => {
 
       let arr: string[] = [];
       if (imagesData) {
-        const currentDate = new Date();
         for (var i = 0; i < imagesData.length; i++) {
+          const currentDate = new Date();
+
           if (imagesData[i].previewUrl) {
             arr.push(imagesData[i].previewUrl);
             new_images.push(imagesData[i].previewUrl);
           } else {
             const webpBlob = await convertToWebP(imagesData[i]);
 
-            const { data: imgData, error: imgErr } = await supabase.storage
-              .from("restaurants")
-              .upload(
-                currentDate.getTime() +
-                  "-" +
-                  changeFileExtensionToWebpExtension(imagesData[i].name),
-                webpBlob
-              );
-
-            if (imgErr) throw imgErr;
-
-            const image_url =
-              process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "/restaurants/" +
-              imgData.path;
+            const image_url = await uploadFileTos3(
+              "restaurants",
+              webpBlob,
+              currentDate.getTime() +
+                "-" +
+                changeFileExtensionToWebpExtension(imagesData[i].name)
+            );
 
             new_images.push(image_url);
           }
@@ -187,11 +181,7 @@ const Settings = () => {
         );
 
         for (var i = 0; i < removeImages.length; i++) {
-          const { error } = await supabase.storage
-            .from("restaurants")
-            .remove([getFilenameFromURL(removeImages[i])]);
-
-          if (error) throw error;
+          await deleteFileFroms3(removeImages[i]);
         }
       }
 
@@ -211,6 +201,12 @@ const Settings = () => {
 
       const { error } = await supabase.from("restaurants").upsert({
         id: id,
+        address: address,
+        local_area: localArea,
+        city: city,
+        state: state,
+        postal_code: postalCode,
+        country: country,
         images: new_images,
       });
 
@@ -340,21 +336,13 @@ const Settings = () => {
           // delete dish images
           if (dishes[i].images) {
             for (var i = 0; i < dishes[i].images.length; i++) {
-              const { error } = await supabase.storage
-                .from("dishes")
-                .remove([getFilenameFromURL(dishes[i].images[i])]);
-
-              if (error) throw error;
+              await deleteFileFroms3(dishes[i].images[i]);
             }
           }
 
           // delete dish video
           if (dishes[i].video) {
-            const { error } = await supabase.storage
-              .from("dishes")
-              .remove([getFilenameFromURL(dishes[i].video)]);
-
-            if (error) throw error;
+            await deleteFileFroms3(dishes[i].video);
           }
 
           // delete dish
@@ -373,28 +361,9 @@ const Settings = () => {
           .throwOnError();
       }
 
-      // get categories data
-      const { data: categories, error: catErr } = await supabase
-        .from("categories")
-        .select("id, image")
-        .eq("restaurant_id", restaurant.id);
-
-      if (catErr) throw catErr;
-
-      // delete restaurant images
-      if (categories.length > 0) {
-        for (var i = 0; i < categories.length; i++) {
-          const { error } = await supabase.storage
-            .from("categories")
-            .remove([getFilenameFromURL(categories[i].image)]);
-
-          if (error) throw error;
-        }
-      }
-
       // delete categories
       await supabase
-        .from("categories")
+        .from("menus_sections")
         .delete()
         .eq("restaurant_id", restaurant.id)
         .throwOnError();
@@ -423,11 +392,7 @@ const Settings = () => {
       // delete restaurant images
       if (restaurant.images) {
         for (var i = 0; i < restaurant.images.length; i++) {
-          const { error } = await supabase.storage
-            .from("restaurants")
-            .remove([getFilenameFromURL(restaurant.images[i])]);
-
-          if (error) throw error;
+          await deleteFileFroms3(restaurant.images[i]);
         }
       }
 
@@ -705,7 +670,9 @@ const Settings = () => {
                         placeholder="395004"
                         required
                         autoComplete="off"
-                        onChange={(e) => setPostalCode(parseInt(e.target.value))}
+                        onChange={(e) =>
+                          setPostalCode(parseInt(e.target.value))
+                        }
                         value={postalCode}
                       />
                       <div className="mt-1 text-xs text-meta-1">

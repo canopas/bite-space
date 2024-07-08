@@ -9,7 +9,8 @@ import SingleImgPreview from "@/components/ImagePreview/SingleImage";
 import {
   changeFileExtensionToWebpExtension,
   convertToWebP,
-  getFilenameFromURL,
+  deleteFileFroms3,
+  uploadFileTos3,
 } from "@/utils/image";
 
 const EditCategoryPage = () => {
@@ -75,27 +76,16 @@ const EditCategoryPage = () => {
         const webpBlob = await convertToWebP(imageData);
 
         const currentDate = new Date();
-        const { data: imgData, error: imgErr } = await supabase.storage
-          .from("categories")
-          .upload(
-            currentDate.getTime() +
-              "-" +
-              changeFileExtensionToWebpExtension(imageData.name),
-            webpBlob
-          );
 
-        if (imgErr) throw imgErr;
+        image_url = await uploadFileTos3(
+          "categories",
+          webpBlob,
+          currentDate.getTime() +
+            "-" +
+            changeFileExtensionToWebpExtension(imageData.name)
+        );
 
-        const { error } = await supabase.storage
-          .from("categories")
-          .remove([getFilenameFromURL(image)]);
-
-        if (error) throw error;
-
-        image_url =
-          process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-          "/categories/" +
-          imgData.path;
+        await deleteFileFroms3(image);
       }
 
       const response = mySchema.safeParse({
