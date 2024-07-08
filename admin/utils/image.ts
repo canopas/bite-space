@@ -15,10 +15,7 @@ const s3 = new S3Client({
   },
 });
 
-const bucketUrl =
-  "https://bitespace.s3." +
-  process.env.NEXT_PUBLIC_AWS_REGION +
-  ".amazonaws.com/";
+const bucketUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/`;
 
 const getFilenameFromURL = (url: string) => {
   const path = new URL(url).pathname;
@@ -59,7 +56,7 @@ const changeFileExtensionToWebpExtension = (name: string) => {
 
 const uploadFileTos3 = async (bucket: string, file: any, fileName: string) => {
   let uploadParams = {
-    Bucket: "bitespace",
+    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
     Body: file,
     ContentType: file.type,
     Key: bucket + "/" + fileName,
@@ -71,7 +68,7 @@ const uploadFileTos3 = async (bucket: string, file: any, fileName: string) => {
     await s3.send(command);
 
     const getObj = new GetObjectCommand({
-      Bucket: "bitespace",
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
       Key: bucket + "/" + fileName,
     });
 
@@ -90,7 +87,7 @@ const uploadFileTos3 = async (bucket: string, file: any, fileName: string) => {
 const deleteFileFroms3 = async (fileUrl: string) => {
   try {
     const deleteObj = new DeleteObjectCommand({
-      Bucket: "bitespace",
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
       Key: fileUrl.replace(bucketUrl, ""),
     });
 
