@@ -66,7 +66,7 @@ Found a bug or have a suggestion for improvement? We'd love to hear from you! Pl
 
 ## Credits
 
-Bite Space is owned and maintained by the [Canopas team](https://canopas.com/). You can reach out to them on GitHub at [canopas](https://github.com/canopas) for questions or need support. You can follow them on X at [@canopas_eng](https://x.com/canopas_eng) for more updates. If you are interested in building web apps or designing products, please let us know. We'd love to hear from you!
+Bite Space is owned and maintained by the [Canopas team](https://canopas.com/). You can reach out to them on GitHub at [canopas](https://github.com/canopas) for questions or need support. You can follow them on X at [@canopassoftware](https://x.com/canopassoftware) for more updates. If you are interested in building web apps or designing products, please let us know. We'd love to hear from you!
 
 <a href="https://canopas.com/contact" target="_blank"><img src="./media/cta_button.png" width="300" /></a>
 
